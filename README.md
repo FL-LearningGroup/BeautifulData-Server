@@ -2,7 +2,7 @@
 Collect data, Process data
 
 # Development Platform
-+ Platform: .Net 5
++ Platform: .Net Standard2.0 & .Net 5
 + Language: C#
 + Develop tool: Visual Studio 2019
 
