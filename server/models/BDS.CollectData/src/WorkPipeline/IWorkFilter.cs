@@ -1,9 +1,12 @@
-namespace BDS.CollectData.WorkPipeline
+namespace BDS.CollectData
 {
+    using System.Collections.Generic;
     /// <Summary> Work Filter </Summary>
-    internal interface IWorkFilter
+    public interface IWorkFilter
     {
-        string readFilter(string key);
+        string TagName { get; set; }
+        string TagId { get; set; }
+        string TagClass { get; set; }
     }
     
 }

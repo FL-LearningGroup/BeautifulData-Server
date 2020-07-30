@@ -1,6 +1,6 @@
-namespace BDS.CollectData.WorkPipeline.Models {
+namespace BDS.CollectData.Models {
     /// <Summary> Work machine status </Summary>
-    internal enum WorkMachineStatus 
+    public enum WorkMachineStatus 
     {
         Wait,
         Running

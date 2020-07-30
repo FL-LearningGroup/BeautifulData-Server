@@ -1,7 +1,7 @@
-namespace  BDS.CollectData.WorkPipeline.Models
+namespace  BDS.CollectData.Models
 {
     /// <Summary>Work site status </Summary>
-    internal enum WorkSiteStatus 
+    public enum WorkSiteStatus 
     {
         Build,
         Running,

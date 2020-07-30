@@ -1,11 +1,11 @@
-namespace BDS.CollectData.WorkPipeline
+namespace BDS.CollectData
 {
-    using BDS.CollectData.Resource;
-    using BDS.CollectData.WorkPipeline.Models;
+    using BDS.CollectData.Models;
+    using System.Collections.Generic;
     /// <Summary> Work machine </Summary>
-    internal interface IWorkMachine
+    public interface IWorkMachine
     {
-        WorkSiteStatus worker(IResource sourceResource, IResource targetResource, IWorkFilter workFilter);
+        WorkSiteStatus worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter);
     }
     
 }

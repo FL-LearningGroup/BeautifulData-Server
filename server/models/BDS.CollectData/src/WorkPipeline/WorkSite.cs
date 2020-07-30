@@ -1,12 +1,12 @@
-namespace BDS.CollectData.WorkPipeline
+namespace BDS.CollectData
 {
     using System;
-    using BDS.CollectData.WorkPipeline.Models;
-    using BDS.CollectData.Resource;
+    using System.Collections.Generic;
+    using BDS.CollectData.Models;
     /// <summary>
     ///  The WorkSite performs process data through Worker method.
     /// </summary>
-    internal class WorkSite: IWorkSite {
+    public class WorkSite: IWorkSite {
         WorkSiteStatus status = WorkSiteStatus.Build;
 
         public WorkSiteStatus Status {
@@ -22,10 +22,10 @@ namespace BDS.CollectData.WorkPipeline
             }
         }
         
-        IResource sourceResource;
-        IResource targetResource;
+        IWorkSiteInput inputResource;
+        IWorkSiteOutput outputResource;
         IWorkMachine workMachine;
-        IWorkFilter workFilter;
+        List<IWorkFilter> workFilterList;
         public WorkSite() {
             Initialize();
         }
@@ -35,14 +35,19 @@ namespace BDS.CollectData.WorkPipeline
         }
         public void Worker()
         {
-            this.status = workMachine.worker(this.sourceResource, this.targetResource, this.workFilter);            
+            this.status = workMachine.worker(this.inputResource, this.outputResource, this.workFilterList);            
         }
-
+        public void SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource) {
+            this.inputResource = inputResource;
+        }
+        public void SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource) {
+            this.outputResource = outputResource;
+        }
         public void SetOrReplaceWorkMachine(IWorkMachine workMachine) {
             this.workMachine = workMachine;
         }
-        public void SetOrReplaceWorkFilter(IWorkFilter workFilter) {
-            this.workFilter = workFilter;
+        public void SetOrReplaceWorkFilter(List<IWorkFilter> workFilter) {
+            this.workFilterList = workFilter;
         }
     }
 }

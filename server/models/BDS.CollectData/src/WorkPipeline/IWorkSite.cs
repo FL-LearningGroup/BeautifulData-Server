@@ -1,8 +1,8 @@
-namespace BDS.CollectData.WorkPipeline
+namespace BDS.CollectData
 {
     using System;
-    using BDS.CollectData.WorkPipeline.Models;
-    internal interface IWorkSite
+    using BDS.CollectData.Models;
+    public interface IWorkSite
     {
         Guid Identifier {get;}
         WorkSiteStatus Status{get;}

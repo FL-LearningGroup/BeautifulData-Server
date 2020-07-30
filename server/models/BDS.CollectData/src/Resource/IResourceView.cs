@@ -1,6 +1,6 @@
-namespace BDS.CollectData.Resource {
+namespace BDS.CollectData {
     /// <summary>Interface Resource View </summary>
-    interface IResourceView {
+    public interface IResourceView {
         void Display();
     }
 }

@@ -1,37 +1,12 @@
-namespace BDS.CollectData.Resource {
+namespace BDS.CollectData {
     using System;
+    using System.Collections.Generic;
     /// <summary> Defined resource </summary>
-    internal class Resource: IResource {
+    public abstract class Resource {
         // Defined resource type.
-        private string type;
-        // Get resource type.
-        public string Type 
-        {
-            get {
-                return this.type;
-            }
+        abstract public string Type {
+            get;
+            set;
         }
-        // Constructor with no parameters.
-        public Resource(string type) 
-        {
-            this.type = type;
-        }
-
-        // Get data and store 
-        IResourceData resourceData;
-
-        // Set or replace IResourceData
-        void SetOrReplaceResourceData(IResourceData resourceData) 
-        {
-            this.resourceData = resourceData;
-        }
-
-        // Display resource data
-        IResourceView resourceView;
-
-        // Set or replace IResourceView;
-        void SetOrReplaceResourceView(IResourceView resourceView) {
-            this.resourceView = resourceView;
-        } 
     }
 }

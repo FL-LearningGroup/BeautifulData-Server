@@ -1,12 +1,12 @@
-namespace BDS.CollectData.WorkPipeline
+namespace BDS.CollectData
 {
     using System;
     using System.Collections.Generic;
-    using BDS.CollectData.WorkPipeline.Models;
-    internal class WorkPipeline
+    using BDS.CollectData.Models;
+    public class WorkPipeline
     {
         public WorkPipelineStatus status = WorkPipelineStatus.Build;
-        LinkedList<IWorkSite> workSiteLinked;
+        LinkedList<IWorkSite> workSiteLinked = new LinkedList<IWorkSite>();
         public void AddWorkSite(IWorkSite workSite)
         {
             this.workSiteLinked.AddLast(workSite);

@@ -1,7 +1,6 @@
-namespace BDS.CollectData.Resource {
-    /// <summary>Interface Resource </summary>
-    interface IResource {
+namespace BDS.CollectData {
+    /// <summary>Resource Interface </summary>
+    public interface IResource: IWorkSiteInput, IWorkSiteOutput {
         // Get resource type.
-        string Type { get; }
     }
 }
