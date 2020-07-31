@@ -379,6 +379,7 @@ namespace BDS.CollectData.Tests
             WorkPipeline workPipeline = new WorkPipeline();
             workPipeline.AddWorkSite(workSite001);
             workPipeline.AddWorkSite(workSite002);
+            workPipeline.status = WorkPipelineStatus.Executable;
             workPipeline.Processor();
 
         }
