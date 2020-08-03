@@ -207,7 +207,7 @@ namespace BDS.CollectData.Tests
     /// </summary>
     public class WM001_FYPublicInfoUrlLinks : IWorkMachine
     {
-        public WorkSiteStatus worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
+        public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {
             HtmlWeb web = new HtmlWeb();
             List<string> urlList = input.GetResourceData();
@@ -253,7 +253,7 @@ namespace BDS.CollectData.Tests
     /// </summary>
     public class WM002_FYPublicInfoTitle : IWorkMachine
     {
-        public WorkSiteStatus worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
+        public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {
  
             HtmlWeb web = new HtmlWeb();

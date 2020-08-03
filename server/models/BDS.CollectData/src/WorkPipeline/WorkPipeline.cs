@@ -6,33 +6,33 @@ namespace BDS.CollectData
     public class WorkPipeline
     {
         public WorkPipelineStatus status = WorkPipelineStatus.Build;
-        LinkedList<IWorkSite> workSiteLinked = new LinkedList<IWorkSite>();
+        LinkedList<IWorkSite> _workSiteLinked = new LinkedList<IWorkSite>();
         public void AddWorkSite(IWorkSite workSite)
         {
-            this.workSiteLinked.AddLast(workSite);
+            this._workSiteLinked.AddLast(workSite);
         }
         public void InsertWorkSite(IWorkSite currentWorkSite, IWorkSite insertWorkSite)
         {
-            LinkedListNode<IWorkSite> current = this.workSiteLinked.Find(currentWorkSite);
-            this.workSiteLinked.AddAfter(current, insertWorkSite);
+            LinkedListNode<IWorkSite> current = this._workSiteLinked.Find(currentWorkSite);
+            this._workSiteLinked.AddAfter(current, insertWorkSite);
         }
 
         public void RemoveWorkSite(IWorkSite workSite)
         {
-            this.workSiteLinked.Remove(workSite);
+            this._workSiteLinked.Remove(workSite);
         }
 
         public void UpdateWorkSite(IWorkSite oldWorkSite, IWorkSite newWorkSite)
         {
-            LinkedListNode<IWorkSite> current = this.workSiteLinked.Find(oldWorkSite);
+            LinkedListNode<IWorkSite> current = this._workSiteLinked.Find(oldWorkSite);
             LinkedListNode<IWorkSite> preCurrent = current.Previous;
-            this.workSiteLinked.Remove(current);
-            this.workSiteLinked.AddAfter(preCurrent, newWorkSite);
+            this._workSiteLinked.Remove(current);
+            this._workSiteLinked.AddAfter(preCurrent, newWorkSite);
         }
         public void ClearWorkPipeline()
         {
             this.status = WorkPipelineStatus.Build;
-            this.workSiteLinked.Clear();
+            this._workSiteLinked.Clear();
         }
 
         public void SetWorkPipelineStatus(WorkPipelineStatus status)
@@ -43,14 +43,23 @@ namespace BDS.CollectData
         {
             if(this.status == WorkPipelineStatus.Executable)
             {
-                foreach (IWorkSite workSite in this.workSiteLinked)
+                foreach (IWorkSite workSite in this._workSiteLinked)
                 {
+                    try
+                    {
                         workSite.Worker();
                         if(workSite.Status == WorkSiteStatus.Failed) 
                         {
                             this.status = WorkPipelineStatus.Failed;
-                            return false;
+                            throw new FailedWorkSiteException(workSite.Identifier, workSite.GetType().Name, "Work process failed.");
                         }
+                    }
+                    catch(FailedWorkSiteException ex)
+                    {
+                        // Log: Record failed work site.
+                        Console.WriteLine(ex.Message);
+                        return false;
+                    }
                 }
                 return true;
             }

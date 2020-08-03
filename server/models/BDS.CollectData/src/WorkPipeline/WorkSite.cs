@@ -7,47 +7,47 @@ namespace BDS.CollectData
     ///  The WorkSite performs process data through Worker method.
     /// </summary>
     public class WorkSite: IWorkSite {
-        WorkSiteStatus status = WorkSiteStatus.Build;
+        WorkSiteStatus _status = WorkSiteStatus.Build;
 
         public WorkSiteStatus Status {
             get {
-                return this.status;
+                return this._status;
             }
         }
-        Guid identifier;
+        private string _identifier;
 
-        public Guid Identifier {
+        public string Identifier {
             get {
-                return this.identifier;
+                return this._identifier;
             }
         }
         
-        IWorkSiteInput inputResource;
-        IWorkSiteOutput outputResource;
-        IWorkMachine workMachine;
-        List<IWorkFilter> workFilterList;
+        IWorkSiteInput _inputResource;
+        IWorkSiteOutput _outputResource;
+        IWorkMachine _workMachine;
+        List<IWorkFilter> _workFilterList;
         public WorkSite() {
             Initialize();
         }
 
         private void Initialize() {
-            identifier = System.Guid.NewGuid();
+            _identifier = System.Guid.NewGuid().ToString();
         }
         public void Worker()
         {
-            this.status = workMachine.worker(this.inputResource, this.outputResource, this.workFilterList);            
+            this._status = _workMachine.Worker(this._inputResource, this._outputResource, this._workFilterList);            
         }
-        public void SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource) {
-            this.inputResource = inputResource;
+        public void SetOrReplaceWorkSiteInput(IWorkSiteInput _inputResource) {
+            this._inputResource = _inputResource;
         }
-        public void SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource) {
-            this.outputResource = outputResource;
+        public void SetOrReplaceWorkSiteOutput(IWorkSiteOutput _outputResource) {
+            this._outputResource = _outputResource;
         }
-        public void SetOrReplaceWorkMachine(IWorkMachine workMachine) {
-            this.workMachine = workMachine;
+        public void SetOrReplaceWorkMachine(IWorkMachine _workMachine) {
+            this._workMachine = _workMachine;
         }
         public void SetOrReplaceWorkFilter(List<IWorkFilter> workFilter) {
-            this.workFilterList = workFilter;
+            this._workFilterList = workFilter;
         }
     }
 }

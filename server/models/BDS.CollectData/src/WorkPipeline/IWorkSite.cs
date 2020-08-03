@@ -4,7 +4,7 @@ namespace BDS.CollectData
     using BDS.CollectData.Models;
     public interface IWorkSite
     {
-        Guid Identifier {get;}
+        string Identifier {get;}
         WorkSiteStatus Status{get;}
         void Worker();
 

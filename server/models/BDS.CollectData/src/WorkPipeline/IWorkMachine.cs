@@ -5,7 +5,7 @@ namespace BDS.CollectData
     /// <Summary> Work machine </Summary>
     public interface IWorkMachine
     {
-        WorkSiteStatus worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter);
+        WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter);
     }
     
 }
