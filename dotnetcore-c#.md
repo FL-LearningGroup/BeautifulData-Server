@@ -5,4 +5,13 @@ Its main purpose is to save the state of an object in order to be able to recrea
 
 ## Attribute Class
 1. https://docs.microsoft.com/en-us/dotnet/api/system.attribute?view=netcore-3.1
-2. Represents the base class for custom attributes.
+2. An attribute is a declarative tag that is used convery information to runtime about behaviors various elements liks classes, methods, structures, enumerators, assemblies etc.
+Attribute are used for adding metadata, such as compiler instruction and other information such as comments, description, methods and classes to a program. The .Net provides two types of attribute: the pre-defined attributes and custom built attributes.
+3. Specifying an attribute: attribute[positional_parameters, name_parameters = value, ...]
+3. .Net provides three pre-defined Attributes
+
+| Attributes |
+|:-------------------|
+|AttributeUsage      |
+|Conditional         |
+|Obsolete            |
