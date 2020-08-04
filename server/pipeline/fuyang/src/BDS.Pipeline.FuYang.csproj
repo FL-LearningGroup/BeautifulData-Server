@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="BDS.CollectData">
+      <HintPath>..\..\..\models\BDS.CollectData\src\bin\Debug\netstandard2.0\BDS.CollectData.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

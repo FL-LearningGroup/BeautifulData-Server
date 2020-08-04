@@ -6,20 +6,46 @@ namespace BDS.CollectData
     public class WorkPipeline
     {
         public WorkPipelineStatus status = WorkPipelineStatus.Build;
-        LinkedList<IWorkSite> _workSiteLinked = new LinkedList<IWorkSite>();
-        public void AddWorkSite(IWorkSite workSite)
+        private LinkedList<IWorkSite> _workSiteLinked = new LinkedList<IWorkSite>();
+        public WorkPipeline()
+        {
+
+        }
+        public LinkedList<IWorkSite> WorkSiteLinked
+        {
+            get
+            {
+                return this._workSiteLinked;
+            }
+        }
+        public int AddWorkSite(IWorkSite workSite)
         {
             this._workSiteLinked.AddLast(workSite);
+            return this._workSiteLinked.Count;
         }
-        public void InsertWorkSite(IWorkSite currentWorkSite, IWorkSite insertWorkSite)
+        // Insert new node before current node.
+        public bool InsertWorkSite(IWorkSite currentWorkSite, IWorkSite insertWorkSite)
         {
+            //Linked list is null
+            if(this._workSiteLinked.Count == 0)
+            {
+                return false;
+            }
             LinkedListNode<IWorkSite> current = this._workSiteLinked.Find(currentWorkSite);
-            this._workSiteLinked.AddAfter(current, insertWorkSite);
+            //Not contain target work site.
+            if(current == null)
+            {
+                return false;
+            }
+            this._workSiteLinked.AddBefore(current, insertWorkSite);
+            return true;
+
         }
 
-        public void RemoveWorkSite(IWorkSite workSite)
+        public System.Int32 RemoveWorkSite(IWorkSite workSite)
         {
             this._workSiteLinked.Remove(workSite);
+            return this._workSiteLinked.Count;
         }
 
         public void UpdateWorkSite(IWorkSite oldWorkSite, IWorkSite newWorkSite)
