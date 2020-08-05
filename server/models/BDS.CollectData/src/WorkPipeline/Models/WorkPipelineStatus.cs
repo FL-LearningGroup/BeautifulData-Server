@@ -2,7 +2,7 @@ namespace BDS.CollectData.Models {
     /// <Summary> Work Pipeline Status </Summary>
     public enum WorkPipelineStatus 
     {
-        Build,
+        Build = 1,
         Executable,
         Forbid,
         Failed

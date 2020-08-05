@@ -8,7 +8,7 @@ namespace BDS.Pipeline.FuYang.Run
     {
         static void Main(string[] args)
         {
-            FuYangNewsPipeline.StartWork();
+           FuYangNewsPipeline.StartWork();
         }
     }
 }

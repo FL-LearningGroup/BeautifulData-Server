@@ -3,11 +3,11 @@ namespace  BDS.CollectData.Models
     /// <Summary>Work site status </Summary>
     public enum WorkSiteStatus 
     {
-        Build,
+        Build = 1,
+        Executable,
         Running,
         Success,
-        Failed,
-        Skip
+        Failed
     }
     
 }

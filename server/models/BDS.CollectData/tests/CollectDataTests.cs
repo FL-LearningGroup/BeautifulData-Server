@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Xunit;
 using BDS.CollectData;
 using BDS.CollectData.Models;
+using BDS.CollectData.BDSException;
 
 
 namespace BDS.CollectData.Tests
@@ -55,11 +56,18 @@ namespace BDS.CollectData.Tests
             set;
         }
     }
-    internal class WokMachineTest: IWorkMachine
+    internal class WorkMachineTest: IWorkMachine
     {
         public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {
             return WorkSiteStatus.Success;
+        }
+    }
+    internal class WorkMachineExceptionTest : IWorkMachine
+    {
+        public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
+        {
+            return WorkSiteStatus.Failed;
         }
     }
     public class CollectData
@@ -77,7 +85,7 @@ namespace BDS.CollectData.Tests
                 TagName = "divTest",
                 TagClass = "classTest"
             });
-            WokMachineTest vm = new WokMachineTest();
+            WorkMachineTest vm = new WorkMachineTest();
             WorkSite ws01 = new WorkSite();
             ws01.SetOrReplaceWorkSiteInput(rg01);
             ws01.SetOrReplaceWorkSiteOutput(rg02);
@@ -86,8 +94,9 @@ namespace BDS.CollectData.Tests
             Assert.NotNull(ws01.Identifier);
 
             // Add Works Site to Work Pipeline
+            var oldWsCount = wp.WorkSiteLinked.Count;
             var wsCount = wp.AddWorkSite(ws01);
-            Assert.Equal(1, wsCount);
+            Assert.Equal(oldWsCount + 1, wsCount);
 
             ResourceTest rg03 = new ResourceTest();
             WorkSite ws02 = new WorkSite();
@@ -96,8 +105,9 @@ namespace BDS.CollectData.Tests
             ws02.SetOrReplaceWorkFilter(wfList);
             ws02.SetOrReplaceWorkMachine(vm);
             // Add Works Site to Work Pipeline
+            oldWsCount = wp.WorkSiteLinked.Count;
             wsCount = wp.AddWorkSite(ws02);
-            Assert.Equal(2, wsCount);
+            Assert.Equal(oldWsCount + 1, wsCount);
             Assert.Equal(wp.WorkSiteLinked.First.Value.Identifier, ws01.Identifier);
 
             ResourceTest rg04 = new ResourceTest();
@@ -107,10 +117,12 @@ namespace BDS.CollectData.Tests
             ws03.SetOrReplaceWorkFilter(wfList);
             ws03.SetOrReplaceWorkMachine(vm);
             // Add Works Site to Work Pipeline
+            oldWsCount = wp.WorkSiteLinked.Count;
             wsCount = wp.AddWorkSite(ws03);
-            Assert.Equal(3, wsCount);
+            Assert.Equal(oldWsCount + 1, wsCount);
             Assert.Equal(wp.WorkSiteLinked.Last.Value.Identifier, ws03.Identifier);
 
+            //Test for insert Work Site
             ResourceTest rg05 = new ResourceTest();
             WorkSite ws04 = new WorkSite();
             ws04.SetOrReplaceWorkSiteInput(rg04);
@@ -118,9 +130,51 @@ namespace BDS.CollectData.Tests
             ws04.SetOrReplaceWorkFilter(wfList);
             ws04.SetOrReplaceWorkMachine(vm);
             // Add Works Site to Work Pipeline
-            var operation = wp.InsertWorkSite(ws03, ws04);
+            var operation = wp.InsertWorkSite(ws03.Identifier, ws04);
             Assert.True(operation);
             Assert.Equal(wp.WorkSiteLinked.Last.Previous.Value.Identifier, ws04.Identifier);
+
+            //Test for remove Work Site.
+            oldWsCount = wp.WorkSiteLinked.Count;
+            wsCount = wp.RemoveWorkSite(ws03.Identifier);
+            Assert.Equal(oldWsCount - 1, wsCount);
+            Assert.Equal(wp.WorkSiteLinked.Last.Value.Identifier, ws04.Identifier);
+
+            //Test for update Work Site.
+            List<IWorkFilter> newWfList = new List<IWorkFilter>();
+            newWfList.Add(new WorkFilterTest()
+            {
+                TagName = "newDivTest",
+                TagClass = "newClassTest"
+            });
+            //left limit
+            ws01.SetOrReplaceWorkFilter(newWfList);
+            var updateOper = wp.UpdateWorkSite(ws01.Identifier, ws01);
+            Assert.True(updateOper);
+
+            //Right limit
+            ws04.SetOrReplaceWorkFilter(newWfList);
+            updateOper = wp.UpdateWorkSite(ws04.Identifier, ws04);
+            Assert.True(updateOper);
+
+            //Start Work Pipeline
+            wp.Status = WorkPipelineStatus.Executable;
+            Assert.Throws<Exception>(() => wp.Processor());
+
+            ws01.Status = WorkSiteStatus.Executable;
+            ws02.Status = WorkSiteStatus.Executable;
+            ws03.Status = WorkSiteStatus.Executable;
+            ws04.Status = WorkSiteStatus.Executable;
+            Assert.True(wp.Processor());
+
+            WorkMachineExceptionTest workMachineExceptionTest = new WorkMachineExceptionTest();
+            ws02.SetOrReplaceWorkMachine(workMachineExceptionTest);
+            Assert.Throws<WorkSiteException>(() => wp.Processor());
+
+            //Clear Work Site linked of Work Pipeline.
+            wsCount = wp.ClearWorkPipeline();
+            Assert.Equal(0, wsCount);
+            Assert.Equal(wp.Status, WorkPipelineStatus.Build);
         }
     }
 }

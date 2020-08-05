@@ -75,8 +75,12 @@ namespace BDS.Pipeline.FuYang
             WorkPipeline workPipeline = new WorkPipeline();
             workPipeline.AddWorkSite(workSite001);
             workPipeline.AddWorkSite(workSite002);
-            workPipeline.status = WorkPipelineStatus.Executable;
+            workPipeline.Status = WorkPipelineStatus.Executable;
             workPipeline.Processor();
+            foreach(IWorkSite workSite in workPipeline.WorkSiteLinked)
+            {
+                //workSite.OutputResource.get
+            }
         }
     }
 }

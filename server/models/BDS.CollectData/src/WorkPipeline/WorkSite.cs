@@ -13,6 +13,11 @@ namespace BDS.CollectData
             get {
                 return this._status;
             }
+            set
+            {
+                this._status = value;
+            }
+
         }
         private string _identifier;
 
@@ -23,7 +28,21 @@ namespace BDS.CollectData
         }
         
         IWorkSiteInput _inputResource;
+        public IWorkSiteInput InputResource
+        {
+            get
+            {
+                return this._inputResource;
+            }
+        }
         IWorkSiteOutput _outputResource;
+        public IWorkSiteOutput OutputResource
+        {
+            get
+            {
+                return this._outputResource;
+            }
+        }
         IWorkMachine _workMachine;
         List<IWorkFilter> _workFilterList;
         public WorkSite() {

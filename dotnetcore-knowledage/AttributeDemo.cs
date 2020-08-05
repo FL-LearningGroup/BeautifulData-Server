@@ -23,7 +23,7 @@ namespace BDS.DotNetCoreKnowledage
         {
             Myclass.Message("In Function 2.");
         }
-        static void Main(string[] args)
+        static void Main_Stop(string[] args)
         {
             Myclass.Message("In Main function.");
             function1();

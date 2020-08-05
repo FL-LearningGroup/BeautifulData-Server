@@ -2,7 +2,7 @@ namespace BDS.CollectData.Models {
     /// <Summary> Work machine status </Summary>
     public enum WorkMachineStatus 
     {
-        Wait,
+        Wait = 1,
         Running
     }
 
