@@ -67,7 +67,7 @@ namespace BDS.DotNetCoreKnowledage
 				client.Connect("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
 
 				// Note: only needed if the SMTP server requires authentication
-				client.Authenticate("lucas_yaodidi@outlook.com", "yaodi@960903");
+				client.Authenticate("lucas_yaodidi@outlook.com", "xxxxxxx");
 
 				client.Send(message);
 				client.Disconnect(true);

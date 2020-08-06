@@ -79,7 +79,7 @@ namespace BDS.DotNetCoreKnowledage
                 {
                     Console.WriteLine("WARNING: No files changed.");
                 }
-                PushChanges(repo, "LucasYao93-DataBase", "yaodi@960903");
+                PushChanges(repo, "LucasYao93-DataBase", "xxxxxxxxx");
             }
 
             Console.WriteLine("Please enter key to end the process");
