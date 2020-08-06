@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using BDS.CollectData;
-
-namespace BDS.Pipeline.FuYang
+﻿namespace BDS.Pipeline.FuYang
 {
+    using System;
+    using System.Collections.Generic;
+    using BDS.CollectData;
+
     /// <summary>
     /// Store base url of Fu Yang public news info.
     /// </summary>

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BDS.CollectData;
-
-namespace BDS.Pipeline.FuYang
+﻿namespace BDS.Pipeline.FuYang
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using BDS.CollectData;
     /// <summary>
     /// Class that store all url links of Fu Yang public info.
     /// </summary>

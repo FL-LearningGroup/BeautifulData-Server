@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BDS.Pipeline.FuYang
+﻿namespace BDS.Pipeline.FuYang
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
     /// <summary>
     /// Data Model: Defined data structure of Fu Yang public info title 
     /// </summary>
+    [Serializable]
     public class FYPublicInfoTitleDM
     {
         public string dataTime;

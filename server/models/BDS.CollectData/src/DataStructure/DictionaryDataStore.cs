@@ -2,7 +2,7 @@ namespace BDS.CollectData
 {
     using System;
     using System.Collections.Generic;
-    public class DictionaryDataStore: IResourceDataStore
+    public class DictionaryDataStore
     {
         private Dictionary<string, string> storeSpace;
 

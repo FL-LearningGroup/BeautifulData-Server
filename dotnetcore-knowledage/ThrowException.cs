@@ -30,7 +30,7 @@ namespace BDS.DotNetCoreKnowledage
         {
             throw new Exception("Throw Execption 03");
         }
-        static void Main(string[] args)
+        static void Main_Stop(string[] args)
         {
             Console.WriteLine("Stard run");
             ThrowExceptionCls exceptionCls = new ThrowExceptionCls();

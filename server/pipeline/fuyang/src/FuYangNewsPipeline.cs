@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BDS.CollectData;
-using BDS.CollectData.Models;
-
-namespace BDS.Pipeline.FuYang
+﻿namespace BDS.Pipeline.FuYang
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
+    using BDS.CollectData;
+    using BDS.CollectData.Models;
+
     public class FuYangNewsPipeline
     {
-        public static void StartWork()
+        public static string StartWork()
         {
             //public info base url
-            const string html = @"htp://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/";
+            const string html = @"http://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/";
             FYPublicInfoBaseUrl fyPublicInfoBaseUrl = new FYPublicInfoBaseUrl();
             fyPublicInfoBaseUrl.Type = "url";
             fyPublicInfoBaseUrl.dataStore = html;
@@ -65,21 +67,29 @@ namespace BDS.Pipeline.FuYang
             workSite001.SetOrReplaceWorkSiteOutput(fyPublicInfoUrlLinks);
             workSite001.SetOrReplaceWorkFilter(wm001_filterList);
             workSite001.SetOrReplaceWorkMachine(wm001_FYPublicInfoUrlLinks);
+            workSite001.Status = WorkSiteStatus.Executable;
 
             WorkSite workSite002 = new WorkSite();
             workSite002.SetOrReplaceWorkSiteInput(fyPublicInfoUrlLinks);
             workSite002.SetOrReplaceWorkSiteOutput(fyPublicInfoTitle);
             workSite002.SetOrReplaceWorkFilter(wm002_filterList);
             workSite002.SetOrReplaceWorkMachine(wm002_FYPublicInfoTitle);
+            workSite002.Status = WorkSiteStatus.Executable;
 
             WorkPipeline workPipeline = new WorkPipeline();
             workPipeline.AddWorkSite(workSite001);
             workPipeline.AddWorkSite(workSite002);
             workPipeline.Status = WorkPipelineStatus.Executable;
-            workPipeline.Processor();
-            foreach(IWorkSite workSite in workPipeline.WorkSiteLinked)
+            try
             {
-                //workSite.OutputResource.get
+                workPipeline.Processor();
+                return JsonSerializer.Serialize(fyPublicInfoTitle.dataStore);
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return "Work pipeline failed.";
             }
         }
     }

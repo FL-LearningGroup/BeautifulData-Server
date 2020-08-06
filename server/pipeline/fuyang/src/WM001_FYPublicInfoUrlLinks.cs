@@ -1,52 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BDS.CollectData;
-using HtmlAgilityPack;
-using BDS.CollectData.Models;
-
-namespace BDS.Pipeline.FuYang
+﻿namespace BDS.Pipeline.FuYang
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+    using BDS.CollectData;
+    using HtmlAgilityPack;
+    using BDS.CollectData.Models;
     public class WM001_FYPublicInfoUrlLinks : IWorkMachine
     {
         public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {
-            HtmlWeb web = new HtmlWeb();
-            List<string> urlList = input.GetResourceData();
-            //Get url from url list.
-            string xPath = System.String.Empty;
-            bool rootTag = true;
-            foreach (IWorkFilter filter in workFilter)
+            try
             {
-                if (rootTag)
+                HtmlWeb web = new HtmlWeb();
+                List<string> urlList = input.GetResourceData();
+                //Get url from url list.
+                string xPath = System.String.Empty;
+                bool rootTag = true;
+                foreach (IWorkFilter filter in workFilter)
                 {
-                    xPath += "//" + filter.TagName;
-                    rootTag = false;
+                    if (rootTag)
+                    {
+                        xPath += "//" + filter.TagName;
+                        rootTag = false;
+                    }
+                    else
+                    {
+                        xPath += "/" + filter.TagName;
+                    }
+                    if (filter.TagId != System.String.Empty)
+                    {
+                        xPath += "[@id='" + filter.TagId + "']";
+                    }
+                    if (filter.TagClass != System.String.Empty)
+                    {
+                        xPath += "[@class='" + filter.TagClass + "']";
+                    }
                 }
-                else
+                HtmlDocument htmlDoc = web.Load(urlList[0]);
+                HtmlNode pageRangeNum = htmlDoc.DocumentNode.SelectSingleNode(xPath);
+                string[] pageMinMax = pageRangeNum.InnerText.Trim().Split('/');
+                System.Int16 lastPage = Convert.ToInt16(pageMinMax[1]);
+                List<string> dataStore = new List<string>();
+                for (int index = 1; index <= lastPage; index++)
                 {
-                    xPath += "/" + filter.TagName;
+                    string url = urlList[0] + "page-" + index + "/";
+                    dataStore.Add(url);
                 }
-                if (filter.TagId != System.String.Empty)
-                {
-                    xPath += "[@id='" + filter.TagId + "']";
-                }
-                if (filter.TagClass != System.String.Empty)
-                {
-                    xPath += "[@class='" + filter.TagClass + "']";
-                }
-            }
-            HtmlDocument htmlDoc = web.Load(urlList[0]);
-            HtmlNode pageRangeNum = htmlDoc.DocumentNode.SelectSingleNode(xPath);
-            string[] pageMinMax = pageRangeNum.InnerText.Trim().Split('/');
-            System.Int16 lastPage = Convert.ToInt16(pageMinMax[1]);
-            List<string> dataStore = new List<string>();
-            for (int index = 1; index <= lastPage; index++)
+                output.StoreResourceData(dataStore);
+            }catch(Exception ex)
             {
-                string url = urlList[0] + "page-" + index + "/";
-                dataStore.Add(url);
+                return WorkSiteStatus.Failed;
             }
-            output.StoreResourceData(dataStore);
             return WorkSiteStatus.Success;
         }
     }

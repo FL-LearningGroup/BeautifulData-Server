@@ -123,7 +123,7 @@ namespace BDS.CollectData
                 bool executable = CheckWorkSiteExecutable();
                 if(!executable)
                 {
-                    throw new System.Exception("The status of Work Site is not executable.");
+                    throw new System.Exception("Exception: The status of Work Site is not executable.");
                 }
                 foreach (IWorkSite workSite in this._workSiteLinked)
                 {
