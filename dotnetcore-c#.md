@@ -10,7 +10,7 @@ Attribute are used for adding metadata, such as compiler instruction and other i
 3. Specifying an attribute: attribute[positional_parameters, name_parameters = value, ...]
 3. .Net provides three pre-defined Attributes
 
-| Attributes ||Description|
+| Attributes |Description|
 |:-------------------||
 |AttributeUsage      ||
 |Conditional         ||
