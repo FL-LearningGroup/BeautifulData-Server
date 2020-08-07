@@ -19,3 +19,8 @@ Attribute are used for adding metadata, such as compiler instruction and other i
 ## 委托
 
 ## Lambda 和 匿名函数
+
+## Serialization and Deserialization
+  1. Json Serialization
+  2. Binary Serialization
+  3. XML and SOAP serialization
