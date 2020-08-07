@@ -11,10 +11,10 @@ Attribute are used for adding metadata, such as compiler instruction and other i
 3. .Net provides three pre-defined Attributes
 
 | Attributes ||Description|
-|:-------------------|
-|AttributeUsage      |
-|Conditional         |
-|Obsolete            |
+|:-------------------||
+|AttributeUsage      ||
+|Conditional         ||
+|Obsolete            ||
 
 ## 委托
 
