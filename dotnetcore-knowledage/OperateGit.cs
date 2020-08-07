@@ -15,7 +15,8 @@ namespace BDS.DotNetCoreKnowledage
             try
             {
                 RepositoryStatus status = repo.RetrieveStatus();
-                List<string> filePaths = status.Modified.Select(mods => mods.FilePath).ToList();
+                //List<string> filePaths = status.Modified.Select(mods => mods.FilePath).ToList();
+                List<string> filePaths = status.Select(mods => mods.FilePath).ToList();
                 if(filePaths.Count == 0)
                 {
                     return 0;
@@ -57,7 +58,7 @@ namespace BDS.DotNetCoreKnowledage
                 Console.WriteLine("Exception:RepoActions:PushChanges " + ex.Message);
             }
         }
-        static void Main(string[] args)
+        static void Main_Stop(string[] args)
         {
             Console.WriteLine("Start process");
             string gitLocalPath = @"D:\OperateGitTest\LibGit2SharpTest";
@@ -79,7 +80,7 @@ namespace BDS.DotNetCoreKnowledage
                 {
                     Console.WriteLine("WARNING: No files changed.");
                 }
-                PushChanges(repo, "LucasYao93-DataBase", "xxxxxxxxx");
+                PushChanges(repo, "LucasYao93-DataBase", "yaodi@960903");
             }
 
             Console.WriteLine("Please enter key to end the process");

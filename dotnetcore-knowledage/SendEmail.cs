@@ -5,22 +5,22 @@ using MimeKit;
 using MailKit;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using System.Threading.Tasks;
 
 namespace BDS.DotNetCoreKnowledage
 {
     public class SendEmail
     {
-		public static void Main_Stop(string[] args)
-		{
-			Console.WriteLine("Start");
-			var message = new MimeMessage();
-			message.From.Add(new MailboxAddress("BDS-CollectData", "LucasYao93@outlook.com"));
-			message.To.Add(new MailboxAddress("LucasYao", "LucasYao93@outlook.com"));
-			message.Subject = "BDS-FuYangNew";
+        static async Task SendEmailAsync()
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("BDS-CollectData", "LucasYao93@outlook.com"));
+            message.To.Add(new MailboxAddress("LucasYao", "LucasYao93@outlook.com"));
+            message.Subject = "BDS-FuYangNew";
 
-			message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
-			{
-				Text = @"<!DOCTYPE html>
+            message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+            {
+                Text = @"<!DOCTYPE html>
                         <html>
                         <head>
                         <style>
@@ -62,18 +62,22 @@ namespace BDS.DotNetCoreKnowledage
                         "
             };
 
-			using (var client = new SmtpClient())
-			{
-				client.Connect("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
+            using (var client = new SmtpClient())
+            {
+                client.Connect("smtp-mail.outlook.com", 587, SecureSocketOptions.StartTls);
 
-				// Note: only needed if the SMTP server requires authentication
-				client.Authenticate("lucas_yaodidi@outlook.com", "xxxxxxx");
+                // Note: only needed if the SMTP server requires authentication
+                client.Authenticate("lucas_yaodidi@outlook.com", "xxxxxxx");
 
-				client.Send(message);
-				client.Disconnect(true);
-			}
-			Console.WriteLine("End");
-			Console.ReadKey();
+                await client.SendAsync(message);
+                client.Disconnect(true);
+            }
+        }
+		static void Main(string[] args)
+		{
+            Process.StartTag();
+			
+            Process.EndTag();
 		}
 	}
 }
