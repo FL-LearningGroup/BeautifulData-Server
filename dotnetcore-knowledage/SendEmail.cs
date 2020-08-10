@@ -73,7 +73,7 @@ namespace BDS.DotNetCoreKnowledage
                 client.Disconnect(true);
             }
         }
-		static void Main(string[] args)
+		static void Main_Stop(string[] args)
 		{
             Process.StartTag();
 			
