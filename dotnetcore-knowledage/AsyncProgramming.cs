@@ -216,7 +216,7 @@ namespace BDS.DotNetCoreKnowledage
     }
     public class AsyncProgramming
     {
-        static async Task Main(string[] args)
+        static async Task Main_Stop(string[] args)
         {
             Process.StartTag();
             var watch = System.Diagnostics.Stopwatch.StartNew();

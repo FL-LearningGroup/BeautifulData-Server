@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\BDS.DataReport.csproj" />
+    <ProjectReference Include="..\src\BDS.DataFactory.csproj" />
   </ItemGroup>
 
 </Project>

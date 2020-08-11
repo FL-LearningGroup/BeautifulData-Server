@@ -10,8 +10,6 @@ namespace BDS.DataReport.model
         private string _name;
         private string _email;
         private string _phone;
-        private Dictionary<string, string> _otherInformation;
-
         public string Name
         {
             get
@@ -45,18 +43,6 @@ namespace BDS.DataReport.model
             set
             {
                 _phone = value;
-            }
-        }
-
-        public Dictionary<string,string> OtherInformation
-        {
-            get
-            {
-                return _otherInformation;
-            }
-            set
-            {
-                _otherInformation = value;
             }
         }
     }

@@ -4,9 +4,8 @@ using System.Text;
 
 namespace BDS.DataReport
 {
-    public enum EmailMessageFormat
+    public enum EmailContextType
     {
-
         Text = 1,
         //
         // Summary:
