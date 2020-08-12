@@ -13,6 +13,8 @@
         public static string StartWork()
         {
             //public info base url
+            WorkSite workSite001 = new WorkSite();
+
             const string html = @"http://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/";
             FYPublicInfoBaseUrl fyPublicInfoBaseUrl = new FYPublicInfoBaseUrl();
             fyPublicInfoBaseUrl.Type = "url";
@@ -36,8 +38,15 @@
             });
             //Work Machine process.
             WM001_FYPublicInfoUrlLinks wm001_FYPublicInfoUrlLinks = new WM001_FYPublicInfoUrlLinks();
+            workSite001.SetOrReplaceWorkSiteInput(fyPublicInfoBaseUrl);
+            workSite001.SetOrReplaceWorkSiteOutput(fyPublicInfoUrlLinks);
+            workSite001.SetOrReplaceWorkFilter(wm001_filterList);
+            workSite001.SetOrReplaceWorkMachine(wm001_FYPublicInfoUrlLinks);
+            workSite001.Status = WorkSiteStatus.Executable;
 
             //Get all public info title
+            WorkSite workSite002 = new WorkSite();
+
             FYPublicInfoTitleCls fyPublicInfoTitle = new FYPublicInfoTitleCls();
             fyPublicInfoTitle.Type = "url";
 
@@ -62,14 +71,8 @@
             });
             WM002_FYPublicInfoTitle wm002_FYPublicInfoTitle = new WM002_FYPublicInfoTitle();
 
-            WorkSite workSite001 = new WorkSite();
-            workSite001.SetOrReplaceWorkSiteInput(fyPublicInfoBaseUrl);
-            workSite001.SetOrReplaceWorkSiteOutput(fyPublicInfoUrlLinks);
-            workSite001.SetOrReplaceWorkFilter(wm001_filterList);
-            workSite001.SetOrReplaceWorkMachine(wm001_FYPublicInfoUrlLinks);
-            workSite001.Status = WorkSiteStatus.Executable;
 
-            WorkSite workSite002 = new WorkSite();
+            
             workSite002.SetOrReplaceWorkSiteInput(fyPublicInfoUrlLinks);
             workSite002.SetOrReplaceWorkSiteOutput(fyPublicInfoTitle);
             workSite002.SetOrReplaceWorkFilter(wm002_filterList);

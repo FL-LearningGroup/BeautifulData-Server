@@ -8,14 +8,20 @@ namespace BDS.CollectData
     /// </summary>
     public class WorkSite: IWorkSite {
         WorkSiteStatus _status = WorkSiteStatus.Build;
-
+        public event EventHandler<WorkSiteStatusEventArgs> publicStatusEvent;
         public WorkSiteStatus Status {
             get {
                 return this._status;
             }
             set
             {
+                WorkSiteStatusEventArgs workSiteStatusEventArgs = new WorkSiteStatusEventArgs();
                 this._status = value;
+                if( _status == WorkSiteStatus.Success)
+                {
+                    workSiteStatusEventArgs.Status = WorkSiteStatus.Success;
+                    publicStatusEvent(this, workSiteStatusEventArgs);
+                }
             }
 
         }

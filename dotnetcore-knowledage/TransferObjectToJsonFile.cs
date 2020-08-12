@@ -88,11 +88,11 @@ namespace BDS.DotNetCoreKnowledage
         static void Main_Stop(string[] args)
         {
             Console.WriteLine("Start process");
-            SerializationJsonAsync();
+            SerializationJsonAsync(dmList);
             Console.WriteLine("Please enter key to end the process");
             Console.ReadKey();
         }
-        static async Task SerializationJsonAsync()
+        public static async Task SerializationJsonAsync(object value)
         {
             string json = string.Empty;
             string jsonPath = @"D:\SerializationAsync.json";
@@ -106,7 +106,7 @@ namespace BDS.DotNetCoreKnowledage
                 {
                     using var file = File.Create(jsonPath);
                 }
-                await JsonSerializer.SerializeAsync(stream, dmList, dmList.GetType(), options);
+                await JsonSerializer.SerializeAsync(stream, value, value.GetType(), options);
                 stream.Position = 0;
                 using (var reader = new StreamReader(stream))
                 {

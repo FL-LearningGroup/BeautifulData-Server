@@ -11,5 +11,11 @@
     <Reference Include="BDS.CollectData">
       <HintPath>..\..\..\models\BDS.CollectData\src\bin\Debug\netstandard2.0\BDS.CollectData.dll</HintPath>
     </Reference>
+    <Reference Include="BDS.DataFactory">
+      <HintPath>..\..\..\models\BDS.DataFactory\src\bin\Debug\netcoreapp3.1\BDS.DataFactory.dll</HintPath>
+    </Reference>
+    <Reference Include="BDS.DataReport">
+      <HintPath>..\..\..\models\BDS.DataReport\src\bin\Debug\netcoreapp3.1\BDS.DataReport.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

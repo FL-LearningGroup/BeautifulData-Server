@@ -5,10 +5,12 @@ namespace BDS.Pipeline.FuYang
     using System.Collections.Generic;
     using System.Text;
     using BDS.CollectData;
+    using BDS.DataFactory;
+    using BDS.DataReport;
     /// <summary>
     /// Class: Defined Fu Yang public info title.
     /// </summary>
-    public sealed class FYPublicInfoTitleCls : Resource, IResource, ITransferResourceData
+    public sealed class FYPublicInfoTitleCls : Resource, IResource
     {
         private string type;
         override public string Type
@@ -52,11 +54,21 @@ namespace BDS.Pipeline.FuYang
             }
             return this.dataStore.Count;
         }
-
-        public bool TransferData(string type)
+        private void GenerateStoreDataFile()
         {
-            
-            return true;
+
+        }
+        private void PushStoreDataFile()
+        {
+
+        }
+        private void ReportStoreData()
+        {
+
+        }
+        private void StoreDataEvent()
+        {
+
         }
     }
 }
