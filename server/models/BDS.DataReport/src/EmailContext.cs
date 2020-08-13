@@ -5,7 +5,7 @@ namespace BDS.DataReport
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using BDS.DataReport.model;
+    using BDS.DataReport.Model;
     using MimeKit;
 
     [Serializable]
@@ -20,7 +20,7 @@ namespace BDS.DataReport
         private EmailContextType _contextType = EmailContextType.Text;
         public EmailContext(EmailContextType contextType)
         {
-
+            _contextType = contextType;
         }
         public EmailContext(List<ContactPerson> fromPerson, List<ContactPerson> toPerson, EmailContextType contextType)
         {

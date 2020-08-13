@@ -9,7 +9,8 @@ namespace BDS.Pipeline.FuYang.Run
         static void Main(string[] args)
         {
             Console.WriteLine("Start");
-            Console.WriteLine(FuYangNewsPipeline.StartWork());
+            FuYangNewsPipeline.StartWork();
+            //Console.WriteLine();
             Console.WriteLine("End");
             Console.ReadKey();
         }

@@ -4,9 +4,13 @@ namespace BDS.Pipeline.FuYang
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using System.Linq;
     using BDS.CollectData;
     using BDS.DataFactory;
     using BDS.DataReport;
+    using BDS.DataReport.Model;
+    using System.Threading.Tasks;
+
     /// <summary>
     /// Class: Defined Fu Yang public info title.
     /// </summary>
@@ -25,17 +29,26 @@ namespace BDS.Pipeline.FuYang
             }
         }
         public List<FYPublicInfoTitleDM> dataStore = new List<FYPublicInfoTitleDM>();
+
+        private GitFactory gitFactory = new GitFactory(@"D:\BDS-Data\", "https://github.com/LucasYao93-DataBase/BDS-Data-FuYang.git", "LucasYao93-DataBase","yaodi@960903", "LucasYao93@outlook.com");
+        private EmailClient emailClient = new EmailClient(EmailHostType.Outlook, "smtp-mail.outlook.com", 587, "LucasYao93@outlook.com", "yaodi@960903");
+        
+        
+        public FYPublicInfoTitleCls(WorkSite workSite)
+        {
+            workSite.publicStatusEvent += StoreDataEvent;
+        }
         /// <summary>
         /// Get data from property dataStore.
         /// </summary>
-        /// <returns>list string</returns>
+        /// <returns>list string</returns
         public List<string> GetResourceData()
         {
             List<string> urlList = new List<string>();
             string baseHost = "http://www.fy.gov.cn";
             foreach (FYPublicInfoTitleDM item in this.dataStore)
             {
-                urlList.Add(baseHost + item.url);
+                urlList.Add(baseHost + item.Url);
             }
             return urlList;
         }
@@ -54,21 +67,120 @@ namespace BDS.Pipeline.FuYang
             }
             return this.dataStore.Count;
         }
-        private void GenerateStoreDataFile()
+        public async Task GenerateDataFileAndPush()
         {
+            try
+            {
+                // Pull repository from remote.
+                if (!gitFactory.PullRepository())
+                {
+                    throw new Exception(string.Format("Pull remote: {0} failed.", gitFactory.Remote));
+                }
+                var titleGroupList =
+                    from data in dataStore
+                    group data by data.DateTime into newData
+                    orderby newData.Key
+                    select newData;
+                string jsonFile = string.Empty;
+                // Generate data json file.
+                foreach (var titleGroup in titleGroupList)
+                {
+                    jsonFile = gitFactory.Local + "title-" + titleGroup.Key + ".json";
+                    await FileFactory.SerializationJsonAsync(jsonFile, titleGroup);
+                }
+                // Add changes to stage.
+                Int32 changeCount = gitFactory.AddStageChanges();
+                // Commit changes.
+                if (changeCount != 0)
+                {
+                    gitFactory.CommitChanges("Add public title.");
+                }
+                // push changes to remote.
+                if (!gitFactory.PushRepository())
+                {
+                    throw new Exception(string.Format("Push remote: {0} failed.", gitFactory.Remote));
+                }
+
+            }
+            catch(Exception ex)
+            {
+
+            }
 
         }
-        private void PushStoreDataFile()
+        public async Task<bool> ReportStoreData()
         {
+            var titleGroupList =
+                from data in dataStore
+                group data by data.DateTime into newData
+                orderby newData.Key descending
+                select newData;
+            string messageTitle = String.Empty;
+            string message = String.Empty;
+            foreach (var titleGroup in titleGroupList)
+            {
+                messageTitle = "FuYang Information: " + titleGroup.Key;
+                foreach (var title in titleGroup)
+                {
+                    message += string.Format(@"<tr>
+                                                <td>{0}</td>
+                                                <td>{1}</td>
+                                                <td><a href=""{2}"">{1}</a></td>
+                                                </tr>
+                                            ", title.DateTime, title.Title, title.Url);
+                    break;
+                }
+                break;
+            }
+            EmailContext emailContext = new EmailContext(EmailContextType.Html);
+            emailContext.FromPerson.Add(new ContactPerson() { Name = "BDS-CollectData", Email = "LucasYao93@outlook.com" });
+            emailContext.ToPerson.Add(new ContactPerson() { Name = "LucasYao", Email = "LucasYao93@outlook.com" });
+            emailContext.Subject = "BDS-ReportData-FuYang";
+            emailContext.Message = String.Format(@"<!DOCTYPE html>
+                                    <html>
+                                    <head>
+                                    <style>
+                                    table {{
+                                        font-family: arial, sans-serif;
+                                        border-collapse: collapse;
+                                    }}
 
+                                    td, th {{
+                                        border: 1px solid #dddddd;
+                                        text-align: left;
+                                        padding: 8px;
+                                    }}
+
+                                    tr:nth-child(even) {{
+                                        background-color: #dddddd;
+                                    }}
+                                    </style>
+                                    </head>
+                                    <body>
+
+                                    <h2>{0}</h2>
+
+                                    <table>
+                                        <tr>
+                                        <th>时间</th>
+                                        <th>标题</th>
+                                        <th>详细连接</th>
+                                        </tr>
+                                        {1}
+                                    </table>
+                                    </body>
+                                    </html>
+                                    ", messageTitle, message);
+            return await emailClient.SendEamilAsync(emailContext);
         }
-        private void ReportStoreData()
+        private void StoreDataEvent(object source, WorkSiteStatusEventArgs args)
         {
-
-        }
-        private void StoreDataEvent()
-        {
-
+            Console.WriteLine("Execute event.");
+            if (args.Status == CollectData.Models.WorkSiteStatus.Success)
+            { 
+                GenerateDataFileAndPush().Wait();
+                ReportStoreData().Wait();
+            }
         }
     }
 }

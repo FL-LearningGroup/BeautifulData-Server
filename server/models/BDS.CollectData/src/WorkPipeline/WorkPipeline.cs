@@ -127,11 +127,10 @@ namespace BDS.CollectData
                 }
                 foreach (IWorkSite workSite in this._workSiteLinked)
                 {
-                    workSite.Status = WorkSiteStatus.Running;
                     workSite.Worker();
                     if(workSite.Status == WorkSiteStatus.Failed) 
                     {
-                        this.Status = WorkPipelineStatus.Failed;
+                        Status = WorkPipelineStatus.Failed;
                         throw new WorkSiteException(workSite.Identifier, workSite.GetType().Name, "Work process failed.");
                     }
                 }

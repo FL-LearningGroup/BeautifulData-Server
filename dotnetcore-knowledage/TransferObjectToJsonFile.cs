@@ -64,7 +64,7 @@ namespace BDS.DotNetCoreKnowledage
             {new FYPublicInfoTitleDM("2020-08-01", "https://github.com/LucasYao93/azure-powershell.git", "测试") },
             {new FYPublicInfoTitleDM("2020-10-01", "https://github.com/LucasYao93/azure-powershell.git", "测试") }
         };
-        static void SerializationJson()
+        static void SerializationJson(string jsonPath)
         {
             //Json Serialization
             JsonSerializerOptions options = new JsonSerializerOptions();
@@ -74,7 +74,7 @@ namespace BDS.DotNetCoreKnowledage
             var jsonString = JsonSerializer.Serialize(dmList, options);
             //Write json file by byte
             //jsonUtf8Bytes = JsonSerializer.SerializeToUtf8Bytes(fyDm, options);
-            string jsonPath = @"D:\Serialization.json";
+            // string jsonPath = @"D:\Serialization.json";
             if (!File.Exists(jsonPath))
             {
                 File.Create(jsonPath);
@@ -88,20 +88,20 @@ namespace BDS.DotNetCoreKnowledage
         static void Main_Stop(string[] args)
         {
             Console.WriteLine("Start process");
-            SerializationJsonAsync(dmList);
+            string jsonPath = @"D:\SerializationAsync.json";
+            SerializationJsonAsync(jsonPath, dmList);
             Console.WriteLine("Please enter key to end the process");
             Console.ReadKey();
         }
-        public static async Task SerializationJsonAsync(object value)
+        public static async Task SerializationJsonAsync(string jsonPath, object value)
         {
             string json = string.Empty;
-            string jsonPath = @"D:\SerializationAsync.json";
+            
             using (var stream = new MemoryStream())
             {
                 JsonSerializerOptions options = new JsonSerializerOptions();
                 options.WriteIndented = true;
                 options.Encoder = JavaScriptEncoder.Create(System.Text.Unicode.UnicodeRanges.All);
-
                 if (!File.Exists(jsonPath))
                 {
                     using var file = File.Create(jsonPath);

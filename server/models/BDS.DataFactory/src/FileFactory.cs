@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Threading.Tasks;
-
 namespace BDS.DataFactory
 {
-    public static class FileFactory
+    using System.Text;
+    using System.Text.Encodings.Web;
+    using System.Text.Json;
+    using System.Threading.Tasks;
+    public class FileFactory
     {
         public static async Task SerializationJsonAsync(string filePath, object value)
         {

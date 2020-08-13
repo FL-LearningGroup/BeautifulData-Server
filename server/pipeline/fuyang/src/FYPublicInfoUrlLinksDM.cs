@@ -8,10 +8,10 @@
     /// </summary>
     public class FYPublicInfoUrlLinksDM
     {
-        public string url;
+        public string Url { get; set; }
         public FYPublicInfoUrlLinksDM(string url)
         {
-            this.url = url;
+            this.Url = url;
         }
     }
 }

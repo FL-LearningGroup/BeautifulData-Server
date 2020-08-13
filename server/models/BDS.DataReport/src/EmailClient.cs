@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
-    using BDS.DataReport.model;
+    using BDS.DataReport.Model;
     using MailKit.Net.Smtp;
     using MailKit.Security;
     using MimeKit;

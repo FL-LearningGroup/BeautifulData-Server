@@ -47,7 +47,7 @@
             //Get all public info title
             WorkSite workSite002 = new WorkSite();
 
-            FYPublicInfoTitleCls fyPublicInfoTitle = new FYPublicInfoTitleCls();
+            FYPublicInfoTitleCls fyPublicInfoTitle = new FYPublicInfoTitleCls(workSite002);
             fyPublicInfoTitle.Type = "url";
 
             List<IWorkFilter> wm002_filterList = new List<IWorkFilter>();
@@ -86,6 +86,11 @@
             try
             {
                 workPipeline.Processor();
+                //fyPublicInfoTitle.GenerateDataFileAndPush().Wait();
+                //fyPublicInfoTitle.ReportStoreData().Wait();
+                //workSite002.Status = WorkSiteStatus.Success; // Can trigger event.
+                //IWorkSite workSite = workSite002;
+                //workSite.Status = WorkSiteStatus.Success; // Can trigger event.
                 return JsonSerializer.Serialize(fyPublicInfoTitle.dataStore);
 
             }

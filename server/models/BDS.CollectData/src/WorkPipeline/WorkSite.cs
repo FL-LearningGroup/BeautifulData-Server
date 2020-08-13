@@ -11,12 +11,12 @@ namespace BDS.CollectData
         public event EventHandler<WorkSiteStatusEventArgs> publicStatusEvent;
         public WorkSiteStatus Status {
             get {
-                return this._status;
+                return _status;
             }
             set
             {
                 WorkSiteStatusEventArgs workSiteStatusEventArgs = new WorkSiteStatusEventArgs();
-                this._status = value;
+                _status = value;
                 if( _status == WorkSiteStatus.Success)
                 {
                     workSiteStatusEventArgs.Status = WorkSiteStatus.Success;
@@ -29,7 +29,7 @@ namespace BDS.CollectData
 
         public string Identifier {
             get {
-                return this._identifier;
+                return _identifier;
             }
         }
         
@@ -38,7 +38,7 @@ namespace BDS.CollectData
         {
             get
             {
-                return this._inputResource;
+                return _inputResource;
             }
         }
         IWorkSiteOutput _outputResource;
@@ -46,7 +46,7 @@ namespace BDS.CollectData
         {
             get
             {
-                return this._outputResource;
+                return _outputResource;
             }
         }
         IWorkMachine _workMachine;
@@ -60,19 +60,20 @@ namespace BDS.CollectData
         }
         public void Worker()
         {
-            this._status = _workMachine.Worker(this._inputResource, this._outputResource, this._workFilterList);            
+            Status = WorkSiteStatus.Running;
+            Status = _workMachine.Worker(_inputResource, _outputResource, _workFilterList);            
         }
-        public void SetOrReplaceWorkSiteInput(IWorkSiteInput _inputResource) {
-            this._inputResource = _inputResource;
+        public void SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource) {
+            _inputResource = inputResource;
         }
-        public void SetOrReplaceWorkSiteOutput(IWorkSiteOutput _outputResource) {
-            this._outputResource = _outputResource;
+        public void SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource) {
+            _outputResource = outputResource;
         }
-        public void SetOrReplaceWorkMachine(IWorkMachine _workMachine) {
-            this._workMachine = _workMachine;
+        public void SetOrReplaceWorkMachine(IWorkMachine workMachine) {
+            _workMachine = workMachine;
         }
         public void SetOrReplaceWorkFilter(List<IWorkFilter> workFilter) {
-            this._workFilterList = workFilter;
+            _workFilterList = workFilter;
         }
     }
 }

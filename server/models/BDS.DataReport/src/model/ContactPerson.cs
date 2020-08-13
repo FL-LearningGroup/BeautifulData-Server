@@ -1,5 +1,5 @@
 ﻿
-namespace BDS.DataReport.model
+namespace BDS.DataReport.Model
 {
     using System;
     using System.Collections.Generic;

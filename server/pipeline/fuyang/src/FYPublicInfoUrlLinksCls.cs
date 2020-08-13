@@ -27,7 +27,7 @@
             List<string> urlList = new List<string>();
             foreach (FYPublicInfoUrlLinksDM item in this.dataStore)
             {
-                urlList.Add(item.url);
+                urlList.Add(item.Url);
             }
             return urlList;
         }

@@ -9,15 +9,15 @@
     [Serializable]
     public class FYPublicInfoTitleDM
     {
-        public string dataTime;
-        public string url;
-        public string title;
+        public string DateTime { get; set; }
+        public string Url { get; set; }
+        public string Title { get; set; }
 
-        public FYPublicInfoTitleDM(string dataTime, string url, string title)
+        public FYPublicInfoTitleDM(string dateTime, string url, string title)
         {
-            this.dataTime = dataTime;
-            this.url = url;
-            this.title = title;
+            this.DateTime = dateTime;
+            this.Url = url;
+            this.Title = title;
         }
     }
 }

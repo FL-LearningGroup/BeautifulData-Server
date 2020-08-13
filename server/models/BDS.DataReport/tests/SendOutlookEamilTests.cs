@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 using BDS.DataReport;
-using BDS.DataReport.model;
+using BDS.DataReport.Model;
 using System.Threading.Tasks;
 
 namespace BDS.DataReport.Tests
