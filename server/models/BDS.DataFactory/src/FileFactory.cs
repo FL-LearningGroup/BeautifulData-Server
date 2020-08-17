@@ -35,7 +35,7 @@ namespace BDS.DataFactory
             }
             catch(Exception ex)
             {
-
+                throw new FileFactoryException("JsonSerializer", ex.Message);
             }
         }
         public static void SerializationJson(string filePath, object value)

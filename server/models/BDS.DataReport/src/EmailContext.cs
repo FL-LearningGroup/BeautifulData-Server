@@ -1,6 +1,4 @@
-﻿
-
-namespace BDS.DataReport
+﻿namespace BDS.DataReport
 {
     using System;
     using System.Collections.Generic;
@@ -80,19 +78,30 @@ namespace BDS.DataReport
 
         private void ConvertMessageToBody()
         {
-            if (_contextType == EmailContextType.Html)
+            try
             {
-                _body = new TextPart(MimeKit.Text.TextFormat.Html)
+                if (_contextType == EmailContextType.Html)
                 {
-                    Text = _message
-                };
+                    _body = new TextPart(MimeKit.Text.TextFormat.Html)
+                    {
+                        Text = _message
+                    };
+                }
+                if (_contextType == EmailContextType.Text)
+                {
+                    _body = new TextPart(MimeKit.Text.TextFormat.Text)
+                    {
+                        Text = _message
+                    };
+                }
             }
-            if (_contextType == EmailContextType.Text)
+            catch(ParseException ex)
             {
-                _body = new TextPart(MimeKit.Text.TextFormat.Text)
-                {
-                    Text = _message
-                };
+                throw new EmailContextException("EmailContext", ex.Message);
+            }
+            catch(Exception ex)
+            {
+                throw new EmailContextException("EmailContext", ex.Message);
             }
         }
 

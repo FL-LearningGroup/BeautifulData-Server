@@ -72,10 +72,7 @@ namespace BDS.Pipeline.FuYang
             try
             {
                 // Pull repository from remote.
-                if (!gitFactory.PullRepository())
-                {
-                    throw new Exception(string.Format("Pull remote: {0} failed.", gitFactory.Remote));
-                }
+                gitFactory.PullRepository();
                 var titleGroupList =
                     from data in dataStore
                     group data by data.DateTime into newData
@@ -96,15 +93,16 @@ namespace BDS.Pipeline.FuYang
                     gitFactory.CommitChanges("Add public title.");
                 }
                 // push changes to remote.
-                if (!gitFactory.PushRepository())
-                {
-                    throw new Exception(string.Format("Push remote: {0} failed.", gitFactory.Remote));
-                }
+                gitFactory.PushRepository();
 
+            }
+            catch(GitFactoryException ex)
+            {
+                Logger.Error(ex.Message);
             }
             catch(Exception ex)
             {
-
+                Logger.Error(ex.Message);
             }
 
         }
@@ -132,11 +130,13 @@ namespace BDS.Pipeline.FuYang
                 }
                 break;
             }
-            EmailContext emailContext = new EmailContext(EmailContextType.Html);
-            emailContext.FromPerson.Add(new ContactPerson() { Name = "BDS-CollectData", Email = "LucasYao93@outlook.com" });
-            emailContext.ToPerson.Add(new ContactPerson() { Name = "LucasYao", Email = "LucasYao93@outlook.com" });
-            emailContext.Subject = "BDS-ReportData-FuYang";
-            emailContext.Message = String.Format(@"<!DOCTYPE html>
+            try
+            {
+                EmailContext emailContext = new EmailContext(EmailContextType.Html);
+                emailContext.FromPerson.Add(new ContactPerson() { Name = "BDS-CollectData", Email = "LucasYao93@outlook.com" });
+                emailContext.ToPerson.Add(new ContactPerson() { Name = "LucasYao", Email = "LucasYao93@outlook.com" });
+                emailContext.Subject = "BDS-ReportData-FuYang";
+                emailContext.Message = String.Format(@"<!DOCTYPE html>
                                     <html>
                                     <head>
                                     <style>
@@ -171,15 +171,25 @@ namespace BDS.Pipeline.FuYang
                                     </body>
                                     </html>
                                     ", messageTitle, message);
-            return await emailClient.SendEamilAsync(emailContext);
+                return await emailClient.SendEamilAsync(emailContext);
+            }
+            catch(FileFactoryException ex)
+            {
+                Logger.Error(ex.Message);
+                return false;
+            }
+            catch(Exception ex)
+            {
+                Logger.Error(ex.Message);
+                return false;
+            }
         }
         private void StoreDataEvent(object source, WorkSiteStatusEventArgs args)
         {
-            Console.WriteLine("Execute event.");
             if (args.Status == CollectData.Models.WorkSiteStatus.Success)
             { 
-                GenerateDataFileAndPush().Wait();
-                ReportStoreData().Wait();
+                GenerateDataFileAndPush();
+                ReportStoreData();
             }
         }
     }

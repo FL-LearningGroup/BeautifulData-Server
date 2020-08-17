@@ -8,34 +8,29 @@ namespace BDS.DotNetCoreKnowledage
     public class ThrowExceptionCls
     {
         public List<string> list;
-        public static void ThrowExecption01()
+        // Test 01: Nested exception
+        public static void NestedException01()
         {
-            Console.WriteLine("Before throw01");
-            throw new Exception("throw01");
-            Console.WriteLine("After throw01"); // The instruction not executed
+            throw new Exception("exception 01");
         }
-        public void ThrowExecption02(string str)
+        public static void NestedException02()
         {
+            NestedException01();
+            throw new Exception("exception 02");
+        }
+
+        static void Main_Stop(string[] args)
+        {
+            Process.StartTag();
             try
             {
-                this.list.Add(str);
+                NestedException02();
             }
             catch(Exception ex)
             {
-                Console.WriteLine("ThrowExecption02: {0}", ex.Message);
-                throw new Exception("Throw Execption 02");
+                Console.WriteLine("exception: {0}", ex.Message);
             }
-        }
-        public void ThrowExecption03(string str)
-        {
-            throw new Exception("Throw Execption 03");
-        }
-        static void Main_Stop(string[] args)
-        {
-            Console.WriteLine("Stard run");
-            ThrowExceptionCls exceptionCls = new ThrowExceptionCls();
-            Console.WriteLine("End run");
-            Console.ReadKey();
+            Process.EndTag();
         }
     }
 }

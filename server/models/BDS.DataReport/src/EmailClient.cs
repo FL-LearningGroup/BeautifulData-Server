@@ -120,9 +120,8 @@
             }
             catch(Exception ex)
             {
-                return false;
+                throw new EmailException(_host, ex.Message);
             }
-
             return true;
         }
         public void SendEamil(EmailContext emailContext)

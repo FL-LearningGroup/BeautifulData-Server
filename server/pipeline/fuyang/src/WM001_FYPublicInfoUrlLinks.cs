@@ -50,6 +50,7 @@
                 output.StoreResourceData(dataStore);
             }catch(Exception ex)
             {
+                Logger.Error(ex.Message);
                 return WorkSiteStatus.Failed;
             }
             return WorkSiteStatus.Success;

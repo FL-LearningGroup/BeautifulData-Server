@@ -2,17 +2,20 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Text;
     using System.Text.Json;
     using System.Text.Json.Serialization;
     using BDS.CollectData;
     using BDS.CollectData.Models;
 
-    public class FuYangNewsPipeline
+    public class Pipeline_FuYangNews
     {
         public static string StartWork()
         {
+            Logger.Info("Pipeline FuYang: Start work");
             //public info base url
+            Logger.Info("Build Pipeline");
             WorkSite workSite001 = new WorkSite();
 
             const string html = @"http://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/";
@@ -83,20 +86,19 @@
             workPipeline.AddWorkSite(workSite001);
             workPipeline.AddWorkSite(workSite002);
             workPipeline.Status = WorkPipelineStatus.Executable;
+
+            Logger.Info("Build Pipeline completed.");
             try
             {
+                Logger.Info("Start up Pipeline.");
                 workPipeline.Processor();
-                //fyPublicInfoTitle.GenerateDataFileAndPush().Wait();
-                //fyPublicInfoTitle.ReportStoreData().Wait();
-                //workSite002.Status = WorkSiteStatus.Success; // Can trigger event.
-                //IWorkSite workSite = workSite002;
-                //workSite.Status = WorkSiteStatus.Success; // Can trigger event.
+                Logger.Info("Pipeline execute successfully.");
                 return JsonSerializer.Serialize(fyPublicInfoTitle.dataStore);
 
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Logger.Error(String.Format("Pipeline execute failed.{0}", ex.Message));
                 return "Work pipeline failed.";
             }
         }

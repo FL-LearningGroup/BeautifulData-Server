@@ -65,6 +65,7 @@ namespace BDS.Pipeline.FuYang
             }
             catch(Exception ex)
             {
+                Logger.Error(ex.Message);
                 return WorkSiteStatus.Failed;
             }
             return WorkSiteStatus.Success;

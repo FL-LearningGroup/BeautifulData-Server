@@ -4,27 +4,28 @@
     using System.Collections.Generic;
     using System.Text;
     using BDS.CollectData;
+    [Serializable]
     public class FyYangPublicInfoFilter : IWorkFilter
     {
-        private string tagName;
-        private string tagId;
-        private string tagClass;
+        private string _tagName;
+        private string _tagId;
+        private string _tagClass;
 
         public FyYangPublicInfoFilter()
         {
-            this.tagName = "";
-            this.tagId = "";
-            this.TagClass = "";
+            _tagName = "";
+            _tagId = "";
+            TagClass = "";
         }
         public string TagName
         {
             get
             {
-                return this.tagName;
+                return _tagName;
             }
             set
             {
-                this.tagName = value;
+                _tagName = value;
             }
         }
 
@@ -32,22 +33,22 @@
         {
             get
             {
-                return this.tagId;
+                return _tagId;
             }
             set
             {
-                this.tagId = value;
+                _tagId = value;
             }
         }
         public string TagClass
         {
             get
             {
-                return this.tagClass;
+                return _tagClass;
             }
             set
             {
-                this.tagClass = value;
+                _tagClass = value;
             }
         }
     }

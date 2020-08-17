@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using log4net;
-using log4net.Config;
-using log4net.Repository;
-
-namespace BDS.DotNetCoreKnowledage
+﻿namespace BDS.Pipeline.FuYang
 {
-    /// <Reference>
-    /// Blog: https://dev.mercymainb.tw/2018/10/19/dotnetcore-log4net/
-    /// </Reference>
-    public static class PipelineLogger
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Reflection;
+    using System.Text;
+    using log4net;
+    using log4net.Config;
+    using log4net.Repository;
+
+    public static class Logger
     {
         private static ILog _log;
         private static void EnsureLogger()
@@ -49,29 +46,31 @@ namespace BDS.DotNetCoreKnowledage
         {
             EnsureLogger();
 
-            _log.Debug($"Test log: {message}");
+            _log.Debug(message);
         }
         public static void Info(string message)
         {
             EnsureLogger();
 
-            _log.Debug($"Test log: {message}");
+            _log.Debug(message);
         }
-    }
-    public class OperateLog4net
-    {
-        static void Main(string[] args)
+        public static void Error(string message)
         {
-            Process.StartTag();
-            // Load configuration
-            //private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-            //var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
-            //XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
-            // log.Warn("Warn!");
-            // Log some things
-            PipelineLogger.Info("Hello logging world!");
-            PipelineLogger.Debug("Error!");
-            Process.EndTag();
+            EnsureLogger();
+
+            _log.Error(message);
+        }
+        public static void Fatal(string message)
+        {
+            EnsureLogger();
+
+            _log.Fatal(message);
+        }
+        public static void Warn(string message)
+        {
+            EnsureLogger();
+
+            _log.Warn(message);
         }
     }
 }

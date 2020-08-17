@@ -62,7 +62,7 @@
                 catch (Exception ex)
                 {
                     Directory.Delete(_local);
-                    return false;
+                    throw new GitFactoryException("Pull Repo", ex.Message);
                 }
             }
             else
@@ -73,7 +73,7 @@
                 }
                 else
                 {
-                    return false;
+                    throw new GitFactoryException(String.Format("Local Repo: {0}", _local), "Local Repository is inValid");
                 }
             }
 
@@ -97,8 +97,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception:RepoActions:StageChanges " + ex.Message);
-                    return 0;
+                    throw new GitFactoryException(String.Format("Local Repo: {0}", _local), String.Format("Add stage changes failed, {0}", ex.Message));
                 }
             }
         }
@@ -115,8 +114,7 @@
                 }
                 catch (Exception ex)
                 {
-                    return false;
-                    //Console.WriteLine("Exception:RepoActions:CommitChanges " + ex.Message);
+                    throw new GitFactoryException(String.Format("Local Repo: {0}", _local), String.Format("Commit stage changes failed, {0}", ex.Message));
                 }
             }
         }
@@ -136,8 +134,7 @@
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine("Exception:RepoActions:PushChanges " + ex.Message);
-                    return false;
+                    throw new GitFactoryException(String.Format("Local Repo: {0}, Remote Repo: {1}", _local, _remote), String.Format("Push repo failed, {0}", ex.Message));
                 }
             }
         }

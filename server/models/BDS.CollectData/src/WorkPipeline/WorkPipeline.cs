@@ -131,7 +131,7 @@ namespace BDS.CollectData
                     if(workSite.Status == WorkSiteStatus.Failed) 
                     {
                         Status = WorkPipelineStatus.Failed;
-                        throw new WorkSiteException(workSite.Identifier, workSite.GetType().Name, "Work process failed.");
+                        throw new WorkSiteException(this.GetType().Name,workSite.Identifier, workSite.GetType().Name, "Work process failed.");
                     }
                 }
                 return true;

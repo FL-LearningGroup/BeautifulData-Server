@@ -22,7 +22,7 @@ namespace BDS.DotNetCoreKnowledage
     }
     public class UseLINQ
     {
-        static async Task Main(string[] args)
+        static async Task Main_Stop(string[] args)
         {
             Process.StartTag();
             List<FYPublicInfoTitleDM01> fyDataList = new List<FYPublicInfoTitleDM01>()

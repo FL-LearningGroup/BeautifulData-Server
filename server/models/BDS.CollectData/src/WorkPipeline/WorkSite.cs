@@ -17,7 +17,7 @@ namespace BDS.CollectData
             {
                 WorkSiteStatusEventArgs workSiteStatusEventArgs = new WorkSiteStatusEventArgs();
                 _status = value;
-                if( _status == WorkSiteStatus.Success)
+                if( _status == WorkSiteStatus.Success && publicStatusEvent != null)
                 {
                     workSiteStatusEventArgs.Status = WorkSiteStatus.Success;
                     publicStatusEvent(this, workSiteStatusEventArgs);
