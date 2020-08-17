@@ -4,6 +4,8 @@ namespace BDS.CollectData
     using System.Collections.Generic;
     using BDS.CollectData.Models;
     using BDS.CollectData.BDSException;
+    
+    [Serializable]
     public class WorkPipeline
     {
         private WorkPipelineStatus _status = WorkPipelineStatus.Build;
@@ -131,7 +133,7 @@ namespace BDS.CollectData
                     if(workSite.Status == WorkSiteStatus.Failed) 
                     {
                         Status = WorkPipelineStatus.Failed;
-                        throw new WorkSiteException(this.GetType().Name,workSite.Identifier, workSite.GetType().Name, "Work process failed.");
+                        throw new WorkSiteException(this.GetType().Name,workSite.Identifier, workSite.Name + "-" + workSite.Description, "Work process failed.");
                     }
                 }
                 return true;

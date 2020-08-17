@@ -49,6 +49,10 @@ namespace BDS.CollectData
                 return _outputResource;
             }
         }
+
+        public string Name { get; set; }
+        public string Description { get; set; }
+
         IWorkMachine _workMachine;
         List<IWorkFilter> _workFilterList;
         public WorkSite() {
