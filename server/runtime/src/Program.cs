@@ -5,11 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace dotnetcore.template.worker
+namespace BDS.Runtime
 {
-    /// <reference>
-    /// Blob: https://medium.com/@nickfane/introduction-to-worker-services-in-net-core-3-0-4bb3fc631225
-    /// </reference>
     public class Program
     {
         public static void Main(string[] args)
@@ -19,10 +16,9 @@ namespace dotnetcore.template.worker
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<Worker>();
+                    services.AddHostedService<PipelineWorker>();
                 });
     }
 }

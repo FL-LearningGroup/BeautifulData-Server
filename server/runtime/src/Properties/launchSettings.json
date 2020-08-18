@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "BDS.Runtime": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
