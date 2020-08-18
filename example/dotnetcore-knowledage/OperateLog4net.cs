@@ -60,7 +60,7 @@ namespace BDS.DotNetCoreKnowledage
     }
     public class OperateLog4net
     {
-        static void Main(string[] args)
+        static void Main_Stop(string[] args)
         {
             Process.StartTag();
             // Load configuration
