@@ -5,7 +5,7 @@
     using System.Text;
     using BDS.CollectData;
     [Serializable]
-    public class FyYangPublicInfoFilter : IWorkFilter
+    internal class FyYangPublicInfoFilter : IWorkFilter
     {
         private string _tagName;
         private string _tagId;

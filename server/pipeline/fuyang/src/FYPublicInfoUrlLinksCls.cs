@@ -7,7 +7,7 @@
     /// <summary>
     /// Class that store all url links of Fu Yang public info.
     /// </summary>
-    public class FYPublicInfoUrlLinksCls : Resource, IResource
+    internal class FYPublicInfoUrlLinksCls : Resource, IResource
     {
         private string type;
         override public string Type

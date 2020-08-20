@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <Version>0.0.1.0</Version>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>  
+  <!--Manual configuration assembly
+  <PropertyGroup>
+    <AssemblyName>DotNetCore.MSBuild.ClassLib</AssemblyName>
+    <ApplicationIcon>BDS.ico</ApplicationIcon>
+    <ProjectGuid>{181FE707-E161-4722-9F38-6AAAB6FAA106}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <Authors>Lucas</Authors>
+    <Company>BDS</Company>
+    <Product>BDS</Product>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\Debug\netcoreapp3.1\</OutputPath>
+    <DocumentationFile>bin\Debug\netcoreapp3.1\DotNetCore.MSBuild.ClassLib.xml</DocumentationFile>
+  </PropertyGroup>
+  -->
+  <!--Manual add property for practice
+  <PropertyGroup>
+    <BuildDir>Build</BuildDir>  </PropertyGroup>
+  -->
+
+  <!--
+  <ItemGroup>
+    <Stuff Include="One.cs" >
+      <Display>false</Display>
+    </Stuff>
+    <Stuff Include="Two.cs">
+      <Display>true</Display>
+    </Stuff>
+  </ItemGroup>
+  <Target Name="Batching">
+    <Delete Files="@(Stuff)" Condition=" '%(Display)' == 'false' " />
+    <Message Text="@(Stuff)" Condition=" '%(Display)' == 'true' "/>
+    <Message Text="$(MSBuildThisFileDirectory)" />
+  </Target>
+  -->
+  <!--
+  <ItemGroup>
+    <None Update="BDS.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  -->
+  <Target Name="DeleteFile">
+    <Delete Files="@(Stuff)" Condition=" '%(Display)' == 'true' " />
+  </Target>
+  <Target Name="Reserved Property">
+    <Message Text="MSBuildThisFileDirectory = $(MSBuildThisFileDirectory)" />
+    <Message Text="LangVersion = $(LangVersion)" />
+    <Message Text="AboveFile = $(AboveFile)" />
+    <Message Text="Root = $(Root)" />
+  </Target>
+  <ItemGroup>
+    <None Update="config\TextFile1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

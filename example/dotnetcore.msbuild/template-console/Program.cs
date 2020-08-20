@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
-//using BDS.Pipeline.FuYang;
+//using DotNetCore.MSBuild.ClassLib;
 
-namespace BDS.Pipeline.FuYang.Run
+namespace DotNetCore.MSBuild.TemplateConsole
 {
     class Program
     {
-        readonly static string dllPath = @"D:\Lucas\git\BeautifulData-Server\server\pipeline\fuyang\src\bin\Debug\netcoreapp3.1\BDS.Pipeline.FuYang.dll";
         static void StartTag()
         {
             Console.WriteLine("Process start up.");
@@ -19,35 +18,42 @@ namespace BDS.Pipeline.FuYang.Run
             Console.WriteLine("Process End.");
             Console.ReadKey();
         }
-        static void DynamicLoadDLL()
+        static void DynamicLoadDLl()
         {
-            var dll = Assembly.LoadFrom(dllPath);
-            foreach (Type type in dll.GetExportedTypes())
+            var DLL = Assembly.LoadFrom(@"D:\Lucas\git\BeautifulData-Server\example\dotnetcore.msbuild\template-classlib\bin\Debug\netcoreapp3.1\DotNetCore.MSBuild.ClassLib.dll");
+            foreach (Type type in DLL.GetExportedTypes())
             {
                 if (type.Name.Contains("AssemblyInformation"))
                 {
                     var assembly = Activator.CreateInstance(type);
+                    //var location = type.InvokeMember("GetAssemblyLocation", BindingFlags.InvokeMethod, null, assembly, null);
+                    //var execute = type.InvokeMember("ExecutingFolder", BindingFlags.InvokeMethod, null, assembly, null);
                     PropertyInfo locationFolder = type.GetProperty("LocationFolder");
                     PropertyInfo executingFolder = type.GetProperty("ExecutingFolder");
                     Console.WriteLine("location folder: {0}", locationFolder.GetValue(assembly));
                     Console.WriteLine("executing folder: {0}", executingFolder.GetValue(assembly));
                 }
-                if (type.Name.Contains("Pipeline_"))
+
+                if (type.Name.Contains("ReadFile"))
                 {
-                    var pipelineInstance = Activator.CreateInstance(type);
-                    var result = type.InvokeMember("StartWork", BindingFlags.InvokeMethod, null, pipelineInstance, null);
-                    Console.WriteLine("resoult: {0}", result);
+                    var readFile = Activator.CreateInstance(type);
+                    type.InvokeMember("read", BindingFlags.InvokeMethod, null, readFile, null);
                 }
             }
         }
+        
         static void ManualLoadDLL()
         {
-            //Pipeline_FuYangNews.StartWork();
+            /*
+            ShowAssemblyInfo showAssemblyInfo = new ShowAssemblyInfo();
+            Console.WriteLine("location: {0}", showAssemblyInfo.Location);
+            Console.WriteLine("execute: {0}", showAssemblyInfo.ExecuteFolder);
+            */
         }
         static void Main(string[] args)
         {
             StartTag();
-            DynamicLoadDLL();
+            DynamicLoadDLl();
             EndTag();
         }
     }

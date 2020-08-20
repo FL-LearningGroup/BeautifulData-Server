@@ -8,7 +8,7 @@ namespace BDS.Pipeline.FuYang
     using HtmlAgilityPack;
     using BDS.CollectData.Models;
     using System.Diagnostics;
-    public class WM002_FYPublicInfoTitle : IWorkMachine
+    internal class WM002_FYPublicInfoTitle : IWorkMachine
     {
         public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {

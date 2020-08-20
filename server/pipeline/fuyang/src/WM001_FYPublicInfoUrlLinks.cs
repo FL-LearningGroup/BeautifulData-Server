@@ -6,7 +6,7 @@
     using BDS.CollectData;
     using HtmlAgilityPack;
     using BDS.CollectData.Models;
-    public class WM001_FYPublicInfoUrlLinks : IWorkMachine
+    internal class WM001_FYPublicInfoUrlLinks : IWorkMachine
     {
         public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {

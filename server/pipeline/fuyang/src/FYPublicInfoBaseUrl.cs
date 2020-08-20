@@ -7,7 +7,7 @@
     /// <summary>
     /// Store base url of Fu Yang public news info.
     /// </summary>
-    public sealed class FYPublicInfoBaseUrl : Resource, IResource
+    internal sealed class FYPublicInfoBaseUrl : Resource, IResource
     {
         private string type;
         override public string Type

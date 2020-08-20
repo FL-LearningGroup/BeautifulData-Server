@@ -1,0 +1,17 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    Add any shared properties you want for the projects under this package directory that need to be set before the auto imported Directory.Build.props
+  -->
+  <ItemGroup>
+    <Stuff Include="Class1.cs">
+        <Display>false</Display>
+    </Stuff>
+    <Stuff Include="Class2.cs">
+        <Display>true</Display>
+    </Stuff>
+  </ItemGroup>
+  <PropertyGroup>
+    <AboveFile>above file</AboveFile>
+  </PropertyGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory).., Directory.Build.props))\Directory.Build.props" />
+</Project>

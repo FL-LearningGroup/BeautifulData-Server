@@ -9,7 +9,7 @@
     using log4net.Config;
     using log4net.Repository;
 
-    public static class Logger
+    internal static class Logger
     {
         private static ILog _log;
         private static void EnsureLogger()
@@ -29,7 +29,9 @@
             FileInfo configFile = null;
 
             // Search config file
-            var configFileNames = new[] { "log4net.config" };
+            var path = AssemblyInformation.LocationFolder + @"\config\log4net.config";
+            Console.WriteLine(path);
+            var configFileNames = new[] { path };
 
             foreach (var configFileName in configFileNames)
             {

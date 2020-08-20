@@ -7,7 +7,7 @@
     /// Data Model: Defined data structure of Fu Yang public info title 
     /// </summary>
     [Serializable]
-    public class FYPublicInfoTitleDM
+    internal class FYPublicInfoTitleDM
     {
         public string DateTime { get; set; }
         public string Url { get; set; }

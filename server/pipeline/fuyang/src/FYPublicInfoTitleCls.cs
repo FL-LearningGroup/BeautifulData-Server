@@ -14,7 +14,7 @@ namespace BDS.Pipeline.FuYang
     /// <summary>
     /// Class: Defined Fu Yang public info title.
     /// </summary>
-    public sealed class FYPublicInfoTitleCls : Resource, IResource
+    internal sealed class FYPublicInfoTitleCls : Resource, IResource
     {
         private string type;
         override public string Type
