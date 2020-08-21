@@ -20,7 +20,7 @@ namespace BDS.DotNetCoreKnowledage
                 }
             }
         }
-        static void Main()
+        static void Main_Stop()
         {
             Process.StartTag();
             var DLL = Assembly.LoadFrom(@"D:\Lucas\git\BeautifulData-Server\server\pipeline\fuyang\src\bin\Debug\netcoreapp3.1\BDS.Pipeline.FuYang.dll");

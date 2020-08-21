@@ -1,0 +1,41 @@
+{
+  "WorkSite": [
+    {
+      "id": "",
+      "dataRecipient": [
+        {
+          "email": [
+            {
+              "type": "host",
+              "address": "smtp-mail.outlook.com",
+              "userAddress": "LucasYao93@outlook.com",
+              "userPassword": "yaodi@960903"
+            },
+            {
+              "type": "from",
+              "user": "BDS-CollectData",
+              "address": "LucasYao93@outlook.com"
+            },
+            {
+              "type": "to",
+              "user": "LucasYao",
+              "address": "LucasYao93@outlook.com"
+            }
+          ]
+        },
+        {
+          "gitRepo": [
+            {
+              "userName": "LucasYao93-DataBase",
+              "password": "yaodi@960903",
+              "email": "LucasYao93@outlook.com",
+              "local": "D:/BDS-Data/",
+              "remote": "https://github.com/LucasYao93-DataBase/BDS-Data-FuYang.git"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+}
