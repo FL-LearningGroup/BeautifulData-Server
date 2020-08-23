@@ -21,7 +21,7 @@ namespace BDS.Pipeline.FuYang.Run
         }
         static void DynamicLoadDLL()
         {
-            var dll = Assembly.LoadFrom(dllPath);
+            Assembly dll = Assembly.LoadFrom(dllPath);
             foreach (Type type in dll.GetExportedTypes())
             {
                 if (type.Name.Contains("AssemblyInformation"))
@@ -36,7 +36,7 @@ namespace BDS.Pipeline.FuYang.Run
                 {
                     var pipelineInstance = Activator.CreateInstance(type);
                     var result = type.InvokeMember("StartWork", BindingFlags.InvokeMethod, null, pipelineInstance, null);
-                    Console.WriteLine("resoult: {0}", result);
+                    Console.WriteLine("result: {0}", result);
                 }
             }
         }

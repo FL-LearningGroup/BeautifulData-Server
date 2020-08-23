@@ -12,6 +12,7 @@
 
     public class Pipeline_FuYangNews
     {
+        public static string executeTime = Config.SelectExecuteTime();
         public static bool StartWork()
         {
             Logger.Info("Pipeline FuYang: Start work");

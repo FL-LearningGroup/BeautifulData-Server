@@ -27,13 +27,16 @@
       </email>
     </dataReport>
     <dataFactory>
-      <GitRepo>
+      <factory type="GitRepo">
         <email>LucasYao93@outlook.com</email>
         <local>D:/BDS-Data/</local>
         <password>yaodi@960903</password>
         <remote>https://github.com/LucasYao93-DataBase/BDS-Data-FuYang.git</remote>
         <userName>LucasYao93-DataBase</userName>
-      </GitRepo>
+      </factory>
     </dataFactory>
   </workSite>
+  <exeSchema>
+    <time>0:0:1:8:0:0</time>
+  </exeSchema>
 </root>

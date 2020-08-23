@@ -30,8 +30,8 @@ namespace BDS.Pipeline.FuYang
         }
         public List<FYPublicInfoTitleDM> dataStore = new List<FYPublicInfoTitleDM>();
 
-        private GitFactory gitFactory = new GitFactory(@"D:\BDS-Data\", "https://github.com/LucasYao93-DataBase/BDS-Data-FuYang.git", "LucasYao93-DataBase","yaodi@960903", "LucasYao93@outlook.com");
-        private EmailClient emailClient = new EmailClient(EmailHostType.Outlook, "smtp-mail.outlook.com", 587, "LucasYao93@outlook.com", "yaodi@960903");
+        private GitFactory gitFactory = new GitFactory(Config.SelectDataFactoyInfo("WorkSite01", "GitRepo","local"), Config.SelectDataFactoyInfo("WorkSite01", "GitRepo", "remote"), Config.SelectDataFactoyInfo("WorkSite01", "GitRepo", "userName"), Config.SelectDataFactoyInfo("WorkSite01", "GitRepo", "password"), Config.SelectDataFactoyInfo("WorkSite01", "GitRepo", "email"));
+        private EmailClient emailClient = new EmailClient(EmailHostType.Outlook, Config.SelectEmailHostInfo("WorkSite01", "outlook", "address"), 587, Config.SelectEmailHostInfo("WorkSite01", "outlook", "userAddress"), Config.SelectEmailHostInfo("WorkSite01", "outlook", "userPassword"));
         
         
         public FYPublicInfoTitleCls(WorkSite workSite)
@@ -133,8 +133,9 @@ namespace BDS.Pipeline.FuYang
             try
             {
                 EmailContext emailContext = new EmailContext(EmailContextType.Html);
-                emailContext.FromPerson.Add(new ContactPerson() { Name = "BDS-CollectData", Email = "LucasYao93@outlook.com" });
-                emailContext.ToPerson.Add(new ContactPerson() { Name = "LucasYao", Email = "LucasYao93@outlook.com" });
+                //emailContext.FromPerson.Add(new ContactPerson() { Name = "BDS-CollectData", Email = "LucasYao93@outlook.com" });
+                emailContext.FromPerson = Config.SelectEmailContactPerson("WorkSite01", "outlook", "fromPerson");
+                emailContext.ToPerson = Config.SelectEmailContactPerson("WorkSite01", "outlook", "toPerson"); ;
                 emailContext.Subject = "BDS-ReportData-FuYang";
                 emailContext.Message = String.Format(@"<!DOCTYPE html>
                                     <html>
