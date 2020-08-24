@@ -54,7 +54,7 @@ namespace BDS.DotNetCoreKnowledage
                 return contacts;
             }
         }
-        static void Main()
+        static void Main_Stop()
         {
             Process.StartTag();
             //var value = Config.SelectEmailHostInfo("WorkSite01", "outlook", "address"); //Pass
