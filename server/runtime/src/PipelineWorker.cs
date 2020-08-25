@@ -23,9 +23,14 @@ namespace BDS.Runtime
         /// Store the path of assembly waiting to be loaded.
         /// </summary>
         private List<string> _waitAssemblyPathList = new List<string>();
+        /// <summary>
+        /// The path of assembly need be remove.
+        /// </summary>
+        private List<string> _removeAssemblyPathList = new List<string>();
 
-        public List<string> AssemblyPathList { get; }
-        public List<string> WaitAssemblyPathList { get; }
+        public List<string> AssemblyPathList { get {return _assemblyPathList; } }
+        public List<string> WaitAssemblyPathList { get { return _waitAssemblyPathList; } }
+        public List<string> RemoveAssemblyPathList { get { return _removeAssemblyPathList; } }
         public PipelineWorker()
         {
             string[] filePathArray = Directory.GetFiles(_assemblyFolder, "BDS.Pipeline*.dll", SearchOption.AllDirectories);
@@ -33,17 +38,35 @@ namespace BDS.Runtime
             {
                 _waitAssemblyPathList.Add(filePath);
             }
+            PipelineFolderWatcher.watcher.Created += AddAssemblyPath;
+            PipelineFolderWatcher.watcher.Deleted += RemoveAssemblyPath;
+            //PipelineFolderWatcher.watcher.Changed += AddAssemblyPath;
         }
 
+        private void AddAssemblyPath(object source, FileSystemEventArgs e)
+        {
+            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\" +e.FullPath;
+            _waitAssemblyPathList.Add(path);
+            Console.WriteLine($"File: {e.FullPath} {e.ChangeType}");
+        }
+        private void RemoveAssemblyPath(object source, FileSystemEventArgs e)
+        {
+            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\" + e.FullPath;
+            _removeAssemblyPathList.Add(path);
+            Console.WriteLine($"File: {e.FullPath} {e.ChangeType}");
+        }
         public void LoadAssembly()
         {
             if (_waitAssemblyPathList.Count == 0)
                 return;
            
-            List<string> removeAssemblyPathList = new List<string>();
+            List<string> addedAssemblyPathList = new List<string>();
             foreach (string assemblyPath in _waitAssemblyPathList)
             {
-                Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                Assembly assembly;
+                //Loaded assembly by bytes, The assembly file can be delete.
+                //Warning: Application not unload assembly, whether cause memory continue growth 
+                assembly = Assembly.Load(File.ReadAllBytes(assemblyPath));
                 bool runFlag = false;
                 foreach (Pipeline pipelineItem in _pipelineCollections)
                 {
@@ -60,26 +83,60 @@ namespace BDS.Runtime
                         break;
                     }
                 }
-                if(!runFlag)
+                //Handle PipelineCollections is null
+                if (!runFlag)
                 {
-                    Pipeline pipeline = new Pipeline(assembly, assembly.FullName, DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss.fffffff"));
+                    Pipeline pipeline = new Pipeline(assembly, assemblyPath, assembly.FullName, DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss.fffffff"));
                     _pipelineCollections.Add(pipeline);
                     _assemblyPathList.Add(assemblyPath);
-                    removeAssemblyPathList.Add(assemblyPath);
+                    addedAssemblyPathList.Add(assemblyPath);
                     // Remove element during foreach, cause System.InvalidOperationException: 
                     //'Collection was modified; enumeration operation may not execute.'
                     //_waitAssemblyPathList.Remove(assemblyPath);
                 }
             }
 
-            foreach(string assemblyPath in removeAssemblyPathList)
+            foreach(string assemblyPath in addedAssemblyPathList)
             {
                 _waitAssemblyPathList.Remove(assemblyPath);
             }
         }
 
+        public void UnloadAssembly()
+        {
+            if (_removeAssemblyPathList.Count == 0)
+                return;
+            List<string> removedAssemblyPathList = new List<string>();
+            foreach (string assemblyPath in _removeAssemblyPathList)
+            {
+                foreach (Pipeline pipelineItem in _pipelineCollections)
+                {
+                    // Pipeline existed in pipeline collections.
+                    if (pipelineItem.AssemblyPath == assemblyPath)
+                    {
+                        //Pipeline running
+                        if (pipelineItem.status == PipelineStatus.Running)
+                        {
+                            break;
+                        }
+                        _pipelineCollections.Remove(pipelineItem);
+                        _assemblyPathList.Remove(assemblyPath);
+                        removedAssemblyPathList.Add(assemblyPath);
+                        break;
+                    }
+                }
+            }
+
+            foreach (string assemblyPath in removedAssemblyPathList)
+            {
+                _removeAssemblyPathList.Remove(assemblyPath);
+            }
+
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            Console.WriteLine("Pipeline Service start.");
             while (!stoppingToken.IsCancellationRequested)
             {
                 /*
@@ -94,7 +151,7 @@ namespace BDS.Runtime
                     }
                 }
                 */
-                Console.WriteLine("Task execute.");
+                Console.WriteLine("----------------------------------------");
                 foreach (var item in _assemblyPathList)
                 {
                     Console.WriteLine("assemblyPath:{0}",item);
@@ -105,10 +162,12 @@ namespace BDS.Runtime
                 }
                 foreach (var item in _pipelineCollections)
                 {
-                    Console.WriteLine("Assembly:{0}, {1}", item.FullName, item.LoadDate);
+                    Console.WriteLine("Assembly:{0}, {1}, {2}", item.FullName, item.LoadDate, item.AssemblyPath);
                 }
+                Console.WriteLine("----------------------------------------");
                 LoadAssembly();
-                await Task.Delay(5000, stoppingToken);
+                UnloadAssembly();
+                await Task.Delay(3000, stoppingToken);
             }
         }
     }

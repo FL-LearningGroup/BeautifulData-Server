@@ -18,7 +18,7 @@ namespace BDS.DotNetCoreKnowledage
         {
             Console.WriteLine(msg);
         }
-        static void Main()
+        static void Main_Stop()
         {
             //Format: prefix:Y:M:W:D:h:m:s
             Process.StartTag();

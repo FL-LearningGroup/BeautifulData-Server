@@ -9,7 +9,6 @@ namespace BDS.Runtime
         public List<string> AssemblyPathList { get; }
         public List<string> WaitAssemblyPathList { get; }
         public void LoadAssembly();
-
-        //public void DeletedAssembly
+        public void UnloadAssembly();
     }
 }

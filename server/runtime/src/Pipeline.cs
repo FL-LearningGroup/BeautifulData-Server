@@ -12,17 +12,23 @@ namespace BDS.Runtime
         private string _executeTime;
         private string _lastExecuteTime;
         private string _nextExecuteTime;
+        private string _fullName;
+        private string _loadDate;
+        private string _assemblyPath;
         private Assembly _assembly;
 
-        public string FullName { get; }
-        public string LoadDate { get; }
+        public string FullName { get { return _fullName; } }
+        public string LoadDate { get { return _loadDate; } }
+        public string AssemblyPath { get { return _assemblyPath; } }
         public PipelineStatus status { get; set; }
 
-        public Pipeline(Assembly assembly, string fullName, string loadDate)
+        public Pipeline(Assembly assembly, string assemblyPath, string fullName, string loadDate)
         {
             _assembly = assembly;
-            FullName = fullName;
-            LoadDate = loadDate;
+            _assemblyPath = assemblyPath;
+            _fullName = fullName;
+            _loadDate = loadDate;
+
         }
 
         public async Task StartPipeline()
