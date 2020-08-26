@@ -8,7 +8,7 @@ namespace BDS.DotNetCoreKnowledage
 {
     // This is a collectible(unloadable) AssemblyLoadContext that loads the dependencies
     // of the plugin from the plugin's binary directory.
-    class PipelineAssemblyLoadContext : AssemblyLoadContext
+    class PipelineAssemblyLoadContext : AssemblyLoadContext, IDisposable
     {
         // Resolver of the locations of the assemblies that are dependencies of the
         // main plugin assembly.
@@ -34,6 +34,10 @@ namespace BDS.DotNetCoreKnowledage
             }
 
             return null;
+        }
+        public void Dispose()
+        {
+
         }
     }
 }

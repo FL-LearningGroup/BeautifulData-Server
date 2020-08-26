@@ -20,7 +20,8 @@ namespace DotNetCore.MSBuild.TemplateConsole
         }
         static void DynamicLoadDLl()
         {
-            var DLL = Assembly.LoadFrom(@"D:\Lucas\git\BeautifulData-Server\example\dotnetcore.msbuild\template-classlib\bin\Debug\netcoreapp3.1\DotNetCore.MSBuild.ClassLib.dll");
+            var DLL = Assembly.Load(File.ReadAllBytes(@"D:\Lucas\git\BeautifulData-Server\example\dotnetcore.msbuild\template-classlib\bin\Debug\netcoreapp3.1\DotNetCore.MSBuild.ClassLib.dll"));
+            //var DLL = Assembly.LoadFrom(@"D:\Lucas\git\BeautifulData-Server\example\dotnetcore.msbuild\template-classlib\bin\Debug\netcoreapp3.1\DotNetCore.MSBuild.ClassLib.dll");
             foreach (Type type in DLL.GetExportedTypes())
             {
                 if (type.Name.Contains("AssemblyInformation"))

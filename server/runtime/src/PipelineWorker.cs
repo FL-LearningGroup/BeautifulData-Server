@@ -66,7 +66,8 @@ namespace BDS.Runtime
                 Assembly assembly;
                 //Loaded assembly by bytes, The assembly file can be delete.
                 //Warning: Application not unload assembly, whether cause memory continue growth 
-                assembly = Assembly.Load(File.ReadAllBytes(assemblyPath));
+                //LoadFrom then cannot delete assemply.
+                assembly = Assembly.LoadFrom(assemblyPath);
                 bool runFlag = false;
                 foreach (Pipeline pipelineItem in _pipelineCollections)
                 {
@@ -101,7 +102,8 @@ namespace BDS.Runtime
                 _waitAssemblyPathList.Remove(assemblyPath);
             }
         }
-
+        //Message: 
+        /*
         public void UnloadAssembly()
         {
             if (_removeAssemblyPathList.Count == 0)
@@ -133,7 +135,7 @@ namespace BDS.Runtime
             }
 
         }
-
+        */
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("Pipeline Service start.");
@@ -166,7 +168,6 @@ namespace BDS.Runtime
                 }
                 Console.WriteLine("----------------------------------------");
                 LoadAssembly();
-                UnloadAssembly();
                 await Task.Delay(3000, stoppingToken);
             }
         }
