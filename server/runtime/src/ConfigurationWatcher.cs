@@ -4,24 +4,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Security.Permissions;
 
 namespace BDS.Runtime
 {
-    internal class PipelineFolderWatcher
+    internal class ConfigurationWatcher
     {
-        private readonly static string _folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\pipeline";
+        private readonly static string _folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\config";
 
         public static FileSystemWatcher watcher;
-        static PipelineFolderWatcher()
+
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+        static ConfigurationWatcher()
         {
             if (!Directory.Exists(_folderPath))
             {
-                throw new Exception("pipeline folder file not found.");
+                throw new Exception("config folder file not found.");
             }
             watcher = new FileSystemWatcher();
             watcher.Path = _folderPath;
             watcher.IncludeSubdirectories = true;
-            watcher.Filter = "BDS.Pipeline*.dll";
+            watcher.Filter = "*";
             watcher.NotifyFilter = NotifyFilters.LastWrite
                                     | NotifyFilters.LastAccess
                                     | NotifyFilters.FileName

@@ -4,11 +4,13 @@ using System.Text;
 
 namespace BDS.Runtime
 {
-    public interface IPipelineWorker
+    internal interface IPipelineWorker
     {
-        public List<string> AssemblyPathList { get; }
-        public List<string> WaitAssemblyPathList { get; }
-        public void LoadAssembly();
-        public void UnloadAssembly();
+        public List<AssemblyConfig> AssemblyConfigList { get; }
+        public List<AssemblyConfig> AddAssemblyConfigList { get; }
+        public List<AssemblyConfig> RemoveAssemblyConfigList { get; }
+
+        public void AddPipeline();
+        public void RemovePipeline();
     }
 }

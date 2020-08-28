@@ -17,13 +17,15 @@
 
   <ItemGroup>
     <Reference Include="BDS.DataReport">
-      <HintPath>..\..\server\models\BDS.DataReport\src\bin\Debug\netcoreapp3.1\BDS.DataReport.dll</HintPath>
+      <HintPath>..\..\..\server\models\BDS.DataReport\src\bin\Debug\netcoreapp3.1\BDS.DataReport.dll</HintPath>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="PipelineConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="readJson.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

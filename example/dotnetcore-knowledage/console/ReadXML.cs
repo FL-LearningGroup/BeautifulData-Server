@@ -29,8 +29,10 @@ namespace BDS.DotNetCoreKnowledage
             public static string SelectEmailHostInfo(string workSiteId, string emailType, string paramName)
             {
                 string query = String.Format("//workSite[@id='{0}']/dataReport/email[@type='{1}']/host/{2}", workSiteId, emailType, paramName);
-                string value = configDocXml.SelectSingleNode(query).FirstChild.Value;
-                return value;
+                XmlNode node = configDocXml.SelectSingleNode(query);
+                var value = node.Attributes["test1"].Value;
+                string value1 = configDocXml.SelectSingleNode(query).FirstChild.Value;
+                return value1;
             }
 
             public static List<ContactPerson> SelectEmailContactPerson(string workSiteId, string emailType, string contactType)
@@ -54,11 +56,21 @@ namespace BDS.DotNetCoreKnowledage
                 return contacts;
             }
         }
+        public static void UpdateXml()
+        {
+            XmlDocument xmlDocument = new XmlDocument();
+            using(FileStream fs = new FileStream("PipelineConfig.xml",FileMode.Open, FileAccess.Read))
+            {
+                xmlDocument.Load(fs);
+            }
+            XmlNodeList pipeline = xmlDocument.GetElementsByTagName("pipeline");
+
+        }
         static void Main_Stop()
         {
             Process.StartTag();
-            //var value = Config.SelectEmailHostInfo("WorkSite01", "outlook", "address"); //Pass
-            var element = Config.SelectEmailContactPerson("WorkSite01", "outlook", "fromPerson");
+            var value = Config.SelectEmailHostInfo("WorkSite01", "outlook", "address"); //Pass
+            //var element = Config.SelectEmailContactPerson("WorkSite01", "outlook", "fromPerson");
             Process.EndTag();
         }
     }

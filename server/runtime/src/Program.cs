@@ -20,7 +20,7 @@ namespace BDS.Runtime
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<PipelineWorker>();
+                    services.AddHostedService<PipelineHostService>();
                 });
     }
 }
