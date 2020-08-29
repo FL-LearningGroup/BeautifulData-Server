@@ -20,20 +20,46 @@ namespace BDS.Runtime
         {
             XmlDocument xmlDoc = new XmlDocument();
             List<AssemblyConfig> assemblyConfigs = new List<AssemblyConfig>();
-            using(FileStream fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read))
+            if (IsFileLocked(xmlPath))
+            {
+                Console.WriteLine("{0} has been open another program", xmlPath);
+                return null;
+            }
+            using (FileStream fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read))
             {
                 xmlDoc.Load(fs);
             }
-            string query = "//pipeline";
+            string query = "//pipeline//element";
             XmlNodeList pipelineNodes = xmlDoc.SelectNodes(query);
-            foreach(XmlNode node in pipelineNodes)
+            foreach (XmlNode node in pipelineNodes)
             {
-                assemblyConfigs.Add(new AssemblyConfig() 
-                    { AssemblyKey = node.Attributes["assemblyKey"].Value, AssemblyPath = node.Attributes["assemblyPath"].Value, AssemplyStatus = node.Attributes["assemblyStatus"].Value }
+                assemblyConfigs.Add(new AssemblyConfig()
+                { AssemblyKey = node.Attributes["assemblyKey"].Value, AssemblyPath = node.Attributes["assemblyPath"].Value, AssemplyStatus = node.Attributes["assemblyStatus"].Value }
                 );
             }
-
             return assemblyConfigs;
+ 
+        }
+        protected static bool IsFileLocked(string xmlPath)
+        {
+            try
+            {
+                using (FileStream stream = new FileStream(xmlPath, FileMode.Open, FileAccess.Read))
+                {
+                    stream.Close();
+                }
+            }
+            catch (IOException)
+            {
+                //the file is unavailable because it is:
+                //still being written to
+                //or being processed by another thread
+                //or does not exist (has already been processed)
+                return true;
+            }
+
+            //file is not locked
+            return false;
         }
     }
 }

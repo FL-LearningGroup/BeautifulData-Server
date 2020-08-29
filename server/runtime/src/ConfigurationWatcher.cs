@@ -26,7 +26,6 @@ namespace BDS.Runtime
             watcher.IncludeSubdirectories = true;
             watcher.Filter = "*";
             watcher.NotifyFilter = NotifyFilters.LastWrite
-                                    | NotifyFilters.LastAccess
                                     | NotifyFilters.FileName
                                     | NotifyFilters.DirectoryName;
         }
