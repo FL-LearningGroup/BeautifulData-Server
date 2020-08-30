@@ -158,9 +158,9 @@ namespace BDS.Runtime
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("Pipleine Collections^^^^^^^^^^^^^^^^^^");
-            foreach(var pipeline in _pipelineCollections)
+            foreach (var pipeline in _pipelineCollections)
             {
-                Console.WriteLine("{0} - {1}", pipeline.AssemblyKey, pipeline.AssemblyPath);
+                Console.WriteLine("{0} - {1} - {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status);
             }
             Console.WriteLine("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
         }
@@ -173,7 +173,15 @@ namespace BDS.Runtime
                 ShowDebugInfo();
                 AddPipeline();
                 RemovePipeline();
-                await Task.Delay(2000, stoppingToken);
+                foreach(Pipeline pipeline in _pipelineCollections)
+                {
+                    pipeline.ExecutePipelineAsync();
+                }
+                foreach (var pipeline in _pipelineCollections)
+                {
+                    Console.WriteLine("{0} - {1} - {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status);
+                }
+                //await Task.Delay(3000, stoppingToken);
             }
         }
     }

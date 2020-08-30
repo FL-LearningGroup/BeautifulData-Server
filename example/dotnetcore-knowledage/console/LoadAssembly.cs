@@ -65,7 +65,7 @@ namespace BDS.DotNetCoreKnowledage
             }
             Console.WriteLine("Unloaded asssembly successfully: {0}", !weak.IsAlive);
         }
-        static void Main()
+        static void Main_Stop()
         {
             Process.StartTag();
             CallLoadAssembly();

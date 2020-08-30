@@ -3,7 +3,7 @@
   <pipeline>
     <!--Status: Add -> Running(auot) -> Deleting(auto) ->Remove-->
     <element assemblyKey="BDS.Pipeline.FuYang.dll" assemblyPath="\pipeline\fuyang\BDS.Pipeline.FuYang.dll" assemblyStatus="Add" />
-    <element assemblyKey="BDS.Pipeline.FuYang.dll-v2" assemblyPath="\pipeline\fuyang\BDS.Pipeline.FuYang.dll" assemblyStatus="Add" />
-    <element assemblyKey="BDS.Pipeline.FuYang.dll-v3" assemblyPath="\pipeline\fuyang\BDS.Pipeline.FuYang.dll" assemblyStatus="Create" />
+    <element assemblyKey="BDS.Pipeline.FuYang.dll-v2" assemblyPath="\pipeline\fuyang-v2\BDS.Pipeline.FuYang.dll" assemblyStatus="None" />
+    <element assemblyKey="BDS.Pipeline.FuYang.dll-v3" assemblyPath="\pipeline\fuyang-v3\BDS.Pipeline.FuYang.dll" assemblyStatus="None" />
   </pipeline>
 </root>
