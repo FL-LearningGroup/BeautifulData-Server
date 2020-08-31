@@ -97,7 +97,7 @@ namespace BDS.Runtime
                 return;
             foreach (AssemblyConfig assemblyConfig in _addAssemblyConfigList)
             {   
-                _pipelineCollections.Add(new Pipeline(assemblyConfig.AssemblyKey, AssemblyInformation.ExecutingFolder + assemblyConfig.AssemblyPath));
+                _pipelineCollections.Add(new Pipeline(assemblyConfig.AssemblyKey, AssemblyInformation.ExecutingFolder + assemblyConfig.AssemblyPath, assemblyConfig.ScheduleTime));
                 _assemblyConfigList.Add(assemblyConfig);
             }
             _addAssemblyConfigList.Clear();
@@ -135,7 +135,7 @@ namespace BDS.Runtime
         }
         private void ShowDebugInfo()
         {
-            Console.WriteLine("Assembly Config^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+            Console.WriteLine("Assembly Config^^^^^^^^^^^^^^^^^^^^^^^^");
             Console.WriteLine("AssemblyConfigList--------------------");
             foreach(var config in _assemblyConfigList)
             {
@@ -175,13 +175,13 @@ namespace BDS.Runtime
                 RemovePipeline();
                 foreach(Pipeline pipeline in _pipelineCollections)
                 {
-                    pipeline.ExecutePipelineAsync();
+                    await pipeline.ExecutePipelineAsync();
                 }
                 foreach (var pipeline in _pipelineCollections)
                 {
                     Console.WriteLine("{0} - {1} - {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status);
                 }
-                //await Task.Delay(3000, stoppingToken);
+                await Task.Delay(3000, stoppingToken);
             }
         }
     }

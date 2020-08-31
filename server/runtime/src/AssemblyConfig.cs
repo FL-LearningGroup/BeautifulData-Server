@@ -17,6 +17,7 @@ namespace BDS.Runtime
         public string AssemblyKey { get; set; }
         public string AssemblyPath { get; set; }
         public string AssemplyStatus { get; set; }
+        public string ScheduleTime { get; set; }
 
         public bool Equals(AssemblyConfig config)
         {

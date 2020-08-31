@@ -144,7 +144,10 @@ namespace BDS.DotNetCoreKnowledage
         {
             //Format: prefix:Y:M:W:D:h:m:s
             Process.StartTag();
-            Console.WriteLine(DateTime.Now.DayOfWeek);
+            DateTime dt = Convert.ToDateTime("2020/08/09 23:05:00");
+            DateTime dt1 = DateTime.Now;
+            //DateTime dt = DateTime.ParseExact("2020/08/08 23:05:00","yyyy/MM/dd hh:mm:ss", System.Globalization.CultureInfo.CurrentCulture);
+            Console.WriteLine(dt < dt1);
             Process.EndTag();
         }
     }

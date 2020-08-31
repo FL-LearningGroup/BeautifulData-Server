@@ -4,12 +4,17 @@ using System.Text;
 
 namespace BDS.Runtime
 {
-    internal enum PiplelineScheduleTimeType
+    internal enum PiplelineScheduleApartTimeType
     {
-        FC = 1, // Fix cycle time.
-        EC, // Every cycle time.
-        AC, // Apart cycle time.
+        Y = 1, // Year.
+        M, // Month.
+        W, // Week.
+        D, // Day
+        HH, // Hour
+        MM, //Minute
+        SS, //Second
     }
+    /*
     /// <summary>
     /// Pipeline execute schedule time
     /// </summary>
@@ -130,5 +135,19 @@ namespace BDS.Runtime
             }
         }
 
+    }
+    */
+    /// <summary>
+    /// Pipeline execute schedule time
+    /// </summary>
+    [Serializable]
+    internal class PiplelineScheduleTime
+    {
+        private string _startTime;
+        private string _model;
+        private int _apartTime;
+        public string StartTime { get { return _startTime; } set { _startTime = value; } }
+        public string Model { get { return _model; } set { _model = value; } }
+        public int ApartTime { get { return _apartTime; } set { _apartTime = value; } }
     }
 }

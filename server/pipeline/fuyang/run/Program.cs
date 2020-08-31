@@ -7,7 +7,7 @@ namespace BDS.Pipeline.FuYang.Run
 {
     class Program
     {
-        readonly static string dllPath = @"D:\Lucas\git\BeautifulData-Server\server\pipeline\fuyang\src\bin\Debug\netcoreapp3.1\BDS.Pipeline.FuYang.dll";
+        readonly static string dllPath = @"D:\Lucas\git\BeautifulData-Server\server\runtime\src\bin\Debug\netcoreapp3.1\pipeline\fuyang\BDS.Pipeline.FuYang.dll";
         static void StartTag()
         {
             Console.WriteLine("Process start up.");

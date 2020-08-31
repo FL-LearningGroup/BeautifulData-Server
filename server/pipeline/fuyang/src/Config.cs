@@ -55,7 +55,7 @@ namespace BDS.Pipeline.FuYang
             string value = configDocXml.SelectSingleNode(query).FirstChild.Value;
             return value;
         }
-        public static string SelectExecuteTime()
+        public static string GetExecuteTime()
         {
             string query = String.Format("//exeSchema/time");
             string value = configDocXml.SelectSingleNode(query).FirstChild.Value;
