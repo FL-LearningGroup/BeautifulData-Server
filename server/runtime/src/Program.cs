@@ -13,6 +13,7 @@ namespace BDS.Runtime
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public static void Main(string[] args)
         {
+            Logger.Info("Start up BDS service.");
             CreateHostBuilder(args).Build().Run();
         }
 

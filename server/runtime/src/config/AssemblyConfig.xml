@@ -2,8 +2,8 @@
 <root>
   <pipeline>
     <!--Status: Add -> Running(auot) -> Deleting(auto) ->Remove-->
-    <element assemblyKey="BDS.Pipeline.FuYang.dll" assemblyPath="\pipeline\fuyang\BDS.Pipeline.FuYang.dll" assemblyStatus="Add" scheduleTime="2020/08/31 17:30:00|MM|2" />
-    <element assemblyKey="BDS.Pipeline.FuYang.dll-v2" assemblyPath="\pipeline\fuyang-v2\BDS.Pipeline.FuYang.dll" assemblyStatus="None" scheduleTime="2020/08/31 17:30:00|MM|2" />
-    <element assemblyKey="BDS.Pipeline.FuYang.dll-v3" assemblyPath="\pipeline\fuyang-v3\BDS.Pipeline.FuYang.dll" assemblyStatus="None" scheduleTime="2020/08/31 17:30:00|MM|2" />
+    <element assemblyKey="BDS.Pipeline.FuYang.dll" assemblyPath="\pipeline\fuyang\BDS.Pipeline.FuYang.dll" assemblyStatus="Add" scheduleTime="2020/09/02 08:00:00|D|1" />
+    <element assemblyKey="BDS.Pipeline.FuYang.dll-v2" assemblyPath="\pipeline\fuyang-v2\BDS.Pipeline.FuYang.dll" assemblyStatus="None" scheduleTime="2020/09/01 14:18:00|MM|2" />
+    <element assemblyKey="BDS.Pipeline.FuYang.dll-v3" assemblyPath="\pipeline\fuyang-v3\BDS.Pipeline.FuYang.dll" assemblyStatus="None" scheduleTime="2020/09/01 14:18:00|MM|2" />
   </pipeline>
 </root>

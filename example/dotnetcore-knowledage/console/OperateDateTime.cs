@@ -140,7 +140,7 @@ namespace BDS.DotNetCoreKnowledage
                 exePipelineTime[i - 1] = Convert.ToUInt32(dtArray[i].Substring(1));
             }
         }
-        static void Main()
+        static void Main_Stop()
         {
             //Format: prefix:Y:M:W:D:h:m:s
             Process.StartTag();

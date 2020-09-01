@@ -24,6 +24,7 @@ namespace BDS.Runtime
         //Assemble name as key.
         private string _assemblyKey;
         private PipelineStatus _status = PipelineStatus.Wait;
+        private Task _piplineTask = null;
         public string ScheduleTimeFormat { get { return _scheduleTimeStr; } }
         public string AssemblyFullName { get { return _assemblyFullName; } }
         public string LoadDate { get { return _loadDate; } }
@@ -39,7 +40,6 @@ namespace BDS.Runtime
         public string LastExecuteTime { get { return _lastExecuteTime.ToString(ScheduleDateFormat); } }
         public string NextExecuteTime { get { return _nextExecuteTime.ToString(ScheduleDateFormat); } }
 
-
         public Pipeline(string assemblyKey,string assemblyPath, string scheduleTimeStr)
         {
             _assemblyKey = assemblyKey;
@@ -47,11 +47,11 @@ namespace BDS.Runtime
             _scheduleTimeStr = scheduleTimeStr;
         }
 
-        private void StartWork(out WeakReference weakRef)
+        private void StartWork(out WeakReference weakRef, ref bool loadAssemblyFlag)
         {
             weakRef = new WeakReference(new object());
-            Console.WriteLine("last execute time {0}", _lastExecuteTime);
-            Console.WriteLine("next execute time {0}", _nextExecuteTime);
+            Logger.Info(String.Format("{1}-last execute time {0}", LastExecuteTime, _assemblyKey));
+            Logger.Info(String.Format("{1}-next execute time {0}", NextExecuteTime, _assemblyKey));
             SetScheduleTime(_scheduleTimeStr);
             if (_firstExeFlag)
             {
@@ -61,6 +61,7 @@ namespace BDS.Runtime
             {
                 _status = PipelineStatus.Running;
                 PipelineAssemblyLoadContext assemblyLoadContext = new PipelineAssemblyLoadContext(_assemblyPath);
+                loadAssemblyFlag = true;
                 weakRef = new WeakReference(assemblyLoadContext);
                 try
                 {
@@ -74,11 +75,10 @@ namespace BDS.Runtime
 
                         if (type.Name.Contains("Pipeline_"))
                         {
-
-                            Console.WriteLine("{0} invoke startwork", _assemblyKey);
+                            object pipelineInstance = Activator.CreateInstance(type);
+                            Logger.Info(String.Format("{0} invoke StartWork Method", _assemblyKey));
                             _executeStartTime = DateTime.Now;
-                            //var result = type.InvokeMember("StartWork", BindingFlags.InvokeMethod, null, pipelineInstance, null);
-                            Task.Delay(2000);
+                            var result = type.InvokeMember("StartWork", BindingFlags.InvokeMethod, null, pipelineInstance, null);
                             _executeEndTime = DateTime.Now;
                             _lastExecuteTime = _nextExecuteTime;
                             SetNextExecuteTime();
@@ -87,12 +87,13 @@ namespace BDS.Runtime
                         }
                     }
                     assemblyLoadContext.Unload();
+                    Logger.Info(String.Format("{0} asssembly unloaded.", _assemblyFullName));
                     _unloadDate = DateTime.Now.ToString(DateFormat);
                 }
                 catch (Exception ex)
                 {
                     _status = PipelineStatus.Failed;
-                    Console.WriteLine("Load assembly failed: {0}", ex.Message);
+                    Logger.Info(String.Format("{1} Invoke or Load assembly failed: {0}", ex.Message, _assemblyFullName));
                 }
             }   
 
@@ -123,6 +124,10 @@ namespace BDS.Runtime
             {
                 _nextExecuteTime = _lastExecuteTime.AddDays(7);
             }
+            if (_scheduleTime.Model.ToUpper() == PiplelineScheduleApartTimeType.D.ToString())
+            {
+                _nextExecuteTime = _lastExecuteTime.AddDays(_scheduleTime.ApartTime);
+            }
             if (_scheduleTime.Model.ToUpper() == PiplelineScheduleApartTimeType.HH.ToString())
             {
                 _nextExecuteTime = _lastExecuteTime.AddHours(_scheduleTime.ApartTime);
@@ -138,19 +143,31 @@ namespace BDS.Runtime
         }
         public async Task ExecutePipelineAsync()
         {
-            await Task.Run(() =>
+            if ((_piplineTask is null) || _piplineTask.IsCompleted)
             {
-                WeakReference weakRef;
-                StartWork(out weakRef);
-                for (int i = 0; weakRef.IsAlive; i++) //&& (i < 10)
+                _piplineTask = Task.Run(() =>
                 {
-                    Console.WriteLine("asssembly unloading");
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-                _gcCollectDate = DateTime.Now.ToString(DateFormat);
-                Console.WriteLine("Unloaded asssembly successfully: {0}", !weakRef.IsAlive);
-            });
+                    WeakReference weakRef;
+                    bool loadAssemblyFlag = false;
+                    StartWork(out weakRef, ref loadAssemblyFlag);
+                    if (loadAssemblyFlag)
+                    {
+                        for (int i = 0; weakRef.IsAlive; i++) //&& (i < 10)
+                        {
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+                        }
+                        _gcCollectDate = DateTime.Now.ToString(DateFormat);
+                        Logger.Info(String.Format("{0} Unloaded asssembly successfully: {1}", _assemblyFullName, !weakRef.IsAlive));
+                    }
+   
+                 });
+                await _piplineTask;
+             }
+            else
+            {
+                Logger.Info(String.Format("{0} pipelline task running", _assemblyKey));
+            }
         }
     }
 }

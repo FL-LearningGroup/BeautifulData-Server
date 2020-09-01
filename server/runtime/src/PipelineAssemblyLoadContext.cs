@@ -33,7 +33,7 @@ namespace BDS.Runtime
             string assemblyPath = _resolver.ResolveAssemblyToPath(name);
             if (assemblyPath != null)
             {
-                //Console.WriteLine($"Loading assembly {assemblyPath} into the HostAssemblyLoadContext");
+                Logger.Info($"Loading assembly {assemblyPath} into the HostAssemblyLoadContext");
                 return LoadFromAssemblyPath(assemblyPath);
             }
 

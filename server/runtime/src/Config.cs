@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -22,7 +23,7 @@ namespace BDS.Runtime
             List<AssemblyConfig> assemblyConfigs = new List<AssemblyConfig>();
             if (IsFileLocked(xmlPath))
             {
-                Console.WriteLine("{0} has been open another program", xmlPath);
+                Logger.Error(String.Format("{0} has been open another program", xmlPath));
                 return null;
             }
             using (FileStream fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read))

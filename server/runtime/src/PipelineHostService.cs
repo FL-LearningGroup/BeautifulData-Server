@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -52,7 +53,7 @@ namespace BDS.Runtime
         }
         private void AddAssemblyPath(object source, FileSystemEventArgs e)
         {
-            //Console.WriteLine("Trigger watcher file.");
+            //Logger.Info("Trigger watcher file.");
             List<AssemblyConfig> assemblyConfigs = Config.LoadAssemblyConfig(e.FullPath);
             if (assemblyConfigs is null)
                 return;
@@ -135,38 +136,36 @@ namespace BDS.Runtime
         }
         private void ShowDebugInfo()
         {
-            Console.WriteLine("Assembly Config^^^^^^^^^^^^^^^^^^^^^^^^");
-            Console.WriteLine("AssemblyConfigList--------------------");
+            Logger.Info("Assembly Config^^^^^^^^^^^^^^^^^^^^^^^^");
+            Logger.Info("AssemblyConfigList--------------------");
             foreach(var config in _assemblyConfigList)
             {
-                Console.WriteLine("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus);
+                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus));
             }
-            Console.WriteLine("--------------------------------------");
-            Console.WriteLine("AddAssemblyConfigList-----------------");
+            Logger.Info("--------------------------------------");
+            Logger.Info("AddAssemblyConfigList-----------------");
             foreach (var config in _addAssemblyConfigList)
             {
-                Console.WriteLine("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus);
+                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus));
             }
-            Console.WriteLine("--------------------------------------");
-            Console.WriteLine("RemoveAssemblyConfigList--------------");
+            Logger.Info("--------------------------------------");
+            Logger.Info("RemoveAssemblyConfigList--------------");
             foreach (var config in _removeAssemblyConfigList)
             {
-                Console.WriteLine("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus);
+                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus));
             }
-            Console.WriteLine("--------------------------------------");
-            Console.WriteLine("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Pipleine Collections^^^^^^^^^^^^^^^^^^");
+            Logger.Info("--------------------------------------");
+            Logger.Info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+            Logger.Info("Pipleine Collections^^^^^^^^^^^^^^^^^^");
             foreach (var pipeline in _pipelineCollections)
             {
-                Console.WriteLine("{0} - {1} - {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status);
+                Logger.Info(String.Format("{0} - {1} - Status: {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status));
             }
-            Console.WriteLine("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+            Logger.Info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("Pipeline Service start.");
+            Logger.Info("Start Up Pipeline Host Service.");
             ServiceStart();
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -175,11 +174,11 @@ namespace BDS.Runtime
                 RemovePipeline();
                 foreach(Pipeline pipeline in _pipelineCollections)
                 {
-                    await pipeline.ExecutePipelineAsync();
+                    pipeline.ExecutePipelineAsync();
                 }
                 foreach (var pipeline in _pipelineCollections)
                 {
-                    Console.WriteLine("{0} - {1} - {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status);
+                    Logger.Info(String.Format("{0} - {1} - {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status));
                 }
                 await Task.Delay(3000, stoppingToken);
             }
