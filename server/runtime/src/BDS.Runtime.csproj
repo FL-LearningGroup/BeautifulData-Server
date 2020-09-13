@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-BDS.Runtime-F4D98E7B-AFF3-4FAD-A479-BD87BD8A1CA0</UserSecretsId>
+    <Version>0.1.0</Version>
+    <Description>Collect data from web world.</Description>
   </PropertyGroup>
 
   <ItemGroup>

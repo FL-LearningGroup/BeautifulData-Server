@@ -55,8 +55,16 @@ namespace BDS.Runtime
         {
             //Logger.Info("Trigger watcher file.");
             List<AssemblyConfig> assemblyConfigs = Config.LoadAssemblyConfig(e.FullPath);
-            if (assemblyConfigs is null)
-                return;
+            int fileLock = 0;
+            while(assemblyConfigs is null)
+            {
+                assemblyConfigs = Config.LoadAssemblyConfig(e.FullPath);
+                fileLock++;
+                if (fileLock >= 3)
+                {
+                    return;
+                }
+            }
             foreach (AssemblyConfig assemblyConfig in assemblyConfigs)
             {
                 //Add assembly
@@ -91,6 +99,7 @@ namespace BDS.Runtime
                 }
 
             }
+            ShowDebugInfo();
         }
         public void AddPipeline()
         {
@@ -102,6 +111,7 @@ namespace BDS.Runtime
                 _assemblyConfigList.Add(assemblyConfig);
             }
             _addAssemblyConfigList.Clear();
+            ShowDebugInfo();
         }
         public void RemovePipeline()
         {
@@ -132,6 +142,7 @@ namespace BDS.Runtime
             {
                 _removeAssemblyConfigList.Remove(assemblyConfig);
             }
+            ShowDebugInfo();
 
         }
         private void ShowDebugInfo()
@@ -169,7 +180,6 @@ namespace BDS.Runtime
             ServiceStart();
             while (!stoppingToken.IsCancellationRequested)
             {
-                ShowDebugInfo();
                 AddPipeline();
                 RemovePipeline();
                 foreach(Pipeline pipeline in _pipelineCollections)
