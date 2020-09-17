@@ -1,7 +1,6 @@
 namespace BDS.CollectData {
-    /// <summary>Resource Interface </summary>
+    /// <summary>Interface of resource</summary>
     public interface IResource: IWorkSiteInput, IWorkSiteOutput {
-        //Store Resource Data
-    
+
     }
 }

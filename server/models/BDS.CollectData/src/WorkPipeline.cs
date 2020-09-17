@@ -5,15 +5,23 @@ namespace BDS.CollectData
     using BDS.CollectData.Models;
     using BDS.CollectData.BDSException;
     
+    /// <summary>
+    /// Pipeline for resource work
+    /// </summary>
     [Serializable]
     public class WorkPipeline
     {
         private WorkPipelineStatus _status = WorkPipelineStatus.Build;
         private LinkedList<IWorkSite> _workSiteLinked = new LinkedList<IWorkSite>();
+        public string Name { get; set; }
+        public string Description { get; set; }
         public WorkPipeline()
         {
 
         }
+        /// <summary>
+        /// Work status of status
+        /// </summary>
         public WorkPipelineStatus Status
         {
             get
@@ -25,6 +33,9 @@ namespace BDS.CollectData
                 this._status = value;
             }
         }
+        /// <summary>
+        /// Site linked of workpipeline
+        /// </summary>
         public LinkedList<IWorkSite> WorkSiteLinked
         {
             get
@@ -32,6 +43,11 @@ namespace BDS.CollectData
                 return this._workSiteLinked;
             }
         }
+        /// <summary>
+        /// Select site in work pipeline linked.
+        /// </summary>
+        /// <param name="identifier">identifier of work site</param>
+        /// <returns>Work site</returns>
         public IWorkSite SelectWorkSite(string identifier)
         {
             foreach(IWorkSite workSite in WorkSiteLinked)
@@ -43,12 +59,24 @@ namespace BDS.CollectData
             }
             return null;
         }
+
+        /// <summary>
+        /// Add work site in work pipeline linked.
+        /// </summary>
+        /// <param name="workSite">Work site</param>
+        /// <returns>Count of work site in work pipeline</returns>
         public int AddWorkSite(IWorkSite workSite)
         {
             this._workSiteLinked.AddLast(workSite);
             return this._workSiteLinked.Count;
         }
-        // Insert new node before currentNode node.
+
+        /// <summary>
+        /// Insert new node before currentNode node.
+        /// </summary>
+        /// <param name="currentIdentifier">Current identifier of work site</param>
+        /// <param name="insertWorkSite">Insert work site</param>
+        /// <returns>Insert result</returns>
         public bool InsertWorkSite(string currentIdentifier, IWorkSite insertWorkSite)
         {
             IWorkSite workSite =  SelectWorkSite(currentIdentifier);
@@ -68,6 +96,11 @@ namespace BDS.CollectData
 
         }
 
+        /// <summary>
+        /// Remove work site in work pipeline
+        /// </summary>
+        /// <param name="currentIdentifier">Current identifier of work site</param>
+        /// <returns>Count of work site in  work pipline</returns>
         public System.Int32 RemoveWorkSite(string currentIdentifier)
         {
             IWorkSite workSite = SelectWorkSite(currentIdentifier);
@@ -79,6 +112,12 @@ namespace BDS.CollectData
             return this._workSiteLinked.Count;
         }
 
+        /// <summary>
+        /// Update work site in work pipeline
+        /// </summary>
+        /// <param name="currentIdentifier">Current identifier of work site</param>
+        /// <param name="newWorkSite">New work site</param>
+        /// <returns>Update result</returns>
         public bool UpdateWorkSite(string currentIdentifier, IWorkSite newWorkSite)
         {
             IWorkSite oldWorkSite = SelectWorkSite(currentIdentifier);
@@ -100,6 +139,10 @@ namespace BDS.CollectData
             this._workSiteLinked.AddAfter(preNode, newWorkSite);
             return true;
         }
+        /// <summary>
+        /// Clear Work pipline.
+        /// </summary>
+        /// <returns>Count of work sitt in work pipeline</returns>
         public System.Int32 ClearWorkPipeline()
         {
             this._workSiteLinked.Clear();
@@ -107,33 +150,40 @@ namespace BDS.CollectData
             return this._workSiteLinked.Count;
         }
 
-        private bool CheckWorkSiteExecutable()
+        /// <summary>
+        /// Check if executable of work site.
+        /// </summary>
+        /// <returns>Result check</returns>
+        private string CheckWorkSiteExecutable()
         {
             foreach (IWorkSite workSite in this._workSiteLinked)
             {
                 if((workSite.Status != WorkSiteStatus.Executable) && (workSite.Status != WorkSiteStatus.Success))
                 {
-                    return false;
+                    return workSite.Identifier;
                 }
             }
-            return true;
+            return null;
         }
+        /// <summary>
+        /// Execute work site.
+        /// </summary>
+        /// <returns>Result execute.</returns>
         public bool Processor()
         {
-            if(this.Status == WorkPipelineStatus.Executable)
+            if (this.Status == WorkPipelineStatus.Executable)
             {
-                bool executable = CheckWorkSiteExecutable();
-                if(!executable)
+                string executable = CheckWorkSiteExecutable();
+                if (!String.IsNullOrEmpty(executable))
                 {
-                    throw new System.Exception("Exception: The status of Work Site is not executable.");
+                    throw new WorkPipelineException(Name, String.Format(" The status of {0}(WorkSite) is not executable in work pipline.", executable));
                 }
                 foreach (IWorkSite workSite in this._workSiteLinked)
                 {
                     workSite.Worker();
-                    if(workSite.Status == WorkSiteStatus.Failed) 
+                    if (workSite.Status == WorkSiteStatus.Failed) 
                     {
                         Status = WorkPipelineStatus.Failed;
-                        throw new WorkSiteException(this.GetType().Name,workSite.Identifier, workSite.Name + "-" + workSite.Description, "Work process failed.");
                     }
                 }
                 return true;

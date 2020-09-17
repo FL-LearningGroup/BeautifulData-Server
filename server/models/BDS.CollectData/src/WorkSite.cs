@@ -6,6 +6,7 @@ namespace BDS.CollectData
     /// <summary>
     ///  The WorkSite performs process data through Worker method.
     /// </summary>
+    [Serializable]
     public class WorkSite: IWorkSite {
         WorkSiteStatus _status = WorkSiteStatus.Build;
         public event EventHandler<WorkSiteStatusEventArgs> publicStatusEvent;
@@ -28,8 +29,13 @@ namespace BDS.CollectData
         private string _identifier;
 
         public string Identifier {
-            get {
+            get 
+            {
                 return _identifier;
+            }
+            set
+            {
+                _identifier = value;
             }
         }
         

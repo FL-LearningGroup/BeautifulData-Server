@@ -12,18 +12,6 @@ namespace BDS.CollectData.Tests
     internal class ResourceTest: Resource, IResource
     {
         private string _type;
-        public override string Type
-        {
-            get
-            {
-                return "test";
-            }
-            set
-            {
-                this._type = "test";
-            }
-
-        }
         public List<string> GetResourceData()
         {
             return new List<string>()
@@ -77,10 +65,10 @@ namespace BDS.CollectData.Tests
         {
             WorkPipeline wp = new WorkPipeline();
 
-            ResourceTest rg01 = new ResourceTest();
-            ResourceTest rg02 = new ResourceTest();
+            Resource rg01 = new Resource();
+            Resource rg02 = new Resource();
             List<IWorkFilter> wfList = new List<IWorkFilter>();
-            wfList.Add(new WorkFilterTest()
+            wfList.Add(new WorkFilter()
             {
                 TagName = "divTest",
                 TagClass = "classTest"
@@ -159,7 +147,7 @@ namespace BDS.CollectData.Tests
 
             //Start Work Pipeline
             wp.Status = WorkPipelineStatus.Executable;
-            Assert.Throws<Exception>(() => wp.Processor());
+            Assert.Throws<WorkPipelineException>(() => wp.Processor());
 
             ws01.Status = WorkSiteStatus.Executable;
             ws02.Status = WorkSiteStatus.Executable;
@@ -169,7 +157,8 @@ namespace BDS.CollectData.Tests
 
             WorkMachineExceptionTest workMachineExceptionTest = new WorkMachineExceptionTest();
             ws02.SetOrReplaceWorkMachine(workMachineExceptionTest);
-            Assert.Throws<WorkSiteException>(() => wp.Processor());
+            wp.Processor();
+            Assert.Equal(wp.Status, WorkPipelineStatus.Failed);
 
             //Clear Work Site linked of Work Pipeline.
             wsCount = wp.ClearWorkPipeline();
