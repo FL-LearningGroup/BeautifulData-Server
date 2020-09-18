@@ -9,6 +9,9 @@
     using log4net.Config;
     using log4net.Repository;
 
+    /// <summary>
+    /// Record information during server run
+    /// </summary>
     internal static class Logger
     {
         private static ILog _log;

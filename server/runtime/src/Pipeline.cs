@@ -1,18 +1,23 @@
 ﻿using Org.BouncyCastle.Asn1;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BDS.Runtime
 {
+    /// <summary>
+    /// The collections of assembly as pipeline.
+    /// </summary>
+    [Serializable]
     internal class Pipeline
     {
         private PiplelineScheduleTime _scheduleTime;
         private string _scheduleTimeStr;
         private DateTime _executeStartTime;
-        private DateTime _executeEndTime ;
+        private DateTime _executeEndTime;
         private DateTime _lastExecuteTime;
         private DateTime _nextExecuteTime;
         private bool _firstExeFlag = true;
@@ -47,11 +52,18 @@ namespace BDS.Runtime
             _scheduleTimeStr = scheduleTimeStr;
         }
 
-        private void StartWork(out WeakReference weakRef, ref bool loadAssemblyFlag)
+        /// <summary>
+        /// Execute assembly.
+        /// </summary>
+        /// <param name="weakRef">Weak reference can by GC for release assembly.</param>
+        /// <param name="loadAssemblyFlag">Load assembly whether success.</param>
+        private void StartWork(out WeakReference weakRef, ref bool loadAssemblyFlag, ref bool reachExeTime)
         {
             weakRef = new WeakReference(new object());
+#if DEBUG
             Logger.Info(String.Format("{1}-last execute time {0}", LastExecuteTime, _assemblyKey));
             Logger.Info(String.Format("{1}-next execute time {0}", NextExecuteTime, _assemblyKey));
+#endif
             SetScheduleTime(_scheduleTimeStr);
             if (_firstExeFlag)
             {
@@ -59,6 +71,7 @@ namespace BDS.Runtime
             }
             if (DateTime.Now >= _nextExecuteTime)
             {
+                reachExeTime = true;
                 _status = PipelineStatus.Running;
                 PipelineAssemblyLoadContext assemblyLoadContext = new PipelineAssemblyLoadContext(_assemblyPath);
                 loadAssemblyFlag = true;
@@ -78,11 +91,19 @@ namespace BDS.Runtime
                             object pipelineInstance = Activator.CreateInstance(type);
                             Logger.Info(String.Format("{0} invoke StartWork Method", _assemblyKey));
                             _executeStartTime = DateTime.Now;
-                            var result = type.InvokeMember("StartWork", BindingFlags.InvokeMethod, null, pipelineInstance, null);
+                            //var result = type.InvokeMember("StartWork", BindingFlags.InvokeMethod, null, pipelineInstance, null);
+                            var result = true;
                             _executeEndTime = DateTime.Now;
                             _lastExecuteTime = _nextExecuteTime;
                             SetNextExecuteTime();
-                            _status = PipelineStatus.Successed;
+                            if (Convert.ToBoolean(result))
+                            {
+                                _status = PipelineStatus.Successed;
+                            }
+                            else
+                            {
+                                _status = PipelineStatus.Failed;
+                            }
                             _firstExeFlag = false;
                         }
                     }
@@ -98,6 +119,10 @@ namespace BDS.Runtime
             }   
 
         }
+        /// <summary>
+        /// Set execute assembly schedule time
+        /// </summary>
+        /// <param name="time">schedule time</param>
         private void SetScheduleTime(string time)
         {
             try
@@ -110,6 +135,9 @@ namespace BDS.Runtime
                 throw new Exception(String.Format("Conver faile that Schedule time", ex.Message));
             }
         }
+        /// <summary>
+        /// Set next execute assembly schedule time
+        /// </summary>
         private void SetNextExecuteTime()
         {
             if (_scheduleTime.Model.ToUpper() == PiplelineScheduleApartTimeType.Y.ToString())
@@ -141,6 +169,10 @@ namespace BDS.Runtime
                 _nextExecuteTime = _lastExecuteTime.AddSeconds(_scheduleTime.ApartTime);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Result as task</returns>
         public async Task ExecutePipelineAsync()
         {
             if ((_piplineTask is null) || _piplineTask.IsCompleted)
@@ -149,7 +181,9 @@ namespace BDS.Runtime
                 {
                     WeakReference weakRef;
                     bool loadAssemblyFlag = false;
-                    StartWork(out weakRef, ref loadAssemblyFlag);
+                    bool reachExeTime = false;
+                    StartWork(out weakRef, ref loadAssemblyFlag, ref reachExeTime);
+                    //Loaded assembly successful.
                     if (loadAssemblyFlag)
                     {
                         for (int i = 0; weakRef.IsAlive; i++) //&& (i < 10)
@@ -159,14 +193,24 @@ namespace BDS.Runtime
                         }
                         _gcCollectDate = DateTime.Now.ToString(DateFormat);
                         Logger.Info(String.Format("{0} Unloaded asssembly successfully: {1}", _assemblyFullName, !weakRef.IsAlive));
+                        Logger.Info(String.Format("Pipleine execute result: AssemblyName: {0} | AssemblyPath: {1} | ExecuteStatus: {2} | LastExeTime: {3} | NextExeTime: {4} | ExeStartTime: {5} | ExeEndTime: {6}",
+                                _assemblyKey, _assemblyPath, Status, LastExecuteTime, NextExecuteTime, ExecuteStartTime, ExecuteEndTime));
                     }
-   
-                 });
+                    else if(reachExeTime)
+                    {
+                        Logger.Error(String.Format("{0} Loaded asssembly failed", _assemblyPath));
+                    }
+                    else
+                    {
+                        Logger.Error(String.Format("{0}  asssembly not reach execute time.", _assemblyKey));
+                    }
+
+                });
                 await _piplineTask;
              }
             else
             {
-                Logger.Info(String.Format("{0} pipelline task running", _assemblyKey));
+                Logger.Info(String.Format("{0} pipelline task {1}", _assemblyPath, Status));
             }
         }
     }

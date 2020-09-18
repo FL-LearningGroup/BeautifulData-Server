@@ -1,4 +1,3 @@
-#define DEBUG
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,7 +30,7 @@ namespace BDS.Runtime
         /// </summary>
         private List<AssemblyConfig> _removeAssemblyConfigList = new List<AssemblyConfig>();
 
-        public List<AssemblyConfig> AssemblyConfigList { get {return _assemblyConfigList; } }
+        public List<AssemblyConfig> AssemblyConfigList { get { return _assemblyConfigList; } }
         public List<AssemblyConfig> AddAssemblyConfigList { get { return _addAssemblyConfigList; } }
         public List<AssemblyConfig> RemoveAssemblyConfigList { get { return _removeAssemblyConfigList; } }
         public PipelineHostService()
@@ -45,11 +44,16 @@ namespace BDS.Runtime
             //Init load assembly path
             foreach (AssemblyConfig assemblyConfig in Config.LoadAssemblyConfig(AssemblyInformation.ExecutingFolder + @"\config\AssemblyConfig.xml"))
             {
-                if (assemblyConfig.AssemplyStatus.ToLower() == AssemblyConfigStatus.ADD.ToLower())
+                if (assemblyConfig.AssemblyStatus.ToLower() == AssemblyConfigStatus.ADD.ToLower())
                 {
                     _addAssemblyConfigList.Add(assemblyConfig);
                 }
             }
+        }
+        [Obsolete("No use in any where", true)]
+        private void UpdatePipelineHostConfig(object source, FileSystemEventArgs e)
+        {
+            Config.UpdateBDSLogFolder(e.FullPath);
         }
         private void AddAssemblyPath(object source, FileSystemEventArgs e)
         {
@@ -68,7 +72,7 @@ namespace BDS.Runtime
             foreach (AssemblyConfig assemblyConfig in assemblyConfigs)
             {
                 //Add assembly
-                if (assemblyConfig.AssemplyStatus.ToLower() == AssemblyConfigStatus.ADD.ToLower())
+                if (assemblyConfig.AssemblyStatus.ToLower() == AssemblyConfigStatus.ADD.ToLower())
                 {
                     //assembly exist
                     if (_assemblyConfigList.Contains(assemblyConfig))
@@ -84,7 +88,7 @@ namespace BDS.Runtime
                     continue;
                 }
                 //Remove assembly
-                if (assemblyConfig.AssemplyStatus.ToLower() == AssemblyConfigStatus.REMOVE.ToLower())
+                if (assemblyConfig.AssemblyStatus.ToLower() == AssemblyConfigStatus.REMOVE.ToLower())
                 {
                     if (_assemblyConfigList.Contains(assemblyConfig))
                     {
@@ -147,23 +151,24 @@ namespace BDS.Runtime
         }
         private void ShowDebugInfo()
         {
+#if DEBUG
             Logger.Info("Assembly Config^^^^^^^^^^^^^^^^^^^^^^^^");
             Logger.Info("AssemblyConfigList--------------------");
             foreach(var config in _assemblyConfigList)
             {
-                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus));
+                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemblyStatus));
             }
             Logger.Info("--------------------------------------");
             Logger.Info("AddAssemblyConfigList-----------------");
             foreach (var config in _addAssemblyConfigList)
             {
-                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus));
+                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemblyStatus));
             }
             Logger.Info("--------------------------------------");
             Logger.Info("RemoveAssemblyConfigList--------------");
             foreach (var config in _removeAssemblyConfigList)
             {
-                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemplyStatus));
+                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemblyStatus));
             }
             Logger.Info("--------------------------------------");
             Logger.Info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
@@ -173,6 +178,7 @@ namespace BDS.Runtime
                 Logger.Info(String.Format("{0} - {1} - Status: {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status));
             }
             Logger.Info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+#endif
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {

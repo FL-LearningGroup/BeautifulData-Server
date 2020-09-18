@@ -8,6 +8,9 @@ using System.Security.Permissions;
 
 namespace BDS.Runtime
 {
+    /// <summary>
+    /// Watch config folder.
+    /// </summary>
     internal class ConfigurationWatcher
     {
         private readonly static string _folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\config";
