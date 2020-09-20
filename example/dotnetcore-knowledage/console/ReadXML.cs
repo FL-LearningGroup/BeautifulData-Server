@@ -1,4 +1,5 @@
-﻿using BDS.DataReport.Model;
+﻿/*
+using BDS.DataReport.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -75,3 +76,4 @@ namespace BDS.DotNetCoreKnowledage
         }
     }
 }
+*/

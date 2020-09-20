@@ -15,5 +15,12 @@ namespace BDS.DotNetCoreKnowledage
             Console.WriteLine("---------Please enter key to end the process----------");
             Console.ReadKey();
         }
+        static void Main()
+        {
+            StartTag();
+            IProcess porcess = new FolderAndFile();
+            porcess.InvokeMain();
+            EndTag();
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace BDS.DotNetCoreKnowledage
             Console.WriteLine("End Invoke call task");
 
         }
-        static async Task Main()
+        static async Task Main_Stop()
         {
             Process.StartTag();
             while(true)

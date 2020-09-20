@@ -1,4 +1,4 @@
-﻿namespace BDS.DataFactory
+﻿  namespace BDS.DataFactory
 {
     using System;
     using System.Collections.Generic;
