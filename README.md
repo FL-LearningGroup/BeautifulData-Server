@@ -9,6 +9,8 @@
 graph TB
   bds[BDS Architecture] --> runtime[Runtime]
   bds --> framework[Framewrok]
+  bds --> plugin[Plugin]
   runtime --> |Drive|framework
-  framework --> |Extension|pipline[Pipeline]
+  framework --> |Implementation|pipline[Pipeline]
+  framework --> |Use|plugin
  ```
