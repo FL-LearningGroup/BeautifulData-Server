@@ -1,0 +1,19 @@
+{
+    "htmlFilter": [
+        {
+            "name01": "desc: html tag name",
+            "id": "desc: html tag id",
+            "class": "desc: html tag calss"
+        },
+        {
+            "name02": "desc: html tag name",
+            "id": "desc: html tag id",
+            "class": "desc: html tag calss"
+        },
+        {
+            "name": "desc: html tag name",
+            "id": "desc: html tag id",
+            "class": "desc: html tag calss"
+        }
+    ]
+}

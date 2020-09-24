@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <pipeline>
+    <!--Status: Add -> Running(auot) -> Deleting(auto) ->Remove-->
+    <element assemblyKey="BDS.Pipeline.FuYang.dll" assemblyPath="\pipeline\fuyang\BDS.Pipeline.FuYang.dll" assemblyStatus="Add" scheduleTime="2020/09/18 08:00:00|D|1" />
+  </pipeline>
+</root>
