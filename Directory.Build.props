@@ -27,7 +27,7 @@
      <!-- Setup common output paths -->
     <PropertyGroup>
         <!--Set build output folder-->
-        <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$(RepoRoot)artifacts\</ArtifactsDir>
+        <ArtifactsDir Condition="'$(ArtifactsDir)' == ''">$(RepoRoot)Artifacts\</ArtifactsDir>
         <ArtifactsObjDir>$(ArtifactsDir)obj\</ArtifactsObjDir>
         <ArtifactsBinDir>$(ArtifactsDir)bin\</ArtifactsBinDir>
         <ArtifactsPackagesDir>$(ArtifactsDir)packages\$(Configuration)\</ArtifactsPackagesDir>
