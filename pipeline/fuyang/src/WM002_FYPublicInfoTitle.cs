@@ -10,12 +10,17 @@ namespace BDS.Pipeline.FuYang
     using System.Diagnostics;
     internal class WM002_FYPublicInfoTitle : IWorkMachine
     {
-        public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
+        public WorkSiteStatus Worker(List<string> takeElements, IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {
             try
             {
                 HtmlWeb web = new HtmlWeb();
-                List<string> urlList = input.GetResourceData();
+
+                List<string> urlList = new List<string>();
+                foreach(string element in takeElements)
+                {
+                    urlList = input.GetResourceData(element);
+                }
                 string hostUrl = "http://www.fy.gov.cn";
                 //Get url from url list.
                 string xPath = System.String.Empty;
@@ -61,7 +66,7 @@ namespace BDS.Pipeline.FuYang
                         break;
                     }
                 }
-                output.StoreResourceData(dataStore);
+                output.StoreResourceData("publicInfo",dataStore);
             }
             catch(Exception ex)
             {

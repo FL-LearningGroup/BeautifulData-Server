@@ -5,13 +5,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
-  <!--DLL Reference
   <ItemGroup>
-    <Reference Include="BDS.Pipeline.FuYang">
-      <HintPath>..\src\bin\Debug\netcoreapp3.1\BDS.Pipeline.FuYang.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\src\BDS.Pipeline.FuYang.csproj">
+    </ProjectReference>
   </ItemGroup>
-  -->
   <!--Package Reference-->
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />

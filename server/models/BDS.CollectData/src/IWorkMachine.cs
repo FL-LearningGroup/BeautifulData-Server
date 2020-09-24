@@ -12,7 +12,7 @@ namespace BDS.CollectData
         /// <param name="output">Output data</param>
         /// <param name="workFilter">Data filter</param>
         /// <returns>Work site status</returns>
-        WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter);
+        WorkSiteStatus Worker(List<string> inItems, IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter);
     }
     
 }

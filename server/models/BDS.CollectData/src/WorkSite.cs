@@ -26,6 +26,7 @@ namespace BDS.CollectData
             }
 
         }
+        public List<string> takeElements { get; set; }
         private string _identifier;
 
         public string Identifier {
@@ -68,22 +69,27 @@ namespace BDS.CollectData
         private void Initialize() {
             _identifier = System.Guid.NewGuid().ToString();
         }
-        public void Worker()
+        public IWorkSite Worker()
         {
             Status = WorkSiteStatus.Running;
-            Status = _workMachine.Worker(_inputResource, _outputResource, _workFilterList);            
+            Status = _workMachine.Worker(takeElements, _inputResource, _outputResource, _workFilterList);
+            return this;
         }
-        public void SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource) {
+        public IWorkSite SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource) {
             _inputResource = inputResource;
+            return this;
         }
-        public void SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource) {
+        public IWorkSite SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource) {
             _outputResource = outputResource;
+            return this;
         }
-        public void SetOrReplaceWorkMachine(IWorkMachine workMachine) {
+        public IWorkSite SetOrReplaceWorkMachine(IWorkMachine workMachine) {
             _workMachine = workMachine;
+            return this;
         }
-        public void SetOrReplaceWorkFilter(List<IWorkFilter> workFilter) {
+        public IWorkSite SetOrReplaceWorkFilter(List<IWorkFilter> workFilter) {
             _workFilterList = workFilter;
+            return this;
         }
     }
 }

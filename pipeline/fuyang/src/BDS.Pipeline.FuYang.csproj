@@ -3,33 +3,15 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
-  <!--
   <ItemGroup>
-    <ProjectReference Include="..\..\..\models\BDS.CollectData\src\BDS.CollectData.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>BDS.CollectData.dll</IncludeAssets>
+    <ProjectReference Include="$(RepoServerPath)\models\BDS.CollectData\src\BDS.CollectData.csproj">
     </ProjectReference>
-    <ProjectReference Include="..\..\..\models\BDS.DataFactory\src\BDS.DataFactory.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>BDS.DataFactory.dll</IncludeAssets>
+    <ProjectReference Include="$(RepoServerPath)\models\BDS.DataFactory\src\BDS.DataFactory.csproj">
     </ProjectReference>
-    <ProjectReference Include="..\..\..\models\BDS.DataReport\src\BDS.DataReport.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <IncludeAssets>BDS.DataReport.dll</IncludeAssets>
+    <ProjectReference Include="$(RepoServerPath)\models\BDS.DataReport\src\BDS.DataReport.csproj">
     </ProjectReference>
   </ItemGroup>
-  -->
-  <ItemGroup>
-    <Reference Include="BDS.CollectData">
-      <HintPath>..\..\..\models\BDS.CollectData\src\bin\Debug\netstandard2.0\BDS.CollectData.dll</HintPath>
-    </Reference>
-    <Reference Include="BDS.DataFactory">
-      <HintPath>..\..\..\models\BDS.DataFactory\src\bin\Debug\netcoreapp3.1\BDS.DataFactory.dll</HintPath>
-    </Reference>
-    <Reference Include="BDS.DataReport">
-      <HintPath>..\..\..\models\BDS.DataReport\src\bin\Debug\netcoreapp3.1\BDS.DataReport.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+
   <!--Package Reference-->
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />

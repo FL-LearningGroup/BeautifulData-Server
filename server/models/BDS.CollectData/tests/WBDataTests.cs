@@ -12,8 +12,10 @@ namespace BDS.CollectData.Tests
     public class WBDataTests
     {
         [Fact]
+        [Obsolete("Not used any more", true)]
         public void OperateWBDataTest()
         {
+
             WBData wbData = new WBData();
             List<string> list1 = new List<string> {"k1", "k2", "k3" };
             List<string> list2 = new List<string> { "k1", "k2", "k3" };

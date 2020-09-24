@@ -9,6 +9,7 @@ namespace BDS.CollectData.DataStructure
     /// <summary>
     /// Collection data of web page.
     /// </summary>
+    [Obsolete("Not used any more", true)]
     [Serializable]
     public class WBData : IWBData
     {

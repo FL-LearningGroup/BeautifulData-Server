@@ -3,22 +3,23 @@ namespace BDS.CollectData {
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Design.Serialization;
+    using System.Linq;
 
     /// <summary>The collections of store resource.</summary>
     [Serializable]
     public class Resource: IResource {
-        private WBData _data;
+        private Dictionary<string, List<string>> _data;
         /// <summary>
         /// Store data
         /// </summary>
-        public WBData Data { get { return _data; }}
+        virtual public Dictionary<string, List<string>> Data { get { return _data; } set { _data = value; } }
 
         public Resource()
         {
-            _data = new WBData();
+            _data = new Dictionary<string, List<string>>();
         }
 
-        public Resource(WBData data)
+        public Resource(Dictionary<string, List<string>> data)
         {
             _data = data;
         }
@@ -27,9 +28,9 @@ namespace BDS.CollectData {
         /// </summary>
         /// <param name="item">the named of data</param>
         /// <returns>data list</returns>
-        public List<string> GetResourceData(string item)
+        virtual public List<string> GetResourceData(string item)
         {
-            return _data[item];
+            return Data[item];
         }
 
         /// <summary>
@@ -38,10 +39,14 @@ namespace BDS.CollectData {
         /// <param name="item">The named of data</param>
         /// <param name="data">data list</param>
         /// <returns>Count data</returns>
-        public int StoreResourceData(string item, List<string> data)
+        virtual public int StoreResourceData(string item, List<string> data)
         {
-            _data.StoreOrReplaceElementData(item, data);
-            return _data[item].Count;
+            if (Data.Keys.Contains(item))
+            {
+                Data.Remove(item);
+            }
+            Data.Add(item, data);
+            return Data.Count;
         }
     }
 }

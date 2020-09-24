@@ -4,6 +4,7 @@ using System.Text;
 
 namespace BDS.CollectData.DataStructure
 {
+    [Obsolete("Not used any more", true)]
     public interface IWBData
     {
         /// <summary>

@@ -19,7 +19,7 @@ namespace BDS.Pipeline.FuYang.Run
             Console.WriteLine("Process End.");
             Console.ReadKey();
         }
-        static void DynamicLoadDLL()
+        static bool DynamicLoadDLL()
         {
             Assembly dll = Assembly.LoadFrom(dllPath);
             foreach (Type type in dll.GetExportedTypes())
@@ -36,18 +36,21 @@ namespace BDS.Pipeline.FuYang.Run
                 {
                     var pipelineInstance = Activator.CreateInstance(type);
                     var result = type.InvokeMember("StartWork", BindingFlags.InvokeMethod, null, pipelineInstance, null);
-                    Console.WriteLine("result: {0}", result);
+                    return Convert.ToBoolean(result);
                 }
+                return false;
             }
+            return false;
         }
-        static void ManualLoadDLL()
+        static bool InvokeStartWork()
         {
-            //Pipeline_FuYangNews.StartWork();
+            return Pipeline_FuYangNews.StartWork();
         }
         static void Main(string[] args)
         {
             StartTag();
-            DynamicLoadDLL();
+            bool result = InvokeStartWork();
+            Console.WriteLine("Pipeline execute: {0}", result);
             EndTag();
         }
     }

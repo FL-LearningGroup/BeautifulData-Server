@@ -14,84 +14,72 @@
     {
         public static bool StartWork()
         {
-            Logger.Info("Pipeline FuYang: Start work");
-            //public info base url
-            Logger.Info("Build Pipeline");
-            WorkSite workSite001 = new WorkSite();
-            workSite001.Name = "workSite001";
-            workSite001.Description = "Get all public info links";
-
-            const string html = @"http://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/";
-            FYPublicInfoBaseUrl fyPublicInfoBaseUrl = new FYPublicInfoBaseUrl();
-            fyPublicInfoBaseUrl.Type = "url";
-            fyPublicInfoBaseUrl.dataStore = html;
-
-            //Collect all public info url links.
-            FYPublicInfoUrlLinksCls fyPublicInfoUrlLinks = new FYPublicInfoUrlLinksCls();
-            fyPublicInfoUrlLinks.Type = "url";
-
-            //Select public info link from html.
-            List<IWorkFilter> wm001_filterList = new List<IWorkFilter>();
-            wm001_filterList.Add(new FyYangPublicInfoFilter()
-            {
-                TagName = "div",
-                TagId = "page-list"
-            });
-            wm001_filterList.Add(new FyYangPublicInfoFilter()
-            {
-                TagName = "span",
-                TagClass = "currentpage"
-            });
-            //Work Machine process.
-            WM001_FYPublicInfoUrlLinks wm001_FYPublicInfoUrlLinks = new WM001_FYPublicInfoUrlLinks();
-            workSite001.SetOrReplaceWorkSiteInput(fyPublicInfoBaseUrl);
-            workSite001.SetOrReplaceWorkSiteOutput(fyPublicInfoUrlLinks);
-            workSite001.SetOrReplaceWorkFilter(wm001_filterList);
-            workSite001.SetOrReplaceWorkMachine(wm001_FYPublicInfoUrlLinks);
-            workSite001.Status = WorkSiteStatus.Executable;
-
-            //Get all public info title
-            WorkSite workSite002 = new WorkSite();
-            workSite001.Name = "workSite002";
-            workSite001.Description = "Get all public titles links";
-
-            FYPublicInfoTitleCls fyPublicInfoTitle = new FYPublicInfoTitleCls(workSite002);
-            fyPublicInfoTitle.Type = "url";
-
-            List<IWorkFilter> wm002_filterList = new List<IWorkFilter>();
-            wm002_filterList.Add(new FyYangPublicInfoFilter()
+            Logger.Info("Pipeline FuYang News: Start Work");
+            Logger.Info("Start build pipeline.");
+            Resource resourceHomePage = new Resource();
+            Resource resourceTitleLinks = new Resource();
+            resourceHomePage.Data.Add("HomePage", new List<string>() { @"http://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/" });
+            List<IWorkFilter> wf001 = new List<IWorkFilter>();
+            wf001.Add(new WorkFilter()
             {
                 TagName = "div",
                 TagClass = "list-right"
-            });
-            wm002_filterList.Add(new FyYangPublicInfoFilter()
+            }
+            );
+            wf001.Add(new WorkFilter()
             {
                 TagName = "div",
                 TagClass = "listright-box"
             });
-            wm002_filterList.Add(new FyYangPublicInfoFilter()
+            wf001.Add(new WorkFilter()
             {
                 TagName = "ul",
             });
-            wm002_filterList.Add(new FyYangPublicInfoFilter()
+            wf001.Add(new WorkFilter()
+            {
+                TagName = "li",
+            });
+            WM001_FYPublicInfoUrlLinks wm001_FYPublicInfoUrlLinks = new WM001_FYPublicInfoUrlLinks();
+            WorkSite ws001 = new WorkSite();
+            ws001.Name = "GetFyPublicInfoUrlLinks";
+            ws001.Description = "Get page link of fy yang public info links.";
+            ws001.SetOrReplaceWorkSiteInput(resourceHomePage).SetOrReplaceWorkSiteOutput(resourceTitleLinks).SetOrReplaceWorkFilter(wf001).SetOrReplaceWorkMachine(wm001_FYPublicInfoUrlLinks);
+            ws001.takeElements = new List<string>() { "HomePage" };
+            ws001.Status = WorkSiteStatus.Executable;
+
+            /*
+            Resource resourcePublicInfo = new Resource();
+            List<IWorkFilter> wf002 = new List<IWorkFilter>();
+            wf002.Add(new WorkFilter()
+            {
+                TagName = "div",
+                TagClass = "list-right"
+            });
+            wf002.Add(new WorkFilter()
+            {
+                TagName = "div",
+                TagClass = "listright-box"
+            });
+            wf002.Add(new WorkFilter()
+            {
+                TagName = "ul",
+            });
+            wf002.Add(new WorkFilter()
             {
                 TagName = "li",
             });
             WM002_FYPublicInfoTitle wm002_FYPublicInfoTitle = new WM002_FYPublicInfoTitle();
-
-
-            
-            workSite002.SetOrReplaceWorkSiteInput(fyPublicInfoUrlLinks);
-            workSite002.SetOrReplaceWorkSiteOutput(fyPublicInfoTitle);
-            workSite002.SetOrReplaceWorkFilter(wm002_filterList);
-            workSite002.SetOrReplaceWorkMachine(wm002_FYPublicInfoTitle);
-            workSite002.Status = WorkSiteStatus.Executable;
-
+            WorkSite ws002 = new WorkSite();
+            ws002.Name = "GetPublicInfo";
+            ws002.Description = "Get public info of fu yuang";
+            ws002.SetOrReplaceWorkSiteInput(resourceTitleLinks).SetOrReplaceWorkSiteOutput(resourcePublicInfo).SetOrReplaceWorkFilter(wf002).SetOrReplaceWorkMachine(wm002_FYPublicInfoTitle);
+            ws002.takeElements = new List<string>() { "AllTitleLinks" };
+            ws002.Status = WorkSiteStatus.Executable;
+            */
             WorkPipeline workPipeline = new WorkPipeline();
-            workPipeline.AddWorkSite(workSite001);
-            workPipeline.AddWorkSite(workSite002);
+            workPipeline.AddWorkSite(ws001);
+            //workPipeline.AddWorkSite(ws002);
             workPipeline.Status = WorkPipelineStatus.Executable;
-
             Logger.Info("Build Pipeline completed.");
             try
             {
@@ -101,7 +89,7 @@
                 return true;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.Error(String.Format("Pipeline execute failed.{0}", ex.Message));
                 return false;

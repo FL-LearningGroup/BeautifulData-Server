@@ -1,6 +1,7 @@
 namespace BDS.CollectData
 {
     using System;
+    using System.Collections.Generic;
     using BDS.CollectData.Models;
     /// <summary>
     /// Work site
@@ -34,10 +35,17 @@ namespace BDS.CollectData
         /// </summary>
         IWorkSiteOutput OutputResource { get; }
 
+        List<string> takeElements { get; set; }
+
         /// <summary>
         /// Work site run
         /// </summary>
-        void Worker();
+        IWorkSite Worker();
+
+        public IWorkSite SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource);
+        public IWorkSite SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource);
+        public IWorkSite SetOrReplaceWorkMachine(IWorkMachine workMachine);
+        public IWorkSite SetOrReplaceWorkFilter(List<IWorkFilter> workFilter);
 
     }
     

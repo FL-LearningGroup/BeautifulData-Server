@@ -46,14 +46,14 @@ namespace BDS.CollectData.Tests
     }
     internal class WorkMachineTest: IWorkMachine
     {
-        public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
+        public WorkSiteStatus Worker(List<string> takeElments, IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {
             return WorkSiteStatus.Success;
         }
     }
     internal class WorkMachineExceptionTest : IWorkMachine
     {
-        public WorkSiteStatus Worker(IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
+        public WorkSiteStatus Worker(List<string> takeElments, IWorkSiteInput input, IWorkSiteOutput output, List<IWorkFilter> workFilter)
         {
             return WorkSiteStatus.Failed;
         }
@@ -75,10 +75,7 @@ namespace BDS.CollectData.Tests
             });
             WorkMachineTest vm = new WorkMachineTest();
             WorkSite ws01 = new WorkSite();
-            ws01.SetOrReplaceWorkSiteInput(rg01);
-            ws01.SetOrReplaceWorkSiteOutput(rg02);
-            ws01.SetOrReplaceWorkFilter(wfList);
-            ws01.SetOrReplaceWorkMachine(vm);
+            ws01.SetOrReplaceWorkSiteInput(rg01).SetOrReplaceWorkSiteOutput(rg02).SetOrReplaceWorkFilter(wfList).SetOrReplaceWorkMachine(vm);
             Assert.NotNull(ws01.Identifier);
 
             // Add Works Site to Work Pipeline
