@@ -1,2 +1,6 @@
-## Overview
-Collect knowledge of the scope of c# or dotnet core. 
+## BDS Architecture
++ Diagram Mermaid Online Edit
+
++ Diagram View
+
++ Diagram Mermaid Code
