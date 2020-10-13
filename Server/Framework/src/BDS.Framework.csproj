@@ -3,5 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
-
+  <Target Name="TestMsg" AfterTargets="Targets">
+    <Message Text="Project File Name${test}"></Message>
+  </Target>
 </Project>

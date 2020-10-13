@@ -18,8 +18,8 @@ namespace BDS.DotNetCoreKnowledage
         static void Main()
         {
             StartTag();
-            IProcess porcess = new FolderAndFile();
-            porcess.InvokeMain();
+            IProcess process = new GenericT();
+            process.InvokeMain();
             EndTag();
         }
     }

@@ -1,25 +1,24 @@
-namespace BDS.CollectData
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace BDS.Framework
 {
-    using System;
-    using System.Collections.Generic;
-    using BDS.CollectData.Models;
-    /// <summary>
-    ///  The WorkSite performs process data through Worker method.
-    /// </summary>
-    [Serializable]
-    public class WorkSite: IWorkSite 
+    public class WorkSite: IWorkSite
     {
         WorkSiteStatus _status = WorkSiteStatus.Build;
-        public event EventHandler<WorkSiteStatusEventArgs> publicStatusEvent;
-        public WorkSiteStatus Status {
-            get {
+        public event EventHandler<WorkSiteStatusTriggerEventArgs> publicStatusEvent;
+        public WorkSiteStatus Status
+        {
+            get
+            {
                 return _status;
             }
             set
             {
-                WorkSiteStatusEventArgs workSiteStatusEventArgs = new WorkSiteStatusEventArgs();
+                WorkSiteStatusTriggerEventArgs workSiteStatusEventArgs = new WorkSiteStatusTriggerEventArgs();
                 _status = value;
-                if( _status == WorkSiteStatus.Success && publicStatusEvent != null)
+                if (_status == WorkSiteStatus.Success && publicStatusEvent != null)
                 {
                     workSiteStatusEventArgs.Status = WorkSiteStatus.Success;
                     publicStatusEvent(this, workSiteStatusEventArgs);
@@ -27,11 +26,11 @@ namespace BDS.CollectData
             }
 
         }
-        public List<string> takeElements { get; set; }
         private string _identifier;
 
-        public string Identifier {
-            get 
+        public string Identifier
+        {
+            get
             {
                 return _identifier;
             }
@@ -40,7 +39,7 @@ namespace BDS.CollectData
                 _identifier = value;
             }
         }
-        
+
         IWorkSiteInput _inputResource;
         public IWorkSiteInput InputResource
         {
@@ -62,35 +61,54 @@ namespace BDS.CollectData
         public string Description { get; set; }
 
         IWorkMachine _workMachine;
-        List<IWorkFilter> _workFilterList;
-        public WorkSite() {
+        public WorkSite()
+        {
             Initialize();
         }
 
-        private void Initialize() {
+        private void Initialize()
+        {
             _identifier = System.Guid.NewGuid().ToString();
         }
         public IWorkSite Worker()
         {
             Status = WorkSiteStatus.Running;
-            Status = _workMachine.Worker(takeElements, _inputResource, _outputResource, _workFilterList);
+            Status = _workMachine.Worker(_inputResource, _outputResource);
             return this;
         }
-        public IWorkSite SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource) {
+        public IWorkSite SetOrReplaceWorkSiteInput(IWorkSiteInput inputResource)
+        {
             _inputResource = inputResource;
             return this;
         }
-        public IWorkSite SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource) {
+        public IWorkSite SetOrReplaceWorkSiteOutput(IWorkSiteOutput outputResource)
+        {
             _outputResource = outputResource;
             return this;
         }
-        public IWorkSite SetOrReplaceWorkMachine(IWorkMachine workMachine) {
+        public IWorkSite SetOrReplaceWorkMachine(IWorkMachine workMachine)
+        {
             _workMachine = workMachine;
             return this;
         }
-        public IWorkSite SetOrReplaceWorkFilter(List<IWorkFilter> workFilter) {
+
+        public IWorkSite AddResourceEventHandler(IResourceEventHandle resourceEventHandle)
+        {
+            publicStatusEvent += resourceEventHandle.ResourceDataEvent;
+            return this;
+        }
+
+        public IWorkSite RemoveResourceEventHandler(IResourceEventHandle resourceEventHandle)
+        {
+            publicStatusEvent -= resourceEventHandle.ResourceDataEvent;
+            return this;
+        }
+        /*
+        public IWorkSite SetOrReplaceWorkFilter(List<IWorkFilter> workFilter)
+        {
             _workFilterList = workFilter;
             return this;
         }
+        */
     }
 }

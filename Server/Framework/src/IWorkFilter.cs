@@ -4,7 +4,11 @@ using System.Text;
 
 namespace BDS.Framework
 {
-    class IWorkFilter
+    [Obsolete("Forbid", true)]
+    public interface IWorkFilter
     {
+        string TagName { get; set; }
+        string TagId { get; set; }
+        string TagClass { get; set; }
     }
 }
