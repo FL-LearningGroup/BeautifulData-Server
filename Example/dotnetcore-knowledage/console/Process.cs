@@ -18,8 +18,10 @@ namespace BDS.DotNetCoreKnowledage
         static void Main()
         {
             StartTag();
-            IProcess process = new GenericT();
-            process.InvokeMain();
+            StringBuilder stringBuilder = new StringBuilder(50);
+            stringBuilder.Append(@"<tr></tr>");
+            stringBuilder.Append("asddas", 3, "asddas".Length);
+            Console.WriteLine(stringBuilder.ToString());
             EndTag();
         }
     }

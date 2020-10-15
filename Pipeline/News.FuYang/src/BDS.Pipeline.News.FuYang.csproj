@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Server\Framework\src\BDS.Framework.csproj" />
@@ -9,5 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+    <PackageReference Include="MailKit" Version="2.9.0" />
   </ItemGroup>
 </Project>

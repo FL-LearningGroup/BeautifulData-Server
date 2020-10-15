@@ -29,8 +29,9 @@ namespace BDS.Pipeline.News.FuYang
                 }
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+               
                 return true;
             }
 

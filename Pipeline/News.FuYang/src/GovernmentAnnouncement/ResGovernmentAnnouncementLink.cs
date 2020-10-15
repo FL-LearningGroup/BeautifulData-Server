@@ -1,27 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using BDS.Framework;
 using BDS.Pipeline.News.FuYang.Models;
 
 namespace BDS.Pipeline.News.FuYang.GovernmentAnnouncement
 {
-    internal class ResGovernmentAnnouncementLink: IWorkSiteInput
+    internal class ResGovernmentAnnouncementLink : Resource<DMGovernmentNewsLink>
     {
-        public DMGovernmentNewsLink Data
+        private List<DMGovernmentNewsLink> _data;
+        public override List<DMGovernmentNewsLink> Data
         {
-            get;
-            set;
+            get
+            {
+                return _data;
+            }
         }
         public ResGovernmentAnnouncementLink()
         {
-            Data = new DMGovernmentNewsLink();
-            Data.Announcement = @"http://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/";
+            _data = new List<DMGovernmentNewsLink>();
+            _data.Add(new DMGovernmentNewsLink { Announcement = @"http://www.fy.gov.cn/content/channel/54509807dfdd2e8475a9e38b/" });
         }
 
-        public List<string> TransferResourceDataToWorkSiteData()
+        public override List<string> TransferResourceDataToWorkSiteData()
         {
-            return new List<string>() { Data.Announcement };
+            return new List<string>() { _data.First().Announcement };
+        }
+        public override void TransferWorkSiteDataToResourceData(List<string> data)
+        {
+            
         }
     }
 }

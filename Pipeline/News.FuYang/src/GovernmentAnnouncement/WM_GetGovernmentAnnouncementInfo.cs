@@ -35,7 +35,8 @@ namespace BDS.Pipeline.News.FuYang.GovernmentAnnouncement
                 do
                 {
                     announcementPageNum++;
-                    announcementFirstPage = htmlWeb.Load(resourceData.First()+ String.Format("page-{0}/", announcementPageNum));
+                    Uri webUri = new Uri(resourceData.First() + String.Format("page-{0}/", announcementPageNum), UriKind.Absolute);
+                    announcementFirstPage = htmlWeb.Load(webUri);
                     announcementNodes = announcementFirstPage.DocumentNode.SelectNodes(queryXpath);
                     firstAnnouncementDate = DateTime.ParseExact(announcementNodes.First().FirstChild.InnerText, "yyyy-MM-dd", CultureInfo.InvariantCulture);
                     lastAnnouncementDate = DateTime.ParseExact(announcementNodes.Last().FirstChild.InnerText, "yyyy-MM-dd", CultureInfo.InvariantCulture);
