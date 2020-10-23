@@ -7,7 +7,7 @@ using BDS.Pipeline.News.FuYang.Models;
 
 namespace BDS.Pipeline.News.FuYang.GovernmentAnnouncement
 {
-    internal class ResGovernmentAnnouncementLink : Resource<DMGovernmentNewsLink>
+    public class ResGovernmentAnnouncementLink : Resource<DMGovernmentNewsLink>
     {
         private List<DMGovernmentNewsLink> _data;
         public override List<DMGovernmentNewsLink> Data

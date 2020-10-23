@@ -8,7 +8,7 @@ namespace BDS.Pipeline.News.FuYang.Models
     /// FuYang government announcement data model.
     /// </summary>
     [Serializable]
-    internal class DMGovermentAnnouncement
+    public class DMGovermentAnnouncement
     {
         public string Title { get; set; }
         public string Date { get; set; }

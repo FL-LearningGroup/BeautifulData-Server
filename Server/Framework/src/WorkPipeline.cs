@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BDS.Framework
 {
-    public sealed class WorkPipeline: IWorkPipeline
+    public class WorkPipeline: IWorkPipeline
     {
         private WorkPipelineStatus _status = WorkPipelineStatus.Build;
         private LinkedList<IWorkSite> _workSites = new LinkedList<IWorkSite>();

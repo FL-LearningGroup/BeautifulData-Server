@@ -10,7 +10,7 @@ using BDS.Pipeline.News.FuYang.Models;
 
 namespace BDS.Pipeline.News.FuYang.GovernmentAnnouncement
 {
-    internal class WM_GetGovernmentAnnouncementInfo: IWorkMachine
+    public class WM_GetGovernmentAnnouncementInfo: IWorkMachine
     {
         public WorkSiteStatus Worker(IWorkSiteInput inputResource, IWorkSiteOutput outputResource)
         {

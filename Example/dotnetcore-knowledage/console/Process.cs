@@ -18,10 +18,13 @@ namespace BDS.DotNetCoreKnowledage
         static void Main()
         {
             StartTag();
-            StringBuilder stringBuilder = new StringBuilder(50);
-            stringBuilder.Append(@"<tr></tr>");
-            stringBuilder.Append("asddas", 3, "asddas".Length);
-            Console.WriteLine(stringBuilder.ToString());
+            List<OverrideEquls> overrideEquls = new List<OverrideEquls>();
+            overrideEquls.Add(new OverrideEquls("First"));
+            overrideEquls.Add(new OverrideEquls("Second"));
+            overrideEquls.Add(new OverrideEquls("Third"));
+            overrideEquls.Add(new OverrideEquls("Fourth"));
+            DriverClass driverClass = new DriverClass("Second");
+            var oper = overrideEquls.Remove(new OverrideEquls(driverClass));
             EndTag();
         }
     }

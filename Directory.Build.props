@@ -9,7 +9,10 @@
         <Company>FreeLive</Company>
         <Product>BDS - Beautiful Data Service</Product>
     </PropertyGroup>
-
+	<!--Project Configuration-->
+	<PropertyGroup>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
     <!--Project path-->
     <PropertyGroup>
         <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>

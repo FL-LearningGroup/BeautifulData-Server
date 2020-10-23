@@ -32,7 +32,7 @@
             FileInfo configFile = null;
 
             // Search config file
-            var path = AssemblyInformation.LocationFolder + @"\config\log4net.config";
+            var path =GlobalConstant.WorkFolder + Path.DirectorySeparatorChar +"config" + Path.DirectorySeparatorChar + "log4net.config";
             var configFileNames = new[] { path };
 
             foreach (var configFileName in configFileNames)

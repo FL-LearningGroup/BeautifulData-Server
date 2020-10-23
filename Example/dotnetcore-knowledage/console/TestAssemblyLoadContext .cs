@@ -9,12 +9,12 @@ using System.Threading;
 
 namespace BDS.DotNetCoreKnowledage
 {
-    class PipelineAssembly: IDisposable
+    class TestAssemblyLoadContext : IDisposable
     {
         //private PipelineAssemblyLoadContext _assemblyLoadContext;
         //private Assembly _assembly;
         private string _assemblyPath;
-        public PipelineAssembly(string assemblyPath)
+        public TestAssemblyLoadContext (string assemblyPath)
         {
             _assemblyPath = assemblyPath;
 
@@ -55,7 +55,7 @@ namespace BDS.DotNetCoreKnowledage
 
             List<WeakReference> WeakReferences = new List<WeakReference>();
             WeakReference weak;
-            PipelineAssembly pipelineAssembly = new PipelineAssembly(assemblyPath);
+            TestAssemblyLoadContext  pipelineAssembly = new TestAssemblyLoadContext (assemblyPath);
             pipelineAssembly.LoadAssembly(out weak);
             Console.WriteLine(weak.IsAlive);
             for (int i = 0; weak.IsAlive && (i < 10); i++)

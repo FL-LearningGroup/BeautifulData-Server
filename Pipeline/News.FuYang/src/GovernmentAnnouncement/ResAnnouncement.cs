@@ -8,7 +8,7 @@ using BDS.Pipeline.News.FuYang.Models;
 
 namespace BDS.Pipeline.News.FuYang.GovernmentAnnouncement
 {
-    internal class ResAnnouncement : Resource<DMGovermentAnnouncement>, IResourceEventHandle
+    public class ResAnnouncement : Resource<DMGovermentAnnouncement>, IResourceEventHandle
     {
         private List<DMGovermentAnnouncement> _data;
         public override List<DMGovermentAnnouncement> Data { get { return _data; } }

@@ -1,202 +1,173 @@
+﻿using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using LibGit2Sharp;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using BDS.Runtime.Models;
+using System.IO;
+using System.Linq;
+using log4net.Util;
 
 namespace BDS.Runtime
 {
-    internal class PipelineHostService : BackgroundService, IPipelineWorker
+    /// <summary>
+    /// Function:
+    /// 1. Monitor assembly confg.
+    /// 2. New pipeline
+    /// </summary>
+    internal class PipelineHostService : BackgroundService, IPielineHostService
     {
-        private List<Pipeline> _pipelineCollections = new List<Pipeline>();
-        private readonly string _assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\pipeline";
-        /// <summary>
-        /// Store the loaded assembly path.
-        /// </summary>
-        private List<AssemblyConfig> _assemblyConfigList = new List<AssemblyConfig>();
-        /// <summary>
-        /// Store the path of assembly waiting to be loaded.
-        /// </summary>
-        private List<AssemblyConfig> _addAssemblyConfigList = new List<AssemblyConfig>();
-        /// <summary>
-        /// The path of assembly need be remove.
-        /// </summary>
-        private List<AssemblyConfig> _removeAssemblyConfigList = new List<AssemblyConfig>();
-
-        public List<AssemblyConfig> AssemblyConfigList { get { return _assemblyConfigList; } }
-        public List<AssemblyConfig> AddAssemblyConfigList { get { return _addAssemblyConfigList; } }
-        public List<AssemblyConfig> RemoveAssemblyConfigList { get { return _removeAssemblyConfigList; } }
+        private List<PipelineAssemblyConfig> _addPipelineAssemblies;
+        private List<PipelineAssemblyConfig> _removePipelineAssemblies;
+        private List<Pipeline> _pipelines;
+        public List<PipelineAssemblyConfig> AddPipelineAssemblies { get { return _addPipelineAssemblies; } }
+        public List<PipelineAssemblyConfig> RemovePipelineAssemblies { get { return _removePipelineAssemblies; } }
+        public List<Pipeline> Pipelines { get { return _pipelines; } }
+        
         public PipelineHostService()
         {
+            _addPipelineAssemblies = new List<PipelineAssemblyConfig>();
+            _removePipelineAssemblies = new List<PipelineAssemblyConfig>();
+            _pipelines = new List<Pipeline>();
         }
-        private void ServiceStart()
+
+        private void InitialServer()
         {
-            ConfigurationWatcher.watcher.Created += AddAssemblyPath;
-            ConfigurationWatcher.watcher.Changed += AddAssemblyPath;
-            ConfigurationWatcher.watcher.EnableRaisingEvents = true;
-            //Init load assembly path
-            foreach (AssemblyConfig assemblyConfig in Config.LoadAssemblyConfig(AssemblyInformation.ExecutingFolder + @"\config\AssemblyConfig.xml"))
+            ServerConfigWatcher.watcher.Created += AddOrRemovePipelineAssembly;
+            ServerConfigWatcher.watcher.Changed += AddOrRemovePipelineAssembly;
+            ServerConfigWatcher.watcher.EnableRaisingEvents = true;
+            //Load pipelne assemblies from the configuration file at the initial time.
+            foreach (PipelineAssemblyConfig assemblyConfig in ServerConfig.LoadAssemblyConfig(GlobalConstant.WorkFolder + Path.DirectorySeparatorChar +"Config" + Path.DirectorySeparatorChar + "AssemblyConfig.xml"))
             {
-                if (assemblyConfig.AssemblyStatus.ToLower() == AssemblyConfigStatus.ADD.ToLower())
+                if (assemblyConfig.AssemblyStatus.ToLower() == PipelineAssemblyStatus.ADD.ToLower())
                 {
-                    _addAssemblyConfigList.Add(assemblyConfig);
+                    _addPipelineAssemblies.Add(assemblyConfig);
                 }
             }
         }
-        [Obsolete("No use in any where", true)]
-        private void UpdatePipelineHostConfig(object source, FileSystemEventArgs e)
+        private void DisplayPipelineAssemblies()
         {
-            Config.UpdateBDSLogFolder(e.FullPath);
+            Logger.Debug("------------------Pipeline Assemblies------------------------------");
+            Logger.Debug("------------------Add Pipeline Assemblies--------------------------");
+            _addPipelineAssemblies.ForEach(item => Logger.Info(String.Format("Add: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
+            Logger.Debug("------------------Remove Pipeline Assemblies-----------------------");
+            _removePipelineAssemblies.ForEach(item => Logger.Info(String.Format("Remove: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
+            Logger.Info("------------------Pipeline Assemblies------------------------------");
         }
-        private void AddAssemblyPath(object source, FileSystemEventArgs e)
+
+        private void DisplayPipelines()
         {
-            //Logger.Info("Trigger watcher file.");
-            List<AssemblyConfig> assemblyConfigs = Config.LoadAssemblyConfig(e.FullPath);
-            int fileLock = 0;
-            while(assemblyConfigs is null)
+            Logger.Debug("------------------Pipeline------------------------------");
+            _pipelines.ForEach(item => Logger.Info(String.Format("Pipeline: AssemlyKey: {0}", item.Name)));
+            Logger.Debug("------------------Pipeline------------------------------");
+        }
+        private void AddOrRemovePipelineAssembly(object source, FileSystemEventArgs eventArgs)
+        {
+            List<PipelineAssemblyConfig> pipelineAssemblies = null;
+            int checkAssemblyFileLock = 0; //The assembly config file is open already with the another application.
+            while((pipelineAssemblies is null) && (checkAssemblyFileLock < 3))
             {
-                assemblyConfigs = Config.LoadAssemblyConfig(e.FullPath);
-                fileLock++;
-                if (fileLock >= 3)
-                {
-                    return;
-                }
+                pipelineAssemblies = ServerConfig.LoadAssemblyConfig(eventArgs.FullPath);
+                checkAssemblyFileLock++;
             }
-            foreach (AssemblyConfig assemblyConfig in assemblyConfigs)
+            if (pipelineAssemblies is null) return; // Open assembly configuration file failed.
+            bool isPipelineExisted = default(Boolean);
+            foreach (PipelineAssemblyConfig pipelineAssembly in pipelineAssemblies)
             {
-                //Add assembly
-                if (assemblyConfig.AssemblyStatus.ToLower() == AssemblyConfigStatus.ADD.ToLower())
+                //Check if it already exists in the pipeline
+                isPipelineExisted = _pipelines.Contains(new DockAssemblyPipeline(pipelineAssembly));
+                /*
+                _pipelines.ForEach(delegate (Pipeline pipeline)
                 {
-                    //assembly exist
-                    if (_assemblyConfigList.Contains(assemblyConfig))
+                    if (pipeline.Name == pipelineAssembly.AssemblyKey)
+                    {
+                        isPipelineExisted = true;
+                    }
+                });*/
+
+                //Add pipeline assembly in the pipeline.
+                if (pipelineAssembly.AssemblyStatus.ToLower() == PipelineAssemblyStatus.ADD.ToLower())
+                {
+                    // Already exists in the pipeline.
+                    if (isPipelineExisted)
                     {
                         continue;
                     }
-                    //Note: Change trigger twice. such as notepadd++. 
-                    if (_addAssemblyConfigList.Contains(assemblyConfig))
+                    // Already exists in the add pipeline assemblies.
+                    if (_addPipelineAssemblies.Contains(pipelineAssembly))
                     {
                         continue;
                     }
-                    _addAssemblyConfigList.Add(assemblyConfig);
+                    // Add pipline assembly in the add pipeline assemblies.
+                    _addPipelineAssemblies.Add(pipelineAssembly);
                     continue;
                 }
-                //Remove assembly
-                if (assemblyConfig.AssemblyStatus.ToLower() == AssemblyConfigStatus.REMOVE.ToLower())
+                //Remove pipeline assembly in the remove pipeline assemblies.
+                if (pipelineAssembly.AssemblyStatus.ToLower() == PipelineAssemblyStatus.REMOVE.ToLower())
                 {
-                    if (_assemblyConfigList.Contains(assemblyConfig))
+                    // Already exsits in the pipeline
+                    if (isPipelineExisted)
                     {
-                        //Note: Change trigger twice. such as notepadd++. 
-                        if (_removeAssemblyConfigList.Contains(assemblyConfig))
+                        // Alread exsits in the remove pipeline assemblies. 
+                        if (_removePipelineAssemblies.Contains(pipelineAssembly))
                         {
                             continue;
                         }
-                        _removeAssemblyConfigList.Add(assemblyConfig);
+                        // Add pipeline asemblyies in the remove pipeline assemblies.
+                        _removePipelineAssemblies.Add(pipelineAssembly);
                         continue;
                     }
                 }
-
             }
-            ShowDebugInfo();
+            DisplayPipelineAssemblies();
         }
-        public void AddPipeline()
+        private void AddOrRemovePipeline()
         {
-            if (_addAssemblyConfigList.Count == 0)
-                return;
-            foreach (AssemblyConfig assemblyConfig in _addAssemblyConfigList)
-            {   
-                _pipelineCollections.Add(new Pipeline(assemblyConfig.AssemblyKey, AssemblyInformation.ExecutingFolder + assemblyConfig.AssemblyPath, assemblyConfig.ScheduleTime));
-                _assemblyConfigList.Add(assemblyConfig);
-            }
-            _addAssemblyConfigList.Clear();
-            ShowDebugInfo();
-        }
-        public void RemovePipeline()
-        {
-            if (_removeAssemblyConfigList.Count == 0)
-                return;
-            List<AssemblyConfig> removedAssemblyPathList = new List<AssemblyConfig>();
-            foreach (AssemblyConfig assemblyConfig in _removeAssemblyConfigList)
+            if (_addPipelineAssemblies.Count == 0 && _removePipelineAssemblies.Count == 0) return;
+            // Add new pipeline in the pipelines
+            foreach (PipelineAssemblyConfig assemblyConfig in _addPipelineAssemblies)
             {
-                foreach (Pipeline pipelineItem in _pipelineCollections)
+                _pipelines.Add(new DockAssemblyPipeline(assemblyConfig));
+            }
+            // Clear the add pipeline assemblies
+            _addPipelineAssemblies.Clear();
+            
+            // Remove pipeline in the pipelines.
+            List<PipelineAssemblyConfig> suceessRemoveAssemblies = new List<PipelineAssemblyConfig>();
+            foreach (PipelineAssemblyConfig pipelineAssembly in _removePipelineAssemblies)
+            {
+                Pipeline pipeline = _pipelines.Find(item => item.Name == pipelineAssembly.AssemblyKey);
+                if (pipeline != null)
                 {
-                    // Pipeline existed in pipeline collections.
-                    if (pipelineItem.AssemblyKey== assemblyConfig.AssemblyKey)
+                    //Check pipeline status
+                    if (pipeline.Status != PipelineStatus.Running)
                     {
-                        //Pipeline running
-                        if (pipelineItem.Status == PipelineStatus.Running)
-                        {
-                            break;
-                        }
-                        _pipelineCollections.Remove(pipelineItem);
-                        _assemblyConfigList.Remove(assemblyConfig);
-                        removedAssemblyPathList.Add(assemblyConfig);
-                        break;
+                        _pipelines.Remove(pipeline);
+                        suceessRemoveAssemblies.Add(pipelineAssembly);
                     }
                 }
             }
-
-            foreach (AssemblyConfig assemblyConfig in removedAssemblyPathList)
+            if (suceessRemoveAssemblies.Count != 0)
             {
-                _removeAssemblyConfigList.Remove(assemblyConfig);
+                // Remove already removed pipeline in the remove pipeline assemblies.
+                suceessRemoveAssemblies.ForEach(item => _removePipelineAssemblies.Remove(item));
             }
-            ShowDebugInfo();
-
+            DisplayPipelines();
         }
-        private void ShowDebugInfo()
-        {
-#if DEBUG
-            Logger.Info("Assembly Config^^^^^^^^^^^^^^^^^^^^^^^^");
-            Logger.Info("AssemblyConfigList--------------------");
-            foreach(var config in _assemblyConfigList)
-            {
-                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemblyStatus));
-            }
-            Logger.Info("--------------------------------------");
-            Logger.Info("AddAssemblyConfigList-----------------");
-            foreach (var config in _addAssemblyConfigList)
-            {
-                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemblyStatus));
-            }
-            Logger.Info("--------------------------------------");
-            Logger.Info("RemoveAssemblyConfigList--------------");
-            foreach (var config in _removeAssemblyConfigList)
-            {
-                Logger.Info(String.Format("{0} - {1} - {2}", config.AssemblyKey, config.AssemblyPath, config.AssemblyStatus));
-            }
-            Logger.Info("--------------------------------------");
-            Logger.Info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-            Logger.Info("Pipleine Collections^^^^^^^^^^^^^^^^^^");
-            foreach (var pipeline in _pipelineCollections)
-            {
-                Logger.Info(String.Format("{0} - {1} - Status: {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status));
-            }
-            Logger.Info("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-#endif
-        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Logger.Info("Start Up Pipeline Host Service.");
-            ServiceStart();
+            InitialServer();
             while (!stoppingToken.IsCancellationRequested)
             {
-                AddPipeline();
-                RemovePipeline();
-                foreach(Pipeline pipeline in _pipelineCollections)
+                AddOrRemovePipeline();
+                foreach(Pipeline pipeline in _pipelines)
                 {
-                    pipeline.ExecutePipelineAsync();
+                    pipeline.ExecuteAsync();
                 }
-                foreach (var pipeline in _pipelineCollections)
-                {
-                    Logger.Info(String.Format("{0} - {1} - {2}", pipeline.AssemblyKey, pipeline.AssemblyPath, pipeline.Status));
-                }
-                await Task.Delay(3000, stoppingToken);
+                await Task.Delay(3000);
             }
         }
     }
