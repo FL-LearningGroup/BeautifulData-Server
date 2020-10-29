@@ -11,6 +11,7 @@
 [Dd]ebug*/
 [Rr]elease/
 [Pu]blic/
+[Aa]rtifacts
 
 # Packages
 nupkgs
@@ -19,4 +20,3 @@ nupkgs
 [Bb]in
 [Oo]bj
 
-[Aa]rtifacts

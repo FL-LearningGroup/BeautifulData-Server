@@ -8,6 +8,7 @@ using BDS.Runtime.Models;
 using System.IO;
 using System.Linq;
 using log4net.Util;
+using BDS.Framework;
 
 namespace BDS.Runtime
 {
@@ -141,8 +142,9 @@ namespace BDS.Runtime
                 if (pipeline != null)
                 {
                     //Check pipeline status
-                    if (pipeline.Status != PipelineStatus.Running)
+                    if (pipeline.Status != WorkPipelineStatus.Running)
                     {
+                        pipeline.UnloadPipelineTime = DateTime.Now;
                         _pipelines.Remove(pipeline);
                         suceessRemoveAssemblies.Add(pipelineAssembly);
                     }
@@ -158,16 +160,23 @@ namespace BDS.Runtime
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Logger.Info("Start Up Pipeline Host Service.");
+            Logger.Info(String.Format("Start the BDS Pipeline Server, {0}.", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+            // Configure server
             InitialServer();
             while (!stoppingToken.IsCancellationRequested)
             {
+                //Add or remove the pipeline from the pipeline collection.
                 AddOrRemovePipeline();
                 foreach(Pipeline pipeline in _pipelines)
                 {
-                    pipeline.ExecuteAsync();
+                    if (DateTime.Now >= pipeline.NextExecuteTime && pipeline.InvokeStatus == InvokePipelineStatus.Invokeable)
+                    {
+                        //Set pipeline can be invoke unable that wait for pipeline execute complete.
+                        pipeline.InvokeStatus = InvokePipelineStatus.InvokeUnable;
+                        Logger.Info(String.Format("Execute {0} pipeline", pipeline.Name));
+                        pipeline.ExecuteAsync();
+                    }
                 }
-                await Task.Delay(3000);
             }
         }
     }

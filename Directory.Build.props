@@ -1,18 +1,16 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <!--Test property for custom defined props using Directory.Build.props-->
-    <PropertyGroup>
-        <CustomProperty>directory build props</CustomProperty>
-    </PropertyGroup>
-
     <!--Common property-->
     <PropertyGroup>
         <Company>FreeLive</Company>
-        <Product>BDS - Beautiful Data Service</Product>
+        <Product>BDS - Beautiful Data Server</Product>
+        <Copyright>FreeLive</Copyright>
     </PropertyGroup>
-	<!--Project Configuration-->
-	<PropertyGroup>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-	</PropertyGroup>
+    <!--Import PackageReference in the BDS.Runtime project.-->
+    <ItemGroup Condition="'$(Project)' == 'BDS.Framework'">
+        <PackageReference Include="MailKit" Version="2.9.0" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.24" />
+        <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    </ItemGroup>
     <!--Project path-->
     <PropertyGroup>
         <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>

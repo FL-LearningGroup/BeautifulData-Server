@@ -32,7 +32,7 @@ namespace BDS.Runtime
             foreach (XmlNode node in pipelineNodes)
             {
                 assemblyConfigs.Add(new PipelineAssemblyConfig()
-                { AssemblyKey = node.Attributes["assemblyKey"].Value, AssemblyPath = node.Attributes["assemblyPath"].Value, AssemblyStatus = node.Attributes["assemblyStatus"].Value, ScheduleTime = node.Attributes["scheduleTime"].Value }
+                { AssemblyKey = node.Attributes["assemblyKey"].Value, AssemblyPath = Path.Combine(GlobalConstant.WorkFolder,node.Attributes["assemblyPath"].Value), AssemblyStatus = node.Attributes["assemblyStatus"].Value, ScheduleTime = node.Attributes["scheduleTime"].Value }
                 );
             }
             return assemblyConfigs;

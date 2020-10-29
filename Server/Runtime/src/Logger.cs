@@ -56,7 +56,7 @@
         {
             EnsureLogger();
 
-            _log.Debug(message);
+            _log.Info(message);
         }
         public static void Error(string message)
         {

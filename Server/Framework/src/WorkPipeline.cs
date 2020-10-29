@@ -199,6 +199,7 @@ namespace BDS.Framework
                         return WorkPipelineStatus.Failed;
                     }
                 }
+                Status = WorkPipelineStatus.Success;
                 return WorkPipelineStatus.Success;
             }
             return WorkPipelineStatus.Failed;

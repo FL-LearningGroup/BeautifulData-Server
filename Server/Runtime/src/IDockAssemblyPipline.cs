@@ -4,11 +4,8 @@ using System.Text;
 
 namespace BDS.Runtime
 {
-    public enum PipelineStatus
+    internal interface IDockAssemblyPipline
     {
-        Wait = 1,
-        Running,
-        Successed,
-        Failed
+        
     }
 }
