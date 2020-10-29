@@ -21,7 +21,7 @@ namespace BDS.Runtime
             if (IsFileLocked(xmlPath))
             {
                 Logger.Error(String.Format("{0} has been open another program", xmlPath));
-                return null;
+                return assemblyConfigs;
             }
             using (FileStream fs = new FileStream(xmlPath, FileMode.Open, FileAccess.Read))
             {
