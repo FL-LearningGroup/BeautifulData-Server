@@ -1,18 +1,22 @@
 # User-specific files
 .vs/
+.vscode/
 
 # Visual Studio profiler
 *.psess
 *.vsp
 
-# VS Code
-.vscode/
 
 # Build results
 [Dd]ebug*/
 [Rr]elease/
-build/
+[Pu]blic/
+[Aa]rtifacts
+
+# Packages
+nupkgs
 
 # Others
 [Bb]in
 [Oo]bj
+
