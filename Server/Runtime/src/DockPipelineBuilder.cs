@@ -10,32 +10,11 @@ using System.Reflection;
 
 namespace BDS.Runtime
 {
-    internal class DockAssemblyPipeline: Pipeline
+    internal class DockPipelineBuilder: DockPipeline
     {
-        private PipelineAssemblyConfig _assemblyConfig;
-        private WorkPipelineStatus _status;
-        private PiplelineScheduleTime _scheduleTime;
-        private DateTime _lastExecuteTime;
-        private DateTime _nextExecuteTime;
-        private DateTime _executeStartTime;
-        private DateTime _executeEndTime;
-        private DateTime _loadAssemblyTime;
-        private DateTime _unloadPipelineTime;
-        private Assembly _pipelineAssembly;
-        private bool _isLoadAssembly = false;
-        private List<WorkPipeline> _workPipelines;
-        public PipelineAssemblyConfig AssemblyConfig { get { return _assemblyConfig; } }
-        public override WorkPipelineStatus Status { get { return _status; } }
-        public PiplelineScheduleTime ScheduleTime { get { return _scheduleTime; } }
-        public override DateTime LastExecuteTime { get { return _lastExecuteTime; } }
-        public override DateTime NextExecuteTime { get { return _nextExecuteTime; } }
-        public override DateTime ExecuteStartTime { get { return _executeStartTime; } }
-        public override DateTime ExecuteEndTime { get { return _executeEndTime; } }
-        public override DateTime LoadPipelineTime { get { return _loadAssemblyTime; } set { _loadAssemblyTime = value; } }
-        public override DateTime UnloadPipelineTime { get { return _unloadPipelineTime; } set { _unloadPipelineTime = value; } }
-        public override InvokePipelineStatus InvokeStatus { get; set; }
-        public DockAssemblyPipeline(PipelineAssemblyConfig assemblyConfig): base(assemblyConfig.AssemblyKey)
+        public DockPipelineBuilder(PipelineAssemblyConfig assemblyConfig)
         {
+            Name = assemblyConfig.AssemblyKey;
             _status = WorkPipelineStatus.Wait;
             //Set pipeline can be invokeable
             InvokeStatus = InvokePipelineStatus.Invokeable;
@@ -79,7 +58,7 @@ namespace BDS.Runtime
                 _status = WorkPipelineStatus.Running;
                 foreach(WorkPipeline workPipeline in _workPipelines)
                 {
-                    workPipeline.Processor();
+                    //workPipeline.Processor();
                 }
                 _executeEndTime = DateTime.Now;
                 _status = WorkPipelineStatus.Success;
@@ -93,15 +72,36 @@ namespace BDS.Runtime
                 //Set next execute time.
                 PiplelineScheduleTime.SetNextExecuteTime(_scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
                 //Set pipeline can be invokeable
-                InvokeStatus = InvokePipelineStatus.Invokeable;
             }
             catch (Exception ex)
             {
                 Logger.Error(String.Format("The pipeline {0} executed failed. detail error message: {1}", Name, ex.Message));
                 _status = WorkPipelineStatus.Failed;
             }
-
-
+            finally
+            {
+                // Save executed info to database
+                using (var context = new MySqlContext())
+                {
+                    DockPipeline pipeline = context.DockPipelines.Find(this.Name);
+                    if (pipeline is null)
+                    {
+                        pipeline = this;
+                        context.DockPipelines.Add(pipeline);
+                    }
+                    else
+                    {
+                        pipeline.Status = this.Status;
+                        pipeline.LastExecuteTime = this.LastExecuteTime;
+                        pipeline.NextExecuteTime = this.NextExecuteTime;
+                        pipeline.ExecuteStartTime = this.ExecuteStartTime;
+                        pipeline.ExecuteEndTime = this.ExecuteEndTime;
+                        pipeline.InvokeStatus = this.InvokeStatus;
+                    }
+                    context.SaveChanges();
+                }
+                InvokeStatus = InvokePipelineStatus.Invokeable;
+            }
         }
         public override Task ExecuteAsync()
         {

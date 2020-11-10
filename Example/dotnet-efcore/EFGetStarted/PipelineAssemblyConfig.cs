@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace BDS.Runtime.Models
+namespace EFGetStarted
 {
     public class PipelineAssemblyConfig
     {

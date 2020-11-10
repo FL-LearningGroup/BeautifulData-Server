@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using log4net.Util;
 using BDS.Framework;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace BDS.Runtime
 {
@@ -46,7 +47,17 @@ namespace BDS.Runtime
                     _addPipelineAssemblies.Add(assemblyConfig);
                 }
             }
+            CreateDataBaseSchema();
         }
+
+        private void CreateDataBaseSchema()
+        {
+            using (var context = new MySqlContext())
+            {
+                context.Database.EnsureCreated();
+            }
+        }
+
         private void DisplayPipelineAssemblies()
         {
             Logger.Debug("------------------Pipeline Assemblies------------------------------");
@@ -77,7 +88,7 @@ namespace BDS.Runtime
             foreach (PipelineAssemblyConfig pipelineAssembly in pipelineAssemblies)
             {
                 //Check if it already exists in the pipeline
-                isPipelineExisted = _pipelines.Contains(new DockAssemblyPipeline(pipelineAssembly));
+                isPipelineExisted = _pipelines.Contains(new DockPipelineBuilder(pipelineAssembly));
                 /*
                 _pipelines.ForEach(delegate (Pipeline pipeline)
                 {
@@ -129,7 +140,7 @@ namespace BDS.Runtime
             // Add new pipeline in the pipelines
             foreach (PipelineAssemblyConfig assemblyConfig in _addPipelineAssemblies)
             {
-                _pipelines.Add(new DockAssemblyPipeline(assemblyConfig));
+                _pipelines.Add(new DockPipelineBuilder(assemblyConfig));
             }
             // Clear the add pipeline assemblies
             _addPipelineAssemblies.Clear();
@@ -157,7 +168,6 @@ namespace BDS.Runtime
             }
             DisplayPipelines();
         }
-
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Logger.Info(String.Format("Start the BDS Pipeline Server, {0}.", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));

@@ -24,5 +24,7 @@ namespace BDS.Runtime
                 Logger.Debug(assem.ToString());
             Logger.Debug(String.Format("{0} -- List of assemblies done-------------------------------", context));
         }
+
+        public static string ConvertDateTimeToStringFormat { get => "yyyy/MM/dd HH:mm:ss"; private set { } }
     }
 }
