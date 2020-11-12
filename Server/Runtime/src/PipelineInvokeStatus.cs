@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BDS.Runtime
 {
-    public enum InvokePipelineStatus
+    public enum PipelineInvokeStatus
     {
         Invokeable = 1,
         InvokeUnable

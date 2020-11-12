@@ -20,12 +20,9 @@ namespace BDS.Runtime
     [Serializable]
     internal class PiplelineScheduleTime
     {
-        private string _startTime;
-        private string _model;
-        private int _apartTime;
-        public string StartTime { get { return _startTime; } set { _startTime = value; } }
-        public string Model { get { return _model; } set { _model = value; } }
-        public int ApartTime { get { return _apartTime; } set { _apartTime = value; } }
+        public string StartTime { get; set; }
+        public string Model { get; set; }
+        public int ApartTime { get; set; }
 
         public static void SetScheduleTime(string scheduleString, out PiplelineScheduleTime scheduleTime, out DateTime lastExecuteTime, ref DateTime nextExecuteTime)
         {

@@ -18,9 +18,10 @@ namespace BDS.DotNetCoreKnowledage
         static void Main()
         {
             StartTag();
-            AsyncAndTask asyncAndTask = new AsyncAndTask();
-            asyncAndTask.AsyncTask();
-            Console.WriteLine("Await");
+            ObjectPassAsRefOrValue objectPassAsRefOrValue = new ObjectPassAsRefOrValue() { Value = 1, GSDateTime = DateTime.Now };
+            objectPassAsRefOrValue.PrintMessage();
+            SetObjectValue.SetValue(objectPassAsRefOrValue, 100, DateTime.Now.AddDays(1));
+            objectPassAsRefOrValue.PrintMessage();
             EndTag();
         }
     }

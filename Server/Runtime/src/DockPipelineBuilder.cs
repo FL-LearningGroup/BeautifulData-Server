@@ -10,23 +10,37 @@ using System.Reflection;
 
 namespace BDS.Runtime
 {
+    /// <summary>
+    /// Invoke pipeline
+    /// </summary>
+    /// <designspec>
+    /// 1. Load dll
+    /// 2. Execute pipleine
+    /// 3. Set schedule time
+    /// 4. Record the results of execution
+    /// </designspec>
     internal class DockPipelineBuilder: DockPipeline
     {
         public DockPipelineBuilder(PipelineAssemblyConfig assemblyConfig)
         {
+            StatusEvent += RecordResultsExecution;
             Name = assemblyConfig.AssemblyKey;
-            _status = WorkPipelineStatus.Wait;
             //Set pipeline can be invokeable
-            InvokeStatus = InvokePipelineStatus.Invokeable;
             _assemblyConfig = assemblyConfig;
             _workPipelines = new List<WorkPipeline>();
+            Status = WorkPipelineStatus.Wait;
+            InvokeStatus = PipelineInvokeStatus.Invokeable;
             try
             {
+                DateTime _lastExecuteTime = LastExecuteTime;
+                DateTime _nextExecuteTime = NextExecuteTime;
                 PiplelineScheduleTime.SetScheduleTime(_assemblyConfig.ScheduleTime,out _scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
+                LastExecuteTime = _lastExecuteTime;
+                NextExecuteTime = _nextExecuteTime;
             }
             catch(Exception ex)
             {
-                _status = WorkPipelineStatus.Failed;
+                Status = WorkPipelineStatus.Failed;
                 Logger.Error(String.Format("The pipeline {0} set schedule failed, error message: {1}", Name, ex.Message));
             }
         }
@@ -36,7 +50,7 @@ namespace BDS.Runtime
             {
                 PipelineAssemblyLoadContext assemblyLoadContext = new PipelineAssemblyLoadContext(_assemblyConfig.AssemblyPath);
                 _pipelineAssembly = assemblyLoadContext.LoadFromAssemblyPath(_assemblyConfig.AssemblyPath);
-                _loadAssemblyTime = DateTime.Now;
+                LoadPipelineTime = DateTime.Now;
                 _isLoadAssembly = true;
             }
             try
@@ -54,57 +68,66 @@ namespace BDS.Runtime
                     }
                 }
                 // Execute pipeline
-                _executeStartTime = DateTime.Now;
-                _status = WorkPipelineStatus.Running;
+                ExecuteStartTime = DateTime.Now;
+                Status = WorkPipelineStatus.Running;
                 foreach(WorkPipeline workPipeline in _workPipelines)
                 {
                     //workPipeline.Processor();
                 }
-                _executeEndTime = DateTime.Now;
-                _status = WorkPipelineStatus.Success;
+                ExecuteEndTime = DateTime.Now;
+                Status = WorkPipelineStatus.Success;
                 _workPipelines.ForEach(pipeline =>
                 {
                     if(pipeline.Status == WorkPipelineStatus.Failed)
                     {
-                        _status = WorkPipelineStatus.Failed;
+                        Status = WorkPipelineStatus.Failed;
                     }
                 });
                 //Set next execute time.
+                DateTime _lastExecuteTime = LastExecuteTime;
+                DateTime _nextExecuteTime = NextExecuteTime;
                 PiplelineScheduleTime.SetNextExecuteTime(_scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
+                LastExecuteTime = _lastExecuteTime;
+                NextExecuteTime = _nextExecuteTime;
                 //Set pipeline can be invokeable
             }
             catch (Exception ex)
             {
                 Logger.Error(String.Format("The pipeline {0} executed failed. detail error message: {1}", Name, ex.Message));
-                _status = WorkPipelineStatus.Failed;
+                Status = WorkPipelineStatus.Failed;
             }
             finally
             {
-                // Save executed info to database
-                using (var context = new MySqlContext())
+                InvokeStatus = PipelineInvokeStatus.Invokeable;
+            }
+        }
+        private void RecordResultsExecution(object source, PipelineEventArgs args)
+        {
+            // Save executed info to database
+            using (var context = new MySqlContext())
+            {
+                DockPipeline pipeline = context.DockPipelines.Find(this.Name);
+                if (pipeline is null)
                 {
-                    DockPipeline pipeline = context.DockPipelines.Find(this.Name);
-                    if (pipeline is null)
-                    {
-                        pipeline = this;
-                        context.DockPipelines.Add(pipeline);
-                    }
-                    else
-                    {
-                        pipeline.Status = this.Status;
-                        pipeline.LastExecuteTime = this.LastExecuteTime;
-                        pipeline.NextExecuteTime = this.NextExecuteTime;
-                        pipeline.ExecuteStartTime = this.ExecuteStartTime;
-                        pipeline.ExecuteEndTime = this.ExecuteEndTime;
-                        pipeline.InvokeStatus = this.InvokeStatus;
-                    }
-                    context.SaveChanges();
+                    pipeline = this;
+                    context.DockPipelines.Add(pipeline);
                 }
-                InvokeStatus = InvokePipelineStatus.Invokeable;
+                else
+                {
+                    pipeline.Status = this.Status;
+                    pipeline.LastExecuteTime = this.LastExecuteTime;
+                    pipeline.NextExecuteTime = this.NextExecuteTime;
+                    pipeline.ExecuteStartTime = this.ExecuteStartTime;
+                    pipeline.ExecuteEndTime = this.ExecuteEndTime;
+                    pipeline.InvokeStatus = this.InvokeStatus;
+                }
+                context.SaveChanges();
             }
         }
         public override Task ExecuteAsync()
         {
+            if (DateTime.Now < NextExecuteTime)
+                return null;
             return Task.Run(() => {
                 ExecuteAndUnloadAssembly();
             });

@@ -140,6 +140,7 @@ namespace BDS.Runtime
             // Add new pipeline in the pipelines
             foreach (PipelineAssemblyConfig assemblyConfig in _addPipelineAssemblies)
             {
+                var test = new DockPipelineBuilder(assemblyConfig);
                 _pipelines.Add(new DockPipelineBuilder(assemblyConfig));
             }
             // Clear the add pipeline assemblies
@@ -179,10 +180,10 @@ namespace BDS.Runtime
                 AddOrRemovePipeline();
                 foreach(Pipeline pipeline in _pipelines)
                 {
-                    if (DateTime.Now >= pipeline.NextExecuteTime && pipeline.InvokeStatus == InvokePipelineStatus.Invokeable)
+                    if (pipeline.InvokeStatus == PipelineInvokeStatus.Invokeable)
                     {
                         //Set pipeline can be invoke unable that wait for pipeline execute complete.
-                        pipeline.InvokeStatus = InvokePipelineStatus.InvokeUnable;
+                        pipeline.InvokeStatus = PipelineInvokeStatus.InvokeUnable;
                         Logger.Info(String.Format("Execute {0} pipeline", pipeline.Name));
                         pipeline.ExecuteAsync();
                     }

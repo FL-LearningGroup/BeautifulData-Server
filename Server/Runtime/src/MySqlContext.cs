@@ -24,7 +24,7 @@ namespace BDS.Runtime
                 .Property(e => e.InvokeStatus)
                 .HasConversion(
                     v => v.ToString(),
-                    v => (InvokePipelineStatus)Enum.Parse(typeof(InvokePipelineStatus), v)
+                    v => (PipelineInvokeStatus)Enum.Parse(typeof(PipelineInvokeStatus), v)
                 );
             // Convert datetime to string
             modelBuilder.Entity<DockPipeline>()
