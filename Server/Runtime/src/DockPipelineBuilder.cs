@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using BDS.Runtime.Models;
+using BDS.Runtime.DataBase;
 using BDS.Framework;
 using log4net.Util;
 using System.Runtime.CompilerServices;
@@ -28,8 +29,7 @@ namespace BDS.Runtime
             //Set pipeline can be invokeable
             _assemblyConfig = assemblyConfig;
             _workPipelines = new List<WorkPipeline>();
-            Status = WorkPipelineStatus.Wait;
-            InvokeStatus = PipelineInvokeStatus.Invokeable;
+
             try
             {
                 DateTime _lastExecuteTime = LastExecuteTime;
@@ -37,11 +37,15 @@ namespace BDS.Runtime
                 PiplelineScheduleTime.SetScheduleTime(_assemblyConfig.ScheduleTime,out _scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
                 LastExecuteTime = _lastExecuteTime;
                 NextExecuteTime = _nextExecuteTime;
+                InvokeStatus = PipelineInvokeStatus.Invokeable;
+                Status = WorkPipelineStatus.Wait;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Status = WorkPipelineStatus.Failed;
                 Logger.Error(String.Format("The pipeline {0} set schedule failed, error message: {1}", Name, ex.Message));
+                ExecutionMessage.Append(String.Format("The pipeline set schedule failed, error message: {0}", ex.Message));
+                InvokeStatus = PipelineInvokeStatus.InvokeUnable;
+                Status = WorkPipelineStatus.Failed;
             }
         }
         private void ExecuteAndUnloadAssembly()
@@ -107,6 +111,7 @@ namespace BDS.Runtime
             using (var context = new MySqlContext())
             {
                 DockPipeline pipeline = context.DockPipelines.Find(this.Name);
+                // First insert
                 if (pipeline is null)
                 {
                     pipeline = this;
@@ -114,12 +119,15 @@ namespace BDS.Runtime
                 }
                 else
                 {
+                    // Update row
                     pipeline.Status = this.Status;
                     pipeline.LastExecuteTime = this.LastExecuteTime;
                     pipeline.NextExecuteTime = this.NextExecuteTime;
                     pipeline.ExecuteStartTime = this.ExecuteStartTime;
                     pipeline.ExecuteEndTime = this.ExecuteEndTime;
+                    pipeline.LoadPipelineTime = this.LoadPipelineTime;
                     pipeline.InvokeStatus = this.InvokeStatus;
+
                 }
                 context.SaveChanges();
             }

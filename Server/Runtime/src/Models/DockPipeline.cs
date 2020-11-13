@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace BDS.Runtime.Models
 {
     /// <summary>
-    /// Loca pipeline through dll file.
+    /// Represent pipeline that locad through dll file.
     /// </summary>
     /// <designspec>
     /// 1. Recore schedule time
@@ -31,7 +31,7 @@ namespace BDS.Runtime.Models
         public  DateTime NextExecuteTime { get; set; }
         public DockPipeline()
         {
-
+            ExecutionMessage = new StringBuilder(1024, 1024*10);
         }
         public override Task ExecuteAsync()
         {

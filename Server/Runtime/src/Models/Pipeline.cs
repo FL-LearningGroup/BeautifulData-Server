@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Threading.Tasks;
+using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
 
 namespace BDS.Runtime.Models
 {
@@ -29,9 +30,11 @@ namespace BDS.Runtime.Models
         protected WorkPipelineStatus status;
         public event EventHandler<PipelineEventArgs> StatusEvent;
         [Key]
+        [Column(TypeName = "varchar(200)", Order = 1)]
+        [MaxLength(200)]
         public string Name { get; set; }
-        public DateTime ExecuteStartTime { get; set; }
-        public DateTime ExecuteEndTime { get; set;}
+
+        [Column(TypeName = "varchar(45)", Order = 2)]
         public WorkPipelineStatus Status
         {
             get { return status; }
@@ -46,10 +49,23 @@ namespace BDS.Runtime.Models
                 }
             }
         }
-        public DateTime LoadPipelineTime { get; set; }
-        public DateTime UnloadPipelineTime { get; set; }
+
+        [Column(TypeName = "varchar(45)")]
         public PipelineInvokeStatus InvokeStatus { get; set; }
 
+        [Column(TypeName = "varchar(19)")]
+        public DateTime LoadPipelineTime { get; set; }
+
+        [Column(TypeName = "varchar(19)")]
+        public DateTime UnloadPipelineTime { get; set; }
+
+        [Column(TypeName = "varchar(19)")]
+        public DateTime ExecuteStartTime { get; set; }
+
+        [Column(TypeName = "varchar(19)")]
+        public DateTime ExecuteEndTime { get; set;}
+
+        public StringBuilder ExecutionMessage { get; set; }
         public override bool Equals(Object obj)
         {
             return Name == ((Pipeline) obj).Name;

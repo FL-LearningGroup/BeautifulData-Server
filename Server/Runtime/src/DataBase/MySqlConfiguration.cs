@@ -3,8 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BDS.Runtime.Models
+namespace BDS.Runtime.DataBase
 {
+    /// <summary>
+    /// Define the parameters for connecting to mysql.
+    /// </summary>
     internal class MySqlConfiguration
     {
         public static string Host { get; set; }

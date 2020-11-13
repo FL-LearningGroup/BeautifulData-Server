@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BDS.Runtime.Models;
+using BDS.Runtime.DataBase;
 using System.IO;
 using System.Linq;
 using log4net.Util;

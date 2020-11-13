@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BDS.Runtime.Models;
+using BDS.Runtime.DataBase;
 
 namespace BDS.Runtime
 {
