@@ -23,12 +23,12 @@ namespace BDS.Runtime.Models
         protected Assembly _pipelineAssembly;
         protected bool _isLoadAssembly = false;
         protected List<WorkPipeline> _workPipelines;
-        [Column("AssemblyKey")]
+        [NotMapped]
         public PipelineAssemblyConfig AssemblyConfig { get { return _assemblyConfig; } private set { } }
         [NotMapped]
         public PiplelineScheduleTime ScheduleTime { get { return _scheduleTime; } private set { } }
-        public  DateTime LastExecuteTime { get; set; }
-        public  DateTime NextExecuteTime { get; set; }
+        public  DateTime LastExecuteDT { get; set; }
+        public  DateTime NextExecuteDT { get; set; }
         public DockPipeline()
         {
             ExecutionMessage = new StringBuilder(1024, 1024*10);

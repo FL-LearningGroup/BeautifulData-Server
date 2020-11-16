@@ -29,12 +29,7 @@ namespace BDS.Runtime.Models
     {
         protected WorkPipelineStatus status;
         public event EventHandler<PipelineEventArgs> StatusEvent;
-        [Key]
-        [Column(TypeName = "varchar(200)", Order = 1)]
-        [MaxLength(200)]
         public string Name { get; set; }
-
-        [Column(TypeName = "varchar(45)", Order = 2)]
         public WorkPipelineStatus Status
         {
             get { return status; }
@@ -50,21 +45,11 @@ namespace BDS.Runtime.Models
             }
         }
 
-        [Column(TypeName = "varchar(45)")]
         public PipelineInvokeStatus InvokeStatus { get; set; }
-
-        [Column(TypeName = "varchar(19)")]
-        public DateTime LoadPipelineTime { get; set; }
-
-        [Column(TypeName = "varchar(19)")]
-        public DateTime UnloadPipelineTime { get; set; }
-
-        [Column(TypeName = "varchar(19)")]
-        public DateTime ExecuteStartTime { get; set; }
-
-        [Column(TypeName = "varchar(19)")]
-        public DateTime ExecuteEndTime { get; set;}
-
+        public DateTime LoadPipelineDT { get; set; }
+        public DateTime UnloadPipelineDT { get; set; }
+        public DateTime ExecuteStartDT { get; set; }
+        public DateTime ExecuteEndDT { get; set;}
         public StringBuilder ExecutionMessage { get; set; }
         public override bool Equals(Object obj)
         {

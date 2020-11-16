@@ -48,6 +48,7 @@ namespace BDS.Runtime
                     _addPipelineAssemblies.Add(assemblyConfig);
                 }
             }
+            
             CreateDataBaseSchema();
         }
 
@@ -141,7 +142,6 @@ namespace BDS.Runtime
             // Add new pipeline in the pipelines
             foreach (PipelineAssemblyConfig assemblyConfig in _addPipelineAssemblies)
             {
-                var test = new DockPipelineBuilder(assemblyConfig);
                 _pipelines.Add(new DockPipelineBuilder(assemblyConfig));
             }
             // Clear the add pipeline assemblies
@@ -157,7 +157,7 @@ namespace BDS.Runtime
                     //Check pipeline status
                     if (pipeline.Status != WorkPipelineStatus.Running)
                     {
-                        pipeline.UnloadPipelineTime = DateTime.Now;
+                        pipeline.UnloadPipelineDT = DateTime.Now;
                         _pipelines.Remove(pipeline);
                         suceessRemoveAssemblies.Add(pipelineAssembly);
                     }

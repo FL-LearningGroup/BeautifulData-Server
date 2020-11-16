@@ -7,7 +7,6 @@ namespace BDS.Runtime.Models
 {
     public class PipelineAssemblyConfig
     {
-        [Key]
         public string AssemblyKey { get; set; }
         public string AssemblyPath { get; set; }
         public string AssemblyStatus { get; set; }
