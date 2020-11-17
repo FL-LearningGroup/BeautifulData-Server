@@ -48,7 +48,7 @@ namespace BDS.Runtime
                 Status = WorkPipelineStatus.Failed;
             }
         }
-        private void ExecuteAndUnloadAssembly()
+        private async Task ExecuteAndUnloadAssembly()
         {
             object lockobject = new object();
             lock(lockobject)
@@ -79,7 +79,7 @@ namespace BDS.Runtime
                     Status = WorkPipelineStatus.Running;
                     foreach(WorkPipeline workPipeline in _workPipelines)
                     {
-                        //workPipeline.Processor();
+                       //workPipeline.Processor();
                     }
                     ExecuteEndDT = DateTime.Now;
                     //Set next execute time.
@@ -108,7 +108,7 @@ namespace BDS.Runtime
                 finally
                 {
                     InvokeStatus = PipelineInvokeStatus.Invokeable;
-                    //Status = WorkPipelineStatus.Wait; //Cause exception
+                    Status = WorkPipelineStatus.Wait; //Cause exception
                 }
             }
         }
@@ -140,7 +140,6 @@ namespace BDS.Runtime
                     pipeline.InvokeStatus = this.InvokeStatus;
 
                 }
-                context.SaveChanges();
                 DockPipelineHistory dockPipelineHistory = new DockPipelineHistory();
                 SaveToHistoryTable(pipeline, dockPipelineHistory);
                 context.DockPipelineHistory.Add(dockPipelineHistory);
@@ -159,13 +158,15 @@ namespace BDS.Runtime
             dockPipelineHistory.LoadPipelineDT = dockPipeline.LoadPipelineDT;
             dockPipelineHistory.ExecutionMessage = dockPipeline.ExecutionMessage;
         }
-        public override Task ExecuteAsync()
+        public override async Task ExecuteAsync()
         {
+            // .Running().Result(c => c.status ==  WorkPipelineStatus.Success ? c.Success() : c.Failed()).Await().Invokeable()
             if (DateTime.Now < NextExecuteDT)
-                return null;
-            return Task.Run(() => {
-                ExecuteAndUnloadAssembly();
-            });
+              return ;
+            //return Task.Run(() => {
+            //    ExecuteAndUnloadAssembly();
+            //});
+            await ExecuteAndUnloadAssembly();
         }
     }
 }
