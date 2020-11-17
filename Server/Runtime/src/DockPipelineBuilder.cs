@@ -79,7 +79,7 @@ namespace BDS.Runtime
                     Status = WorkPipelineStatus.Running;
                     foreach(WorkPipeline workPipeline in _workPipelines)
                     {
-                       //workPipeline.Processor();
+                       workPipeline.Processor();
                     }
                     ExecuteEndDT = DateTime.Now;
                     //Set next execute time.

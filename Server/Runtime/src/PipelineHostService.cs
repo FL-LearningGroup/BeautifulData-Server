@@ -56,7 +56,24 @@ namespace BDS.Runtime
         {
             using (var context = new MySqlContext())
             {
-                context.Database.EnsureCreated();
+                try
+                {
+                    bool isDataBase = context.Database.EnsureCreated();
+                    if (isDataBase)
+                    {
+                        Logger.Info("Created database.");
+                    }
+                    else
+                    {
+                        Logger.Info("The database already existed.");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Logger.Fatal(String.Format("Cannot connect to database. exception message: {0}", ex.Message));
+                    throw new Exception("Cannot connected database. Failed stop service.");
+
+                }
             }
         }
 
