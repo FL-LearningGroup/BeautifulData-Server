@@ -28,6 +28,7 @@ Store execution results for analysis.
 
 # Design
 ## Global design
+
 ```mermaid
 classDiagram
     class Animal
