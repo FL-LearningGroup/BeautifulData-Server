@@ -27,6 +27,7 @@ We need to create, remove, update, stop pipeline and ensure correct execute at t
 Store execution results for analysis.
 
 # Design
+## Global design
 
 # Feature
 
