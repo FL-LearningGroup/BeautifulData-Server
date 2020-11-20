@@ -31,8 +31,7 @@ Store execution results for analysis.
 
 ```mermaid
 classDiagram
-    class Animal
-    Vehicle <|-- Car
+    class Pieline <|-- class DockPipeline
 ```
 # Feature
 
