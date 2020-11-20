@@ -28,7 +28,11 @@ Store execution results for analysis.
 
 # Design
 ## Global design
-
+```mermaid
+classDiagram
+    class Animal
+    Vehicle <|-- Car
+```
 # Feature
 
 + Load and Unload the reference pipeline assembly.
