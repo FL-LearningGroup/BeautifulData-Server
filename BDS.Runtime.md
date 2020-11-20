@@ -3,12 +3,18 @@ titile: BDS.Runtime design document
 date: 2020/11/20
 author: LucasYao
 ---
-## Summary
-The BDS.Runtime drive The BDS.Framework to run pipeline.
+# Background
+Execute the collection information pipline at the scheduled time. So need a service to schedule invoke pipeline.  
+We create the BDS.Runtime service to invoke it.
 
-## Design
+# Requirements
++ Dynamic load and execute pipeline.
++ Control pipeline.
++ Store pipleine execution results.
+## Detail Requirements
+#### Dynamic load and execute pipeline
 
-### Feature
+# Feature
 + Load and Unload the reference pipeline assembly.
 The Unload is a high risk feature base on the NetCore provide assembly [unloadability](https://docs.microsoft.com/en-us/dotnet/standard/assembly/unloadability) function. 
 Think in Two ways:
