@@ -20,10 +20,10 @@ We create the BDS.Runtime service to invoke it.
 The type of collection infomation pipeline is divided into two parts. One types is dll file.
 The dll file include detial step of collection information.The dll file can be dynamic load and unload. This function is provided by .NET.
 
-### Control pipeline
+#### Control pipeline
 We need to create, remove, update, stop pipeline and ensure correct execute at the right time according to the schedule time.
 
-### Store pipeline execution results.
+#### Store pipeline execution results.
 Store execution results for analysis.
 
 # Design
