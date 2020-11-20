@@ -31,7 +31,7 @@ Store execution results for analysis.
 
 ```mermaid
 classDiagram
-    class Pieline <|-- class DockPipeline
+    Pieline <|-- DockPipeline
 ```
 # Feature
 
