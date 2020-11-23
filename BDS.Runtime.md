@@ -26,7 +26,20 @@ We need to create, remove, update, stop pipeline and ensure correct execute at t
 Store execution results for analysis.
 
 # Design
-## Global design
+
+## Pipeline control diagrams
+
+### Concept:
+
++ Build control model in memory.
+
++ Operate control-model information via powershell.
+
++ Load from disk and save into disk information of control-model when start up and shutdown the services.
+
+### Feasibility
++ Whether can operate controm-model via powershell?
+## Class diagrams
 
 ```mermaid
 classDiagram
