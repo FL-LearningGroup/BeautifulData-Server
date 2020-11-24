@@ -45,7 +45,7 @@ Store execution results for analysis.
 
 ```mermaid
 classDiagram
-    Pieline <|-- DockPipeline
+    Pieline
 ```
 # Feature
 + Load and Unload the reference pipeline assembly.
