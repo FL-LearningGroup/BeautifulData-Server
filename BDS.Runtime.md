@@ -48,6 +48,7 @@ Result: No feasible, because import dll and exe not in same address of memory, T
 
 ```mermaid
 classDiagram
+    class BDS
     class PipelineHostServer
     class MySqlContext
     class DockPipelineOperation
