@@ -37,13 +37,14 @@ Store execution results for analysis.
 ### Feasibility
 
 + Whether can operate controm-model via powershell?
+Result: No feasible, because import dll and exe not in same address of memory, They are independent of each other.
 
 # Design
 
 ## Pipeline control diagrams
 
 
-## Worker Class diagrams
+## Worker Class Diagram
 
 ```mermaid
 classDiagram
@@ -52,6 +53,8 @@ classDiagram
     class DockPipelineOperation
     class PipelineAssemblyContext
 ```
+## Worker Sequence Diagram
+
 # Feature
 + Load and Unload the reference pipeline assembly.
 The Unload is a high risk feature base on the NetCore provide assembly [unloadability](https://docs.microsoft.com/en-us/dotnet/standard/assembly/unloadability) function. 
