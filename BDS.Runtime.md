@@ -45,7 +45,11 @@ Store execution results for analysis.
 
 ```mermaid
 classDiagram
-    class Pieline 
+    class PipelineHostServer
+    class DockPipeline
+    class Pipeline
+    class PipelineAssembly
+    class MySqlContext
 ```
 # Feature
 + Load and Unload the reference pipeline assembly.
