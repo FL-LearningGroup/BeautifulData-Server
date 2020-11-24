@@ -22,14 +22,11 @@ The dll file include detials steps of collection information.The dll file can be
 
 #### Control pipeline
 We need to create, remove, update, stop pipeline and ensure correct execute at the right time according to the schedule time.
+
 #### Store pipeline execution results.
 Store execution results for analysis.
 
-# Design
-
-## Pipeline control diagrams
-
-### Concept:
+## Discuss Control pipeline:
 
 + Build control model in memory.
 
@@ -41,15 +38,19 @@ Store execution results for analysis.
 
 + Whether can operate controm-model via powershell?
 
-## Class diagrams
+# Design
+
+## Pipeline control diagrams
+
+
+## Worker Class diagrams
 
 ```mermaid
 classDiagram
     class PipelineHostServer
-    class DockPipeline
-    class Pipeline
-    class PipelineAssembly
     class MySqlContext
+    class DockPipelineOperation
+    class PipelineAssemblyContext
 ```
 # Feature
 + Load and Unload the reference pipeline assembly.
