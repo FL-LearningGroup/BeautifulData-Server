@@ -1,19 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BDS.Runtime.Models;
 
 namespace BDS.Runtime
 {
-    internal enum PiplelineScheduleApartTimeType
-    {
-        Y = 1, // Year.
-        M, // Month.
-        W, // Week.
-        D, // Day
-        HH, // Hour
-        MM, //Minute
-        SS, //Second
-    }
     /// <summary>
     /// Pipeline execute schedule time
     /// </summary>

@@ -18,9 +18,10 @@ namespace BDS.Runtime.Models
     /// 2. Record pipeline status
     /// 3. Record pipeline invoke status
     /// 4. Record pipeline execute time
-    /// 6. Record pipeline load time
-    /// 5. Invoke pipeline
-    /// 6. Sent event as pipeline status
+    /// 5. Record pipeline load time
+    /// 6. Invoke pipeline
+    /// 7. Sent event as pipeline status
+    /// 8. Set time event
     /// ========
     /// </designspec>
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
@@ -28,7 +29,7 @@ namespace BDS.Runtime.Models
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
         protected WorkPipelineStatus status;
-        public event EventHandler<PipelineEventArgs> StatusEvent;
+        public event EventHandler<PipelineStatusEventArgs> StatusEvent;
         public string Name { get; set; }
         public WorkPipelineStatus Status
         {
@@ -38,14 +39,15 @@ namespace BDS.Runtime.Models
                 status = value;
                 if (StatusEvent != null)
                 {
-                    PipelineEventArgs args = new PipelineEventArgs();
+                    PipelineStatusEventArgs args = new PipelineStatusEventArgs();
                     args.Status = status;
                     StatusEvent(this, args);
                 }
             }
         }
-
         public PipelineInvokeStatus InvokeStatus { get; set; }
+        public DateTime LastExecuteDT { get; set; }
+        public DateTime NextExecuteDT { get; set; }
         public DateTime LoadPipelineDT { get; set; }
         public DateTime UnloadPipelineDT { get; set; }
         public DateTime ExecuteStartDT { get; set; }

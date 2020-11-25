@@ -18,17 +18,15 @@ namespace BDS.Runtime.Models
     /// </designspec>
     internal class DockPipeline : Pipeline
     {
-        protected PipelineAssemblyConfig _assemblyConfig;
-        protected PiplelineScheduleTime _scheduleTime;
-        protected Assembly _pipelineAssembly;
-        protected bool _isLoadAssembly = false;
-        protected List<WorkPipeline> _workPipelines;
+        protected PipelineAssemblyConfig assemblyConfig;
+        protected PiplelineScheduleTime scheduleTime;
+        protected Assembly pipelineAssembly;
+        protected PipelineAssemblyLoadContext assemblyLoadContext;
+        protected List<WorkPipeline> workPipelines;
         [NotMapped]
-        public PipelineAssemblyConfig AssemblyConfig { get { return _assemblyConfig; } private set { } }
+        public PipelineAssemblyConfig AssemblyConfig { get { return assemblyConfig; } private set { } }
         [NotMapped]
-        public PiplelineScheduleTime ScheduleTime { get { return _scheduleTime; } private set { } }
-        public  DateTime LastExecuteDT { get; set; }
-        public  DateTime NextExecuteDT { get; set; }
+        public PiplelineScheduleTime ScheduleTime { get { return scheduleTime; } private set { } }
         public DockPipeline()
         {
             ExecutionMessage = new StringBuilder(1024, 1024*10);

@@ -21,7 +21,7 @@ namespace BDS.Runtime.DataBase
         {
             DefineModelsProperties.DockPipelineHistory(modelBuilder);
             DefineModelsProperties.DockPipeline(modelBuilder);
-            DefineModelsProperties.PipelineAssemblyConfig(modelBuilder);
+            //DefineModelsProperties.PipelineAssemblyConfig(modelBuilder);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

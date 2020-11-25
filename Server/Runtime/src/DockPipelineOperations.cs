@@ -21,63 +21,68 @@ namespace BDS.Runtime
     /// 4. Record the results of execution
     /// 5. Make results of execution into history table
     /// </designspec>
-    internal class DockPipelineBuilder: DockPipeline
+    internal class DockPipelineOperations: DockPipeline, IDisposable
     {
-        public DockPipelineBuilder(PipelineAssemblyConfig assemblyConfig)
+        public DockPipelineOperations(PipelineAssemblyConfig assemblyConfigParam)
+        {
+            Name = assemblyConfigParam.AssemblyKey;
+            //Set pipeline can be invokeable
+            assemblyConfig = assemblyConfigParam;
+            workPipelines = new List<WorkPipeline>();
+
+            Initialization();
+        }
+        
+        private void Initialization()
         {
             StatusEvent += RecordResultsExecution;
-            Name = assemblyConfig.AssemblyKey;
-            //Set pipeline can be invokeable
-            _assemblyConfig = assemblyConfig;
-            _workPipelines = new List<WorkPipeline>();
-
             try
             {
                 DateTime _lastExecuteTime = LastExecuteDT;
                 DateTime _nextExecuteTime = NextExecuteDT;
-                PiplelineScheduleTime.SetScheduleTime(_assemblyConfig.ScheduleTime,out _scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
+                PiplelineScheduleTime.SetScheduleTime(assemblyConfig.ScheduleTime, out scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
                 LastExecuteDT = _lastExecuteTime;
                 NextExecuteDT = _nextExecuteTime;
+
+                assemblyLoadContext = new PipelineAssemblyLoadContext(assemblyConfig.AssemblyPath);
+                LoadPipelineDT = DateTime.Now;
+                pipelineAssembly = assemblyLoadContext.LoadFromAssemblyPath(assemblyConfig.AssemblyPath);
+
                 InvokeStatus = PipelineInvokeStatus.Invokeable;
                 Status = WorkPipelineStatus.Wait;
             }
             catch (Exception ex)
             {
-                Logger.Error(String.Format("The pipeline {0} set schedule failed, error message: {1}", Name, ex.Message));
-                ExecutionMessage.Append(String.Format("The pipeline set schedule failed, error message: {0}", ex.Message));
+                Logger.Error(String.Format("The pipeline {0} init failed in constructor method, error message: {1}", Name, ex.Message));
+                ExecutionMessage.Append(String.Format("The pipeline init failed in constructor method, error message: {0}", ex.Message));
+                InvokeStatus = PipelineInvokeStatus.InvokeUnable;
                 Status = WorkPipelineStatus.Failed;
             }
         }
-        private async Task ExecuteAndUnloadAssembly()
+
+        private async Task ExecutePipelineAsync()
         {
             object lockobject = new object();
             lock(lockobject)
             {
-                if (!_isLoadAssembly)
-                {
-                    PipelineAssemblyLoadContext assemblyLoadContext = new PipelineAssemblyLoadContext(_assemblyConfig.AssemblyPath);
-                    _pipelineAssembly = assemblyLoadContext.LoadFromAssemblyPath(_assemblyConfig.AssemblyPath);
-                    LoadPipelineDT = DateTime.Now;
-                    _isLoadAssembly = true;
-                }
                 try
                 {
                     // Load assembly
                     // Get all types of the assembly.
-                    Type[] pipelineTypes = _pipelineAssembly.GetTypes();
+                    Type[] pipelineTypes = pipelineAssembly.GetTypes();
                     //Get pipline of inherit WorkPipeline class
                     foreach (Type pipelineType in pipelineTypes)
                     {              
                         if (pipelineType.BaseType.Name == typeof(WorkPipeline).Name)
                         {
                             object pipelineInstance = Activator.CreateInstance(pipelineType);
-                            _workPipelines.Add((WorkPipeline)pipelineInstance);
+                            workPipelines.Add((WorkPipeline)pipelineInstance);
                         }
                     }
                     // Execute pipeline
-                    ExecuteStartDT = DateTime.Now;
                     Status = WorkPipelineStatus.Running;
-                    foreach(WorkPipeline workPipeline in _workPipelines)
+                    ExecuteStartDT = DateTime.Now;
+                    foreach(WorkPipeline workPipeline in workPipelines)
                     {
                        workPipeline.Processor();
                     }
@@ -85,10 +90,10 @@ namespace BDS.Runtime
                     //Set next execute time.
                     DateTime _lastExecuteTime = LastExecuteDT;
                     DateTime _nextExecuteTime = NextExecuteDT;
-                    PiplelineScheduleTime.SetNextExecuteTime(_scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
+                    PiplelineScheduleTime.SetNextExecuteTime(scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
                     LastExecuteDT = _lastExecuteTime;
                     NextExecuteDT = _nextExecuteTime;
-                    foreach(WorkPipeline pipeline in _workPipelines)
+                    foreach(WorkPipeline pipeline in workPipelines)
                     {
                         if (pipeline.Status == WorkPipelineStatus.Failed)
                         {
@@ -103,6 +108,7 @@ namespace BDS.Runtime
                 catch (Exception ex)
                 {
                     Logger.Error(String.Format("The pipeline {0} executed failed. detail error message: {1}", Name, ex.Message));
+                    ExecutionMessage.Append(String.Format("The pipeline {0} executed failed. detail error message: {1}", Name, ex.Message));
                     Status = WorkPipelineStatus.Failed;
                 }
                 finally
@@ -112,7 +118,7 @@ namespace BDS.Runtime
                 }
             }
         }
-        private void RecordResultsExecution(object source, PipelineEventArgs args)
+        private void RecordResultsExecution(object source, PipelineStatusEventArgs args)
         {
             // Save executed info to database
             using (var context = new MySqlContext())
@@ -160,13 +166,13 @@ namespace BDS.Runtime
         }
         public override async Task ExecuteAsync()
         {
-            // .Running().Result(c => c.status ==  WorkPipelineStatus.Success ? c.Success() : c.Failed()).Await().Invokeable()
-            if (DateTime.Now < NextExecuteDT)
-              return ;
-            //return Task.Run(() => {
-            //    ExecuteAndUnloadAssembly();
-            //});
-            await ExecuteAndUnloadAssembly();
+            await ExecutePipelineAsync();
+        }
+
+        public void Dispose()
+        {
+            assemblyLoadContext.Unload();
+            GC.Collect();
         }
     }
 }

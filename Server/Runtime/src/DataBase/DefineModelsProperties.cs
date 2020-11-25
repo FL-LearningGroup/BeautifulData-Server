@@ -62,32 +62,32 @@ namespace BDS.Runtime.DataBase
             modelBuilder.Entity<DockPipeline>().HasIndex(e => e.LastExecuteDT);
             #endregion
         }
-        public static void PipelineAssemblyConfig(ModelBuilder modelBuilder)
-        {
-            #region Column type
-            modelBuilder.Entity<PipelineAssemblyConfig>()
-                .Property(e => e.AssemblyKey)
-                .HasColumnType("varchar(200)")
-                .HasMaxLength(200);
-            modelBuilder.Entity<PipelineAssemblyConfig>()
-                .Property(e => e.AssemblyPath)
-                .HasColumnType("varchar(1000)")
-                .HasMaxLength(1000);
-            modelBuilder.Entity<PipelineAssemblyConfig>()
-                .Property(e => e.AssemblyStatus)
-                .HasColumnType("varchar(45)")
-                .HasMaxLength(45);
-            modelBuilder.Entity<PipelineAssemblyConfig>()
-                .Property(e => e.ScheduleTime)
-                .HasColumnType("varchar(45)")
-                .HasMaxLength(45);
-            #endregion
+        //public static void PipelineAssemblyConfig(ModelBuilder modelBuilder)
+        //{
+        //    #region Column type
+        //    modelBuilder.Entity<PipelineAssemblyConfig>()
+        //        .Property(e => e.AssemblyKey)
+        //        .HasColumnType("varchar(200)")
+        //        .HasMaxLength(200);
+        //    modelBuilder.Entity<PipelineAssemblyConfig>()
+        //        .Property(e => e.AssemblyPath)
+        //        .HasColumnType("varchar(1000)")
+        //        .HasMaxLength(1000);
+        //    modelBuilder.Entity<PipelineAssemblyConfig>()
+        //        .Property(e => e.AssemblyStatus)
+        //        .HasColumnType("varchar(45)")
+        //        .HasMaxLength(45);
+        //    modelBuilder.Entity<PipelineAssemblyConfig>()
+        //        .Property(e => e.ScheduleTime)
+        //        .HasColumnType("varchar(45)")
+        //        .HasMaxLength(45);
+        //    #endregion
 
-            #region Table constraint
-            modelBuilder.Entity<PipelineAssemblyConfig>().HasKey(c => c.AssemblyKey);
-            modelBuilder.Entity<PipelineAssemblyConfig>().HasIndex(e => e.AssemblyKey);
-            #endregion
-        }
+        //    #region Table constraint
+        //    modelBuilder.Entity<PipelineAssemblyConfig>().HasKey(c => c.AssemblyKey);
+        //    modelBuilder.Entity<PipelineAssemblyConfig>().HasIndex(e => e.AssemblyKey);
+        //    #endregion
+        //}
         public static void DockPipelineHistory(ModelBuilder modelBuilder)
         {
             #region Column type

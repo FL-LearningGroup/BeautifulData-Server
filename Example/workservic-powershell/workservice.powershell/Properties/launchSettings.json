@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "workservice.powershell": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

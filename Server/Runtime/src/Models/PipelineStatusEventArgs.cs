@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BDS.Runtime
 {
-    public class PipelineEventArgs: EventArgs
+    public class PipelineStatusEventArgs: EventArgs
     {
         public WorkPipelineStatus Status { get; set; }
         public PipelineInvokeStatus InvokeStatus { get; set; }

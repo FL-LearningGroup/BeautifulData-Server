@@ -2,6 +2,6 @@
 <root>
   <pipelines>
     <!--Status: Add -> Running(auot) -> Deleting(auto) ->Remove-->
-    <element assemblyKey="BDS.Pipeline.News.FuYang.dll" assemblyPath=".\Pipelines\News\FuYang\BDS.Pipeline.News.FuYang.dll" assemblyStatus="Add" scheduleTime="2020/11/16 08:00:00|D|1" />
+    <element assemblyKey="BDS.Pipeline.News.FuYang.dll" assemblyPath=".\Resources\Pipelines\News\FuYang\BDS.Pipeline.News.FuYang.dll" assemblyStatus="Remove" scheduleTime="2020/11/25 08:00:00|D|1" />
   </pipelines>
 </root>

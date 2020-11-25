@@ -49,10 +49,10 @@ namespace BDS.Runtime
                 }
             }
             
-            CreateDataBaseSchema();
+            CheckOrCreateDBSchema();
         }
 
-        private void CreateDataBaseSchema()
+        private void CheckOrCreateDBSchema()
         {
             using (var context = new MySqlContext())
             {
@@ -61,17 +61,17 @@ namespace BDS.Runtime
                     bool isDataBase = context.Database.EnsureCreated();
                     if (isDataBase)
                     {
-                        Logger.Info("Created database.");
+                        Logger.Info("Created database schema.");
                     }
                     else
                     {
-                        Logger.Info("The database already existed.");
+                        Logger.Info("The database schema already existed.");
                     }
                 }
                 catch(Exception ex)
                 {
-                    Logger.Fatal(String.Format("Cannot connect to database. exception message: {0}", ex.Message));
-                    throw new Exception("Cannot connected database. Failed stop service.");
+                    Logger.Fatal(String.Format("Ensure created database failed. exception message: {0}", ex.Message));
+                    throw new Exception(String.Format("Ensure created database failed. exception message: {0}", ex.Message));
 
                 }
             }
@@ -107,16 +107,13 @@ namespace BDS.Runtime
             foreach (PipelineAssemblyConfig pipelineAssembly in pipelineAssemblies)
             {
                 //Check if it already exists in the pipeline
-                isPipelineExisted = _pipelines.Contains(new DockPipelineBuilder(pipelineAssembly));
-                /*
-                _pipelines.ForEach(delegate (Pipeline pipeline)
+                foreach (var pipeline in _pipelines)
                 {
                     if (pipeline.Name == pipelineAssembly.AssemblyKey)
                     {
                         isPipelineExisted = true;
                     }
-                });*/
-
+                }
                 //Add pipeline assembly in the pipeline.
                 if (pipelineAssembly.AssemblyStatus.ToLower() == PipelineAssemblyStatus.ADD.ToLower())
                 {
@@ -159,7 +156,7 @@ namespace BDS.Runtime
             // Add new pipeline in the pipelines
             foreach (PipelineAssemblyConfig assemblyConfig in _addPipelineAssemblies)
             {
-                _pipelines.Add(new DockPipelineBuilder(assemblyConfig));
+                _pipelines.Add(new DockPipelineOperations(assemblyConfig));
             }
             // Clear the add pipeline assemblies
             _addPipelineAssemblies.Clear();
@@ -189,7 +186,7 @@ namespace BDS.Runtime
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Logger.Info(String.Format("Start the BDS Pipeline Server, {0}.", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+            Logger.Info("Start the BDS Pipeline Service");
             // Configure server
             InitialServer();
             while (!stoppingToken.IsCancellationRequested)
@@ -198,11 +195,11 @@ namespace BDS.Runtime
                 AddOrRemovePipeline();
                 foreach(Pipeline pipeline in _pipelines)
                 {
-                    if (pipeline.InvokeStatus == PipelineInvokeStatus.Invokeable)
+                    if (pipeline.InvokeStatus == PipelineInvokeStatus.Invokeable && DateTime.Now >= pipeline.NextExecuteDT)
                     {
-                        //Set pipeline can be invoke unable that wait for pipeline execute complete.
+                        //Set pipeline invoke unable that wait for pipeline execute complete.
                         pipeline.InvokeStatus = PipelineInvokeStatus.InvokeUnable;
-                        Logger.Info(String.Format("Execute {0} pipeline", pipeline.Name));
+                        Logger.Info(String.Format("Execute pipeline {0} ", pipeline.Name));
                         pipeline.ExecuteAsync();
                     }
                 }

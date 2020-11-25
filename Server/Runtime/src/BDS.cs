@@ -12,12 +12,12 @@ using BDS.Runtime.DataBase;
 
 namespace BDS.Runtime
 {
-    public class Program
+    public class BDS
     {
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public static void Main(string[] args)
         {
-            Logger.Info(String.Format("Start the BDS Server, {0}.", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+            Logger.Info("Start up the BDS Server");
             CreateHostBuilder(args).Build().Run();
         }
         
@@ -27,7 +27,11 @@ namespace BDS.Runtime
                 .ConfigureServices((hostContext, services) =>
                 {
                     //Get Mysql configuration.
+#if DEBUG
+                    MySqlConfiguration mySqlConfiguration = hostContext.Configuration.GetSection("MySqlDebug").Get<MySqlConfiguration>();
+#else
                     MySqlConfiguration mySqlConfiguration = hostContext.Configuration.GetSection("MySql").Get<MySqlConfiguration>();
+#endif
                     services.AddHostedService<PipelineHostService>();
                 });
     }
