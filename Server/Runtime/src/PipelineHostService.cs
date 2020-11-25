@@ -81,9 +81,9 @@ namespace BDS.Runtime
         {
             Logger.Debug("------------------Pipeline Assemblies------------------------------");
             Logger.Debug("------------------Add Pipeline Assemblies--------------------------");
-            _addPipelineAssemblies.ForEach(item => Logger.Info(String.Format("Add: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
+            _addPipelineAssemblies.ToList().ForEach(item => Logger.Info(String.Format("Add: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
             Logger.Debug("------------------Remove Pipeline Assemblies-----------------------");
-            _removePipelineAssemblies.ForEach(item => Logger.Info(String.Format("Remove: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
+            _removePipelineAssemblies.ToList().ForEach(item => Logger.Info(String.Format("Remove: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
             Logger.Info("------------------Pipeline Assemblies------------------------------");
         }
 
