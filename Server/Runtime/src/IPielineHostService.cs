@@ -7,8 +7,14 @@ namespace BDS.Runtime
 {
     internal interface IPielineHostService
     {
-        public List<PipelineAssemblyConfig> AddPipelineAssemblies { get; }
-        public List<PipelineAssemblyConfig> RemovePipelineAssemblies { get; }
-        public List<Pipeline> Pipelines { get; }
+        //public List<PipelineAssemblyConfig> AddPipelineAssemblies { get; }
+        //public List<PipelineAssemblyConfig> RemovePipelineAssemblies { get; }
+
+        //public List<Pipeline> Pipelines { get; }
+
+        //public List<PipelineConfig> GetPipelineConfigs();
+
+        //public PipelineConfig GetPipelineConfig(string pipelineName);
+
     }
 }

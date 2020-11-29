@@ -1,4 +1,5 @@
-﻿using BDS.Runtime.Models;
+﻿using BDS.Framework;
+using BDS.Runtime.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,10 +21,12 @@ namespace BDS.Runtime.DataBase
                 .HasMaxLength(200);
             modelBuilder.Entity<DockPipeline>()
                 .Property(e => e.Status)
-                .HasColumnType("varchar(45)");
+                .HasColumnType("varchar(45)")
+                .HasConversion(ValueTypeConverter.EnumConvertString<WorkPipelineStatus>());
             modelBuilder.Entity<DockPipeline>()
                 .Property(e => e.InvokeStatus)
-                .HasColumnType("varchar(45)");
+                .HasColumnType("varchar(45)")
+                .HasConversion(ValueTypeConverter.EnumConvertString<PipelineInvokeStatus>());
             modelBuilder.Entity<DockPipeline>()
                 .Property(e => e.InvokeStatus)
                 .HasColumnType("varchar(45)");
@@ -61,6 +64,40 @@ namespace BDS.Runtime.DataBase
             modelBuilder.Entity<DockPipeline>().HasKey(e => e.Name);
             modelBuilder.Entity<DockPipeline>().HasIndex(e => e.LastExecuteDT);
             #endregion
+        }
+        public static void PipelineConfig(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.Name)
+                .HasColumnType("varchar(45)");
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.Status)
+                .HasColumnType("varchar(45)")
+                .HasConversion(ValueTypeConverter.EnumConvertString<PipelineConfigStatus>());
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.Type)
+                .HasColumnType("varchar(45)")
+                .HasConversion(ValueTypeConverter.EnumConvertString<PipelineReferenceType>());
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.AddressType)
+                .HasColumnType("varchar(45)")
+                .HasConversion(ValueTypeConverter.EnumConvertString<PipelineReferenceAddressType>());
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.PipelineReferenceAddress)
+                .HasColumnType("varchar(100)");
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.StartDT)
+                .HasColumnType("varchar(19)")
+                .HasConversion(ValueTypeConverter.DateTimeConvertString);
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.ApartTimeType)
+                .HasColumnType("varchar(45)")
+                .HasConversion(ValueTypeConverter.EnumConvertString<PipelineScheduleApartTimeType>());
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.ApartTime)
+                .HasColumnType("int");
+
+            modelBuilder.Entity<PipelineConfig>().HasKey(e => e.Name);
         }
         //public static void PipelineAssemblyConfig(ModelBuilder modelBuilder)
         //{

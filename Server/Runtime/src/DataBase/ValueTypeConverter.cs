@@ -15,7 +15,7 @@ namespace BDS.Runtime.DataBase
         public static ValueConverter<DateTime, string> DateTimeConvertString 
         { 
             get => new ValueConverter<DateTime, string> (
-                v => v.ToString(GlobalConstant.ConvertDateTimeToStringFormat),
+                v => v.ToString(GlobalVariables.ConvertDateTimeToStringFormat),
                 v => DateTime.Parse(v)
             );
         }
@@ -36,6 +36,11 @@ namespace BDS.Runtime.DataBase
                 v => (PipelineInvokeStatus)Enum.Parse(typeof(PipelineInvokeStatus), v)
             );
         }
+
+        public static ValueConverter EnumConvertString<T>() where T: Enum => new ValueConverter<T, string>(
+                v => v.ToString(),
+                v => (T)Enum.Parse(typeof(T), v)
+            );
         #endregion
 
         #region StringBuilder convert String

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BDS.Runtime.Models
 {
-    internal enum PiplelineScheduleApartTimeType
+    internal enum PipelineScheduleApartTimeType
     {
         Y = 1, // Year.
         M, // Month.

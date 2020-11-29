@@ -10,8 +10,8 @@ namespace BDS.Runtime.DataBase
     public class StringDateConverter : ValueConverter<DateTime?, string>
     {
         // these can be overridden
-        public static string StringDateStorageType = $"char{GlobalConstant.ConvertDateTimeToStringFormat}";
-        public static string StringDateStorageFormat = GlobalConstant.ConvertDateTimeToStringFormat;
+        public static string StringDateStorageType = $"char{GlobalVariables.ConvertDateTimeToStringFormat}";
+        public static string StringDateStorageFormat = GlobalVariables.ConvertDateTimeToStringFormat;
         public static string StringDateEmptyValue = "0001-01-01 00:00:00";
 
         protected static readonly ConverterMappingHints _defaultHints

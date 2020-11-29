@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 using BDS.Runtime.Models;
 
 namespace BDS.Runtime
 {
-    public static class ServerConfig
+    public static class ServerConfigOperation
     {
+        public static void SubscriptionServerConfigWatcher()
+        {
+            ServerConfigWatcher.watcher.Changed += LoadServerConfigSwitch;
+            ServerConfigWatcher.watcher.EnableRaisingEvents = true;
+        }
         /// <summary>
         /// Load pipline configuration information from xml file.
         /// </summary>
@@ -32,11 +38,24 @@ namespace BDS.Runtime
             foreach (XmlNode node in pipelineNodes)
             {
                 assemblyConfigs.Add(new PipelineAssemblyConfig()
-                { AssemblyKey = node.Attributes["assemblyKey"].Value, AssemblyPath = Path.Combine(GlobalConstant.WorkFolder,node.Attributes["assemblyPath"].Value), AssemblyStatus = node.Attributes["assemblyStatus"].Value, ScheduleTime = node.Attributes["scheduleTime"].Value }
+                { AssemblyKey = node.Attributes["assemblyKey"].Value, AssemblyPath = Path.Combine(GlobalVariables.WorkFolder,node.Attributes["assemblyPath"].Value), AssemblyStatus = node.Attributes["assemblyStatus"].Value, ScheduleTime = node.Attributes["scheduleTime"].Value }
                 );
             }
             return assemblyConfigs;
 
+        }
+        public static void LoadServerConfigSwitch(object source, FileSystemEventArgs eventArgs)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            List<PipelineAssemblyConfig> assemblyConfigs = new List<PipelineAssemblyConfig>();
+            if (!IsFileLocked(eventArgs.FullPath))
+            {
+                using(FileStream fileStream = new FileStream(eventArgs.FullPath, FileMode.Open))
+                {
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(ServerConfig));
+                    GlobalVariables.ServerConfig = (ServerConfig) xmlSerializer.Deserialize(fileStream);
+                }
+            }
         }
         /// <summary>
         /// Check if the file is locked by another program.
@@ -52,12 +71,13 @@ namespace BDS.Runtime
                     stream.Close();
                 }
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 //the file is unavailable because it is:
                 //still being written to
                 //or being processed by another thread
                 //or does not exist (has already been processed)
+                Logger.Error(String.Format("{0} has been open another program, exception message {1}", xmlPath, ex.Message + ex.InnerException));
                 return true;
             }
 

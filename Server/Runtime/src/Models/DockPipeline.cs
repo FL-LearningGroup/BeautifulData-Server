@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BDS.Runtime.Models
@@ -18,22 +19,19 @@ namespace BDS.Runtime.Models
     /// </designspec>
     internal class DockPipeline : Pipeline
     {
-        protected PipelineAssemblyConfig assemblyConfig;
-        protected PiplelineScheduleTime scheduleTime;
-        protected Assembly pipelineAssembly;
         protected PipelineAssemblyLoadContext assemblyLoadContext;
         protected List<WorkPipeline> workPipelines;
-        [NotMapped]
-        public PipelineAssemblyConfig AssemblyConfig { get { return assemblyConfig; } private set { } }
-        [NotMapped]
-        public PiplelineScheduleTime ScheduleTime { get { return scheduleTime; } private set { } }
+        public string DllPath { get; set; }
+        public PiplelineScheduleTimeOperation ScheduleTimeOperation { get; set; }
+        public Assembly pipelineAssembly { get; set; }
+
         public DockPipeline()
         {
             ExecutionMessage = new StringBuilder(1024, 1024*10);
         }
-        public override Task ExecuteAsync()
+        public override Task<PipelineTaskResult> ExecuteAsync(CancellationToken cancellationToken)
         {
-            return new Task(null);
+            return null;
         }
     }
 }

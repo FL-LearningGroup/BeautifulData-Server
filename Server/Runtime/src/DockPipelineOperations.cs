@@ -8,6 +8,7 @@ using BDS.Framework;
 using log4net.Util;
 using System.Runtime.CompilerServices;
 using System.Reflection;
+using System.Threading;
 
 namespace BDS.Runtime
 {
@@ -23,13 +24,13 @@ namespace BDS.Runtime
     /// </designspec>
     internal class DockPipelineOperations: DockPipeline, IDisposable
     {
-        public DockPipelineOperations(PipelineAssemblyConfig assemblyConfigParam)
+        public DockPipelineOperations(string name, string dllPath, PiplelineScheduleTimeOperation scheduleTimeOperation)
         {
-            Name = assemblyConfigParam.AssemblyKey;
+            Name = name;
+            DllPath = dllPath;
+            ScheduleTimeOperation = scheduleTimeOperation;
             //Set pipeline can be invokeable
-            assemblyConfig = assemblyConfigParam;
             workPipelines = new List<WorkPipeline>();
-
             Initialization();
         }
         
@@ -40,13 +41,13 @@ namespace BDS.Runtime
             {
                 DateTime _lastExecuteTime = LastExecuteDT;
                 DateTime _nextExecuteTime = NextExecuteDT;
-                PiplelineScheduleTime.SetScheduleTime(assemblyConfig.ScheduleTime, out scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
+                ScheduleTimeOperation.SetScheduleTime(out _lastExecuteTime, ref _nextExecuteTime);
                 LastExecuteDT = _lastExecuteTime;
                 NextExecuteDT = _nextExecuteTime;
 
-                assemblyLoadContext = new PipelineAssemblyLoadContext(assemblyConfig.AssemblyPath);
+                assemblyLoadContext = new PipelineAssemblyLoadContext(DllPath);
                 LoadPipelineDT = DateTime.Now;
-                pipelineAssembly = assemblyLoadContext.LoadFromAssemblyPath(assemblyConfig.AssemblyPath);
+                pipelineAssembly = assemblyLoadContext.LoadFromAssemblyPath(DllPath);
 
                 InvokeStatus = PipelineInvokeStatus.Invokeable;
                 Status = WorkPipelineStatus.Wait;
@@ -60,7 +61,7 @@ namespace BDS.Runtime
             }
         }
 
-        private async Task ExecutePipelineAsync()
+        private PipelineTaskResult ExecutePipelineAsync()
         {
             object lockobject = new object();
             lock(lockobject)
@@ -90,7 +91,7 @@ namespace BDS.Runtime
                     //Set next execute time.
                     DateTime _lastExecuteTime = LastExecuteDT;
                     DateTime _nextExecuteTime = NextExecuteDT;
-                    PiplelineScheduleTime.SetNextExecuteTime(scheduleTime, out _lastExecuteTime, ref _nextExecuteTime);
+                    ScheduleTimeOperation.SetNextExecuteTime(out _lastExecuteTime, ref _nextExecuteTime);
                     LastExecuteDT = _lastExecuteTime;
                     NextExecuteDT = _nextExecuteTime;
                     foreach(WorkPipeline pipeline in workPipelines)
@@ -116,6 +117,7 @@ namespace BDS.Runtime
                     InvokeStatus = PipelineInvokeStatus.Invokeable;
                     Status = WorkPipelineStatus.Wait; //Cause exception
                 }
+                return new PipelineTaskResult() {Name = this.Name, Status = this.Status };
             }
         }
         private void RecordResultsExecution(object source, PipelineStatusEventArgs args)
@@ -164,9 +166,9 @@ namespace BDS.Runtime
             dockPipelineHistory.LoadPipelineDT = dockPipeline.LoadPipelineDT;
             dockPipelineHistory.ExecutionMessage = dockPipeline.ExecutionMessage;
         }
-        public override async Task ExecuteAsync()
+        public override async Task<PipelineTaskResult> ExecuteAsync(CancellationToken cancellationToken)
         {
-            await ExecutePipelineAsync();
+            return await Task.Run(() => ExecutePipelineAsync(), cancellationToken);
         }
 
         public void Dispose()

@@ -33,7 +33,7 @@
 
             // Search config file
 #if DEBUG
-            var path =GlobalConstant.WorkFolder + Path.DirectorySeparatorChar +"config" + Path.DirectorySeparatorChar + "log4netdebug.config";
+            var path =GlobalVariables.WorkFolder + Path.DirectorySeparatorChar +"config" + Path.DirectorySeparatorChar + "log4netdebug.config";
 #else
             var path =GlobalConstant.WorkFolder + Path.DirectorySeparatorChar +"config" + Path.DirectorySeparatorChar + "log4net.config";
 #endif
@@ -73,6 +73,7 @@
             EnsureLogger();
 
             _log.Fatal(message);
+            throw new Exception(message);
         }
         public static void Warn(string message)
         {

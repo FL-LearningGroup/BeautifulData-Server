@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
 
@@ -58,6 +59,6 @@ namespace BDS.Runtime.Models
             return Name == ((Pipeline) obj).Name;
         }
 
-        public abstract Task ExecuteAsync();
+        public abstract Task<PipelineTaskResult> ExecuteAsync(CancellationToken cancellationToken);
     }
 }

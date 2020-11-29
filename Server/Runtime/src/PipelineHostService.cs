@@ -11,6 +11,7 @@ using System.Linq;
 using log4net.Util;
 using BDS.Framework;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Xml;
 
 namespace BDS.Runtime
 {
@@ -21,40 +22,26 @@ namespace BDS.Runtime
     /// </summary>
     internal class PipelineHostService : BackgroundService, IPielineHostService
     {
-        private List<PipelineAssemblyConfig> _addPipelineAssemblies;
-        private List<PipelineAssemblyConfig> _removePipelineAssemblies;
-        private List<Pipeline> _pipelines;
-        public List<PipelineAssemblyConfig> AddPipelineAssemblies { get { return _addPipelineAssemblies; } }
-        public List<PipelineAssemblyConfig> RemovePipelineAssemblies { get { return _removePipelineAssemblies; } }
-        public List<Pipeline> Pipelines { get { return _pipelines; } }
-        
+        private ServerConfigSwitch _configSwitch;
+        private List<PipelineConfig> _pipelineConfigList;
+        private List<PipelineControl> _pipelineControlList;
+        private XmlNodeList _serverConfig = null;
         public PipelineHostService()
         {
-            _addPipelineAssemblies = new List<PipelineAssemblyConfig>();
-            _removePipelineAssemblies = new List<PipelineAssemblyConfig>();
-            _pipelines = new List<Pipeline>();
+            _pipelineConfigList = new List<PipelineConfig>();
+            _pipelineControlList = new List<PipelineControl>();
+            _configSwitch = new ServerConfigSwitch();
         }
 
         private void InitialServer()
         {
-            ServerConfigWatcher.watcher.Created += AddOrRemovePipelineAssembly;
-            ServerConfigWatcher.watcher.Changed += AddOrRemovePipelineAssembly;
-            ServerConfigWatcher.watcher.EnableRaisingEvents = true;
-            //Load pipelne assemblies from the configuration file at the initial time.
-            foreach (PipelineAssemblyConfig assemblyConfig in ServerConfig.LoadAssemblyConfig(GlobalConstant.WorkFolder + Path.DirectorySeparatorChar +"Config" + Path.DirectorySeparatorChar + "AssemblyConfig.xml"))
-            {
-                if (assemblyConfig.AssemblyStatus.ToLower() == PipelineAssemblyStatus.ADD.ToLower())
-                {
-                    _addPipelineAssemblies.Add(assemblyConfig);
-                }
-            }
-            
+            _configSwitch.ServerSwitchEvent += GetPipelineConfigs;
             CheckOrCreateDBSchema();
         }
 
         private void CheckOrCreateDBSchema()
         {
-            using (var context = new MySqlContext())
+            using (MySqlContext context = new MySqlContext())
             {
                 try
                 {
@@ -71,119 +58,66 @@ namespace BDS.Runtime
                 catch(Exception ex)
                 {
                     Logger.Fatal(String.Format("Ensure created database failed. exception message: {0}", ex.Message));
-                    throw new Exception(String.Format("Ensure created database failed. exception message: {0}", ex.Message));
-
                 }
             }
         }
 
-        private void DisplayPipelineAssemblies()
+        public void GetPipelineConfigs(object source, EventArgs eventArgs)
         {
-            Logger.Debug("------------------Pipeline Assemblies------------------------------");
-            Logger.Debug("------------------Add Pipeline Assemblies--------------------------");
-            _addPipelineAssemblies.ToList().ForEach(item => Logger.Info(String.Format("Add: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
-            Logger.Debug("------------------Remove Pipeline Assemblies-----------------------");
-            _removePipelineAssemblies.ToList().ForEach(item => Logger.Info(String.Format("Remove: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
-            Logger.Info("------------------Pipeline Assemblies------------------------------");
+            using(MySqlContext context = new MySqlContext())
+            {
+                try
+                {
+                    _pipelineConfigList =  context.PipelineConfig.ToList();
+                }
+                catch(Exception ex)
+                {
+                    Logger.Error(String.Format("Cannot get all pipeline config from databases, exception message: {0}", ex.Message + ex.InnerException));
+                }
+            }
         }
 
-        private void DisplayPipelines()
+        private void CreatePipeline()
         {
-            Logger.Debug("------------------Pipeline------------------------------");
-            _pipelines.ForEach(item => Logger.Info(String.Format("Pipeline: AssemlyKey: {0}", item.Name)));
-            Logger.Debug("------------------Pipeline------------------------------");
+            if (_pipelineConfigList.Count == 0) return;
+            PipelineConfigOperation.AddPipeline(_pipelineConfigList.FindAll(item => item.Status == PipelineConfigStatus.Add), _pipelineControlList);
+            PipelineConfigOperation.StopPipeline(_pipelineConfigList.FindAll(item => item.Status == PipelineConfigStatus.Stop), _pipelineControlList);
+            PipelineConfigOperation.RemovePipeline(_pipelineConfigList.FindAll(item => item.Status == PipelineConfigStatus.Remove), _pipelineControlList);
         }
-        private void AddOrRemovePipelineAssembly(object source, FileSystemEventArgs eventArgs)
+
+        public PipelineConfig GetPipelineConfig(string pipelineName)
         {
-            List<PipelineAssemblyConfig> pipelineAssemblies = null;
-            int checkAssemblyFileLock = 0; //The assembly config file is open already with the another application.
-            while((pipelineAssemblies is null) && (checkAssemblyFileLock < 3))
+            using (MySqlContext context = new MySqlContext())
             {
-                pipelineAssemblies = ServerConfig.LoadAssemblyConfig(eventArgs.FullPath);
-                checkAssemblyFileLock++;
-            }
-            if (pipelineAssemblies is null) return; // Open assembly configuration file failed.
-            bool isPipelineExisted = default(Boolean);
-            foreach (PipelineAssemblyConfig pipelineAssembly in pipelineAssemblies)
-            {
-                //Check if it already exists in the pipeline
-                foreach (var pipeline in _pipelines)
+                try
                 {
-                    if (pipeline.Name == pipelineAssembly.AssemblyKey)
-                    {
-                        isPipelineExisted = true;
-                    }
+                    List<PipelineConfig> pipelineConfigs = context.PipelineConfig.ToList();
+                    return pipelineConfigs.Find(item => item.Name == pipelineName);
                 }
-                //Add pipeline assembly in the pipeline.
-                if (pipelineAssembly.AssemblyStatus.ToLower() == PipelineAssemblyStatus.ADD.ToLower())
+                catch (Exception ex)
                 {
-                    // Already exists in the pipeline.
-                    if (isPipelineExisted)
-                    {
-                        continue;
-                    }
-                    // Already exists in the add pipeline assemblies.
-                    if (_addPipelineAssemblies.Contains(pipelineAssembly))
-                    {
-                        continue;
-                    }
-                    // Add pipline assembly in the add pipeline assemblies.
-                    _addPipelineAssemblies.Add(pipelineAssembly);
-                    continue;
-                }
-                //Remove pipeline assembly in the remove pipeline assemblies.
-                if (pipelineAssembly.AssemblyStatus.ToLower() == PipelineAssemblyStatus.REMOVE.ToLower())
-                {
-                    // Already exsits in the pipeline
-                    if (isPipelineExisted)
-                    {
-                        // Alread exsits in the remove pipeline assemblies. 
-                        if (_removePipelineAssemblies.Contains(pipelineAssembly))
-                        {
-                            continue;
-                        }
-                        // Add pipeline asemblyies in the remove pipeline assemblies.
-                        _removePipelineAssemblies.Add(pipelineAssembly);
-                        continue;
-                    }
+                    Logger.Fatal(String.Format("Cannot get a pipeline config from databases, exception message: {0}", ex.Message + ex.InnerException));
+                    return null;
                 }
             }
-            DisplayPipelineAssemblies();
         }
-        private void AddOrRemovePipeline()
-        {
-            if (_addPipelineAssemblies.Count == 0 && _removePipelineAssemblies.Count == 0) return;
-            // Add new pipeline in the pipelines
-            foreach (PipelineAssemblyConfig assemblyConfig in _addPipelineAssemblies)
-            {
-                _pipelines.Add(new DockPipelineOperations(assemblyConfig));
-            }
-            // Clear the add pipeline assemblies
-            _addPipelineAssemblies.Clear();
-            
-            // Remove pipeline in the pipelines.
-            List<PipelineAssemblyConfig> suceessRemoveAssemblies = new List<PipelineAssemblyConfig>();
-            foreach (PipelineAssemblyConfig pipelineAssembly in _removePipelineAssemblies)
-            {
-                Pipeline pipeline = _pipelines.Find(item => item.Name == pipelineAssembly.AssemblyKey);
-                if (pipeline != null)
-                {
-                    //Check pipeline status
-                    if (pipeline.Status != WorkPipelineStatus.Running)
-                    {
-                        pipeline.UnloadPipelineDT = DateTime.Now;
-                        _pipelines.Remove(pipeline);
-                        suceessRemoveAssemblies.Add(pipelineAssembly);
-                    }
-                }
-            }
-            if (suceessRemoveAssemblies.Count != 0)
-            {
-                // Remove already removed pipeline in the remove pipeline assemblies.
-                suceessRemoveAssemblies.ForEach(item => _removePipelineAssemblies.Remove(item));
-            }
-            DisplayPipelines();
-        }
+        //private void DisplayPipelineAssemblies()
+        //{
+        //    Logger.Info("------------------Pipeline Assemblies------------------------------");
+        //    Logger.Info("------------------Add Pipeline Assemblies--------------------------");
+        //    _addPipelineAssemblies.ToList().ForEach(item => Logger.Info(String.Format("Add: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
+        //    Logger.Info("------------------Remove Pipeline Assemblies-----------------------");
+        //    _removePipelineAssemblies.ToList().ForEach(item => Logger.Info(String.Format("Remove: AssemlyKey: {0}, AssemblyStatus: {1}", item.AssemblyKey, item.AssemblyStatus)));
+        //    Logger.Info("------------------Pipeline Assemblies------------------------------");
+        //}
+
+        //private void DisplayPipelines()
+        //{
+        //    Logger.Info("------------------Pipeline------------------------------");
+        //    _pipelineList.ForEach(item => Logger.Info(String.Format("Pipeline: AssemlyKey: {0}", item.Name)));
+        //    Logger.Info("------------------Pipeline------------------------------");
+        //}
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Logger.Info("Start the BDS Pipeline Service");
@@ -192,16 +126,15 @@ namespace BDS.Runtime
             while (!stoppingToken.IsCancellationRequested)
             {
                 //Add or remove the pipeline from the pipeline collection.
-                AddOrRemovePipeline();
-                foreach(Pipeline pipeline in _pipelines)
+                foreach(PipelineControl pipeline in _pipelineControlList)
                 {
-                    if (pipeline.InvokeStatus == PipelineInvokeStatus.Invokeable && DateTime.Now >= pipeline.NextExecuteDT)
-                    {
-                        //Set pipeline invoke unable that wait for pipeline execute complete.
-                        pipeline.InvokeStatus = PipelineInvokeStatus.InvokeUnable;
-                        Logger.Info(String.Format("Execute pipeline {0} ", pipeline.Name));
-                        pipeline.ExecuteAsync();
-                    }
+                    //if (pipeline.InvokeStatus == PipelineInvokeStatus.Invokeable && DateTime.Now >= pipeline.NextExecuteDT)
+                    //{
+                    //    //Set pipeline invoke unable that wait for pipeline execute complete.
+                    //    pipeline.InvokeStatus = PipelineInvokeStatus.InvokeUnable;
+                    //    Logger.Info(String.Format("Execute pipeline {0} ", pipeline.Name));
+                    //    pipeline.ExecuteAsync();
+                    //}
                 }
             }
         }

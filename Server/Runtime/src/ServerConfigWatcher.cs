@@ -9,7 +9,7 @@ namespace BDS.Runtime
 {
     internal class ServerConfigWatcher
     {
-        private readonly static string _folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar + "config";
+        private readonly static string _folderPath = GlobalVariables.WorkFolder + Path.DirectorySeparatorChar + "config";
 
         public static FileSystemWatcher watcher;
 
@@ -23,11 +23,9 @@ namespace BDS.Runtime
             }
             watcher = new FileSystemWatcher();
             watcher.Path = _folderPath;
-            watcher.IncludeSubdirectories = true;
-            watcher.Filter = "*";
-            watcher.NotifyFilter = NotifyFilters.LastWrite
-                                    | NotifyFilters.FileName
-                                    | NotifyFilters.DirectoryName;
+            watcher.IncludeSubdirectories = false;
+            watcher.Filter = "ServerConfig.xml";
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
         }
     }
 }

@@ -17,6 +17,7 @@ namespace BDS.Runtime.DataBase
         public DbSet<DockPipeline> DockPipeline { get; set; }
         public DbSet<PipelineAssemblyConfig> PipelineAssemblyConfig { get; set; }
         public DbSet<DockPipelineHistory> DockPipelineHistory { get; set; }
+        public DbSet<PipelineConfig> PipelineConfig { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             DefineModelsProperties.DockPipelineHistory(modelBuilder);

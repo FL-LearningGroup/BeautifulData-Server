@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BDS.Runtime.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,9 +9,11 @@ using System.Text;
 
 namespace BDS.Runtime
 {
-    internal static class GlobalConstant
+    internal static class GlobalVariables
     {
+        private static ServerConfig _serverConfig;
         public static string WorkFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string ResourcesFolder = Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar;
         public static void GetAssemblied(string context)
         {
             AppDomain currentDomain = AppDomain.CurrentDomain;
@@ -26,5 +29,7 @@ namespace BDS.Runtime
         }
 
         public static string ConvertDateTimeToStringFormat { get => "yyyy/MM/dd HH:mm:ss"; private set { } }
+
+        public static ServerConfig ServerConfig { get => _serverConfig = _serverConfig ?? new ServerConfig(); set => _serverConfig = value; }
     }
 }

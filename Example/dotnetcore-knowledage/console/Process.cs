@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BDS.DotNetCoreKnowledage
 {
@@ -15,7 +17,7 @@ namespace BDS.DotNetCoreKnowledage
             Console.WriteLine("---------Please enter key to end the process----------");
             Console.ReadKey();
         }
-        static void Main()
+        static async Task Main()
         {
             StartTag();
             EndTag();
