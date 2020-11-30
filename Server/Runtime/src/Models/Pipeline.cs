@@ -46,9 +46,6 @@ namespace BDS.Runtime.Models
                 }
             }
         }
-        public PipelineInvokeStatus InvokeStatus { get; set; }
-        public DateTime LastExecuteDT { get; set; }
-        public DateTime NextExecuteDT { get; set; }
         public DateTime LoadPipelineDT { get; set; }
         public DateTime UnloadPipelineDT { get; set; }
         public DateTime ExecuteStartDT { get; set; }

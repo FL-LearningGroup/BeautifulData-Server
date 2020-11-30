@@ -12,12 +12,11 @@ namespace BDS.Runtime
     [Serializable]
     internal class PiplelineScheduleTimeOperation: PiplelineScheduleTime
     {
-
-        public void SetScheduleTime(out DateTime lastExecuteTime, ref DateTime nextExecuteTime)
+        public PiplelineScheduleTimeOperation(PipelineScheduleApartTimeType model, int apartTime): base(model, apartTime)
         {
-            nextExecuteTime = StartTime;
-            lastExecuteTime = nextExecuteTime;
+
         }
+
         public  void SetNextExecuteTime(out DateTime lastExecuteTime, ref DateTime nextExecuteTime)
         {
             lastExecuteTime = nextExecuteTime;

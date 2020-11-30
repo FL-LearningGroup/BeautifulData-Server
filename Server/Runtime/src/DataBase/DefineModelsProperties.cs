@@ -24,13 +24,6 @@ namespace BDS.Runtime.DataBase
                 .HasColumnType("varchar(45)")
                 .HasConversion(ValueTypeConverter.EnumConvertString<WorkPipelineStatus>());
             modelBuilder.Entity<DockPipeline>()
-                .Property(e => e.InvokeStatus)
-                .HasColumnType("varchar(45)")
-                .HasConversion(ValueTypeConverter.EnumConvertString<PipelineInvokeStatus>());
-            modelBuilder.Entity<DockPipeline>()
-                .Property(e => e.InvokeStatus)
-                .HasColumnType("varchar(45)");
-            modelBuilder.Entity<DockPipeline>()
                 .Property(e => e.LoadPipelineDT)
                 .HasColumnType("varchar(19)")
                 .HasConversion(ValueTypeConverter.DateTimeConvertString);
@@ -50,19 +43,10 @@ namespace BDS.Runtime.DataBase
                 .Property(e => e.ExecutionMessage)
                 .HasColumnType("text")
                 .HasConversion(ValueTypeConverter.StringBuilderConvertString);
-            modelBuilder.Entity<DockPipeline>()
-                .Property(e => e.LastExecuteDT)
-                .HasColumnType("varchar(19)")
-                .HasConversion(ValueTypeConverter.DateTimeConvertString);
-            modelBuilder.Entity<DockPipeline>()
-                .Property(e => e.NextExecuteDT)
-                .HasColumnType("varchar(19)")
-                .HasConversion(ValueTypeConverter.DateTimeConvertString);
             #endregion
 
             #region Table constraint
             modelBuilder.Entity<DockPipeline>().HasKey(e => e.Name);
-            modelBuilder.Entity<DockPipeline>().HasIndex(e => e.LastExecuteDT);
             #endregion
         }
         public static void PipelineConfig(ModelBuilder modelBuilder)
@@ -85,10 +69,6 @@ namespace BDS.Runtime.DataBase
             modelBuilder.Entity<PipelineConfig>()
                 .Property(e => e.PipelineReferenceAddress)
                 .HasColumnType("varchar(100)");
-            modelBuilder.Entity<PipelineConfig>()
-                .Property(e => e.StartDT)
-                .HasColumnType("varchar(19)")
-                .HasConversion(ValueTypeConverter.DateTimeConvertString);
             modelBuilder.Entity<PipelineConfig>()
                 .Property(e => e.ApartTimeType)
                 .HasColumnType("varchar(45)")

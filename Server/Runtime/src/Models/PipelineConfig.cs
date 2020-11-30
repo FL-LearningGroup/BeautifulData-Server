@@ -15,7 +15,9 @@ namespace BDS.Runtime.Models
 
         public string PipelineReferenceAddress { get; set; }
 
-        public DateTime StartDT { get; set; }
+        public DateTime LastExecuteDT { get; set; }
+
+        public DateTime NextExecuteDT { get; set; }
 
         public PipelineScheduleApartTimeType ApartTimeType { get; set; }
 

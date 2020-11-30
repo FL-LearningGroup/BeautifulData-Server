@@ -22,7 +22,6 @@ namespace BDS.Runtime.Models
         protected PipelineAssemblyLoadContext assemblyLoadContext;
         protected List<WorkPipeline> workPipelines;
         public string DllPath { get; set; }
-        public PiplelineScheduleTimeOperation ScheduleTimeOperation { get; set; }
         public Assembly pipelineAssembly { get; set; }
 
         public DockPipeline()

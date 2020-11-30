@@ -24,11 +24,10 @@ namespace BDS.Runtime
     /// </designspec>
     internal class DockPipelineOperations: DockPipeline, IDisposable
     {
-        public DockPipelineOperations(string name, string dllPath, PiplelineScheduleTimeOperation scheduleTimeOperation)
+        public DockPipelineOperations(string name, string dllPath)
         {
             Name = name;
             DllPath = dllPath;
-            ScheduleTimeOperation = scheduleTimeOperation;
             //Set pipeline can be invokeable
             workPipelines = new List<WorkPipeline>();
             Initialization();
@@ -39,24 +38,15 @@ namespace BDS.Runtime
             StatusEvent += RecordResultsExecution;
             try
             {
-                DateTime _lastExecuteTime = LastExecuteDT;
-                DateTime _nextExecuteTime = NextExecuteDT;
-                ScheduleTimeOperation.SetScheduleTime(out _lastExecuteTime, ref _nextExecuteTime);
-                LastExecuteDT = _lastExecuteTime;
-                NextExecuteDT = _nextExecuteTime;
-
                 assemblyLoadContext = new PipelineAssemblyLoadContext(DllPath);
                 LoadPipelineDT = DateTime.Now;
                 pipelineAssembly = assemblyLoadContext.LoadFromAssemblyPath(DllPath);
-
-                InvokeStatus = PipelineInvokeStatus.Invokeable;
                 Status = WorkPipelineStatus.Wait;
             }
             catch (Exception ex)
             {
                 Logger.Error(String.Format("The pipeline {0} init failed in constructor method, error message: {1}", Name, ex.Message));
                 ExecutionMessage.Append(String.Format("The pipeline init failed in constructor method, error message: {0}", ex.Message));
-                InvokeStatus = PipelineInvokeStatus.InvokeUnable;
                 Status = WorkPipelineStatus.Failed;
             }
         }
@@ -88,12 +78,6 @@ namespace BDS.Runtime
                        workPipeline.Processor();
                     }
                     ExecuteEndDT = DateTime.Now;
-                    //Set next execute time.
-                    DateTime _lastExecuteTime = LastExecuteDT;
-                    DateTime _nextExecuteTime = NextExecuteDT;
-                    ScheduleTimeOperation.SetNextExecuteTime(out _lastExecuteTime, ref _nextExecuteTime);
-                    LastExecuteDT = _lastExecuteTime;
-                    NextExecuteDT = _nextExecuteTime;
                     foreach(WorkPipeline pipeline in workPipelines)
                     {
                         if (pipeline.Status == WorkPipelineStatus.Failed)
@@ -114,7 +98,6 @@ namespace BDS.Runtime
                 }
                 finally
                 {
-                    InvokeStatus = PipelineInvokeStatus.Invokeable;
                     Status = WorkPipelineStatus.Wait; //Cause exception
                 }
                 return new PipelineTaskResult() {Name = this.Name, Status = this.Status };
@@ -140,12 +123,9 @@ namespace BDS.Runtime
                 {
                     // Update row
                     pipeline.Status = this.Status;
-                    pipeline.LastExecuteDT = this.LastExecuteDT;
-                    pipeline.NextExecuteDT = this.NextExecuteDT;
                     pipeline.ExecuteStartDT = this.ExecuteStartDT;
                     pipeline.ExecuteEndDT = this.ExecuteEndDT;
                     pipeline.LoadPipelineDT = this.LoadPipelineDT;
-                    pipeline.InvokeStatus = this.InvokeStatus;
 
                 }
                 DockPipelineHistory dockPipelineHistory = new DockPipelineHistory();
@@ -158,9 +138,6 @@ namespace BDS.Runtime
         {
             dockPipelineHistory.Name = dockPipeline.Name;
             dockPipelineHistory.Status = dockPipeline.Status;
-            dockPipelineHistory.InvokeStatus = dockPipeline.InvokeStatus;
-            dockPipelineHistory.LastExecuteDT = dockPipeline.LastExecuteDT;
-            dockPipelineHistory.NextExecuteDT = dockPipeline.NextExecuteDT;
             dockPipelineHistory.ExecuteStartDT = dockPipeline.ExecuteStartDT;
             dockPipelineHistory.ExecuteEndDT = dockPipeline.ExecuteEndDT;
             dockPipelineHistory.LoadPipelineDT = dockPipeline.LoadPipelineDT;

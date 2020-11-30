@@ -6,7 +6,11 @@ namespace BDS.Runtime.Models
 {
     internal class PiplelineScheduleTime
     {
-        public DateTime StartTime { get; set; }
+        public PiplelineScheduleTime(PipelineScheduleApartTimeType model, int apartTime)
+        {
+            Model = model;
+            ApartTime = apartTime;
+        }
         public PipelineScheduleApartTimeType Model { get; set; }
         public int ApartTime { get; set; }
     }
