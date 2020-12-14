@@ -30,6 +30,12 @@
     <None Update="Config\AssemblyConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Config\ServerConfig.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Respository\Models\" />
   </ItemGroup>
 
 </Project>

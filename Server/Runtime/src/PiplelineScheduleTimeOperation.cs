@@ -17,7 +17,7 @@ namespace BDS.Runtime
 
         }
 
-        public  void SetNextExecuteTime(out DateTime lastExecuteTime, ref DateTime nextExecuteTime)
+        public  void SetNextExecuteTime(ref DateTime lastExecuteTime, ref DateTime nextExecuteTime)
         {
             lastExecuteTime = nextExecuteTime;
             if (Model == PipelineScheduleApartTimeType.Y)

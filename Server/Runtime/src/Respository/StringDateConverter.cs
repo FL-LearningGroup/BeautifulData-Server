@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace BDS.Runtime.DataBase
+namespace BDS.Runtime.Respository
 {
     public class StringDateConverter : ValueConverter<DateTime?, string>
     {

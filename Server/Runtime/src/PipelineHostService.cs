@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using BDS.Runtime.Models;
-using BDS.Runtime.DataBase;
+using BDS.Runtime.Respository;
 using System.IO;
 using System.Linq;
 using log4net.Util;
 using BDS.Framework;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Xml;
+using BDS.Runtime.Respository.Models;
 
 namespace BDS.Runtime
 {
@@ -22,10 +23,10 @@ namespace BDS.Runtime
     /// </summary>
     internal class PipelineHostService : BackgroundService, IPielineHostService
     {
+        private ServerConfig _serverConfig;
         private ServerConfigSwitch _configSwitch;
         private List<PipelineConfig> _pipelineConfigList;
         private List<PipelineControl> _pipelineControlList;
-        private XmlNodeList _serverConfig = null;
         public PipelineHostService()
         {
             _pipelineConfigList = new List<PipelineConfig>();
@@ -35,8 +36,10 @@ namespace BDS.Runtime
 
         private void InitialServer()
         {
-            _configSwitch.ServerSwitchEvent += GetPipelineConfigs;
+            GlobalVariables.ServerConfig.Switch.ServerSwitchEvent += GetPipelineConfigs;
+            ServerConfigOperation.SubscriptionServerConfigWatcher();
             CheckOrCreateDBSchema();
+            GenerateTestData();
         }
 
         private void CheckOrCreateDBSchema()
@@ -75,6 +78,7 @@ namespace BDS.Runtime
                     Logger.Error(String.Format("Cannot get all pipeline config from databases, exception message: {0}", ex.Message + ex.InnerException));
                 }
             }
+            CreatePipeline();
         }
 
         private void CreatePipeline()
@@ -101,6 +105,31 @@ namespace BDS.Runtime
                 }
             }
         }
+
+        public void GenerateTestData()
+        {
+            PipelineConfig pipelineConfig = new PipelineConfig()
+            {
+                Name = "BDS.Pipeline.News.FuYang",
+                Status = PipelineConfigStatus.Add,
+                Type = PipelineReferenceType.DLL,
+                PipelineReferenceAddress = @".\Resources\Pipelines\News\FuYang\BDS.Pipeline.News.FuYang.dll",
+                LastExecuteDT = DateTime.Now.AddDays(-1),
+                NextExecuteDT = DateTime.Now.AddDays(-1),
+                ApartTimeType = PipelineScheduleApartTimeType.D,
+                ApartTime = 1
+            };
+            using(MySqlContext context = new MySqlContext())
+            {
+                var config = context.PipelineConfig.FirstOrDefault(e => e.Name == pipelineConfig.Name);
+                if (config == null)
+                {
+                    context.PipelineConfig.Add(pipelineConfig);
+                    context.SaveChanges();
+                }
+
+            }
+        }
         //private void DisplayPipelineAssemblies()
         //{
         //    Logger.Info("------------------Pipeline Assemblies------------------------------");
@@ -125,9 +154,11 @@ namespace BDS.Runtime
             InitialServer();
             while (!stoppingToken.IsCancellationRequested)
             {
+                var snapshortPipelineControlList = _pipelineControlList;
                 //Add or remove the pipeline from the pipeline collection.
-                foreach(PipelineControl pipeline in _pipelineControlList)
+                foreach (PipelineControl pipeline in snapshortPipelineControlList)
                 {
+                    Logger.Debug(String.Format("Already pipeline name {0}", pipeline.Resource.Name));
                     //if (pipeline.InvokeStatus == PipelineInvokeStatus.Invokeable && DateTime.Now >= pipeline.NextExecuteDT)
                     //{
                     //    //Set pipeline invoke unable that wait for pipeline execute complete.
@@ -135,6 +166,7 @@ namespace BDS.Runtime
                     //    Logger.Info(String.Format("Execute pipeline {0} ", pipeline.Name));
                     //    pipeline.ExecuteAsync();
                     //}
+                    await Task.Delay(5000);
                 }
             }
         }

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using BDS.Runtime.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BDS.Runtime.Models
+namespace BDS.Runtime.Respository.Models
 {
     internal class PipelineConfig
     {

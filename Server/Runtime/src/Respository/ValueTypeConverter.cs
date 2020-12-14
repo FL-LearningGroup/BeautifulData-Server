@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BDS.Runtime.DataBase
+namespace BDS.Runtime.Respository
 {
     /// <summary>
     /// Provide value convert betwwen EF Core model and DataBase

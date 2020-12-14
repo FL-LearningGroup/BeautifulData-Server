@@ -1,5 +1,8 @@
-﻿using System;
+﻿using BDS.Runtime.Respository;
+using BDS.Runtime.Respository.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,9 +14,10 @@ namespace BDS.Runtime.Models
         public Pipeline Resource { get; private set; }
         public CancellationTokenSource CancelTakenSource { get; private set; }
         public PipelineConfigStatus Status { get; set; }
-        public DateTime LastExecuteDT { get; set; }
-        public DateTime NextExecuteDT { get; set; }
-        public PiplelineScheduleTimeOperation ScheduleTime { get; set; }
+        public DateTime LastExecuteDT { get; private set; }
+        public DateTime NextExecuteDT { get; private set; }
+        public PipelineTaskResult TaskResult { get; private set; }
+        public PiplelineScheduleTimeOperation ScheduleTime { get; private set; }
         public PipelineControl(Pipeline pipeline, PipelineConfigStatus status,DateTime lastExecuteDT, DateTime nextExecuteDT, PiplelineScheduleTimeOperation scheduleTime,CancellationTokenSource cancelTakenSource)
         {
             Resource = pipeline;
@@ -25,7 +29,36 @@ namespace BDS.Runtime.Models
         }
         public async Task InvokePipeline()
         {
-            await Resource.ExecuteAsync(CancelTakenSource.Token);
+            if ((DateTime.Now >= NextExecuteDT) && (Status == (PipelineConfigStatus.Wait | PipelineConfigStatus.Running)))
+            {
+                TaskResult = await Resource.ExecuteAsync(CancelTakenSource.Token);
+            }
+            if (TaskResult.Status == Framework.WorkPipelineStatus.Success)
+            {
+                UpdatePipelineConfig();
+                SetExecuteSchedule();
+            }
+        }
+
+        public void SetExecuteSchedule()
+        {
+            DateTime lastExecuteDT = LastExecuteDT;
+            DateTime nextExecuteDT = NextExecuteDT;
+            ScheduleTime.SetNextExecuteTime(ref lastExecuteDT, ref nextExecuteDT);
+            LastExecuteDT = lastExecuteDT;
+            NextExecuteDT = nextExecuteDT;
+        }
+
+        public void UpdatePipelineConfig()
+        {
+            using(MySqlContext context = new MySqlContext())
+            {
+                PipelineConfig pipelinConfig = context.PipelineConfig.FirstOrDefault(item => item.Name == Resource.Name);
+                pipelinConfig.LastExecuteDT = LastExecuteDT;
+                pipelinConfig.NextExecuteDT = NextExecuteDT;
+                context.PipelineConfig.Update(pipelinConfig);
+                context.SaveChanges();
+            }
         }
     }
 }

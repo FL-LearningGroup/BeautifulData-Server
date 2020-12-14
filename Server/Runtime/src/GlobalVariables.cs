@@ -11,8 +11,8 @@ namespace BDS.Runtime
 {
     internal static class GlobalVariables
     {
-        private static ServerConfig _serverConfig;
-        public static string WorkFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        private static ServerConfig _serverConfig = new ServerConfig();
+        public static string WorkFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
         public static string ResourcesFolder = Path.DirectorySeparatorChar + "Resources" + Path.DirectorySeparatorChar;
         public static void GetAssemblied(string context)
         {
@@ -28,8 +28,8 @@ namespace BDS.Runtime
             Logger.Debug(String.Format("{0} -- List of assemblies done-------------------------------", context));
         }
 
-        public static string ConvertDateTimeToStringFormat { get => "yyyy/MM/dd HH:mm:ss"; private set { } }
+        public static string ConvertDateTimeToStringFormat { get => "yyyy/MM/dd HH:mm:ss"; }
 
-        public static ServerConfig ServerConfig { get => _serverConfig = _serverConfig ?? new ServerConfig(); set => _serverConfig = value; }
+        public static ServerConfig ServerConfig { get => _serverConfig; set => _serverConfig = value; }
     }
 }

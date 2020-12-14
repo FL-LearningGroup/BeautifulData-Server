@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BDS.Runtime.DataBase
+namespace BDS.Runtime.Respository
 {
     /// <summary>
     /// Define the parameters for connecting to mysql.

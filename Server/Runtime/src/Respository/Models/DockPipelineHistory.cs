@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace BDS.Runtime.Models
+namespace BDS.Runtime.Respository.Models
 {
     /// <summary>
     /// Represent dock pipeline execution history
@@ -19,8 +19,6 @@ namespace BDS.Runtime.Models
         public DateTime UnloadPipelineDT { get; set; }
         public DateTime ExecuteStartDT { get; set; }
         public DateTime ExecuteEndDT { get; set; }
-        public DateTime LastExecuteDT { get; set; }
-        public DateTime NextExecuteDT { get; set; }
         public StringBuilder ExecutionMessage { get; set; }
         public DateTime InsertRowDT { get; set; }
         public DockPipelineHistory()

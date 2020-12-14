@@ -8,7 +8,7 @@ using BDS.Runtime.Models;
 
 namespace BDS.Runtime
 {
-    public static class ServerConfigOperation
+    public class ServerConfigOperation
     {
         public static void SubscriptionServerConfigWatcher()
         {
@@ -47,14 +47,23 @@ namespace BDS.Runtime
         public static void LoadServerConfigSwitch(object source, FileSystemEventArgs eventArgs)
         {
             XmlDocument xmlDoc = new XmlDocument();
+            int checkNum = 0;
             List<PipelineAssemblyConfig> assemblyConfigs = new List<PipelineAssemblyConfig>();
-            if (!IsFileLocked(eventArgs.FullPath))
+            do
+            {
+                checkNum++;
+            } while (checkNum < 3 && IsFileLocked(eventArgs.FullPath));
+            try
             {
                 using(FileStream fileStream = new FileStream(eventArgs.FullPath, FileMode.Open))
                 {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(ServerConfig));
-                    GlobalVariables.ServerConfig = (ServerConfig) xmlSerializer.Deserialize(fileStream);
+                    GlobalVariables.ServerConfig.Switch.ReloadDataBase = ((ServerConfig) xmlSerializer.Deserialize(fileStream)).Switch.ReloadDataBase;
                 }
+            }
+            catch(IOException ex)
+            {
+                Logger.Error(String.Format("{0} has been open another program, exception message {1}", eventArgs.FullPath, ex.ToString()));
             }
         }
         /// <summary>

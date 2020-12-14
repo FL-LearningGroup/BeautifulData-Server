@@ -1,4 +1,5 @@
 ﻿using BDS.Framework;
+using BDS.Runtime.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BDS.Runtime.Models
+namespace BDS.Runtime.Respository.Models
 {
     /// <summary>
     /// Represent pipeline that locad through dll file.
@@ -22,6 +23,7 @@ namespace BDS.Runtime.Models
         protected PipelineAssemblyLoadContext assemblyLoadContext;
         protected List<WorkPipeline> workPipelines;
         public string DllPath { get; set; }
+        [NotMapped]
         public Assembly pipelineAssembly { get; set; }
 
         public DockPipeline()

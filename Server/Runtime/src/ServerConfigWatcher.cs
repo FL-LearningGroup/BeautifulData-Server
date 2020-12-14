@@ -9,7 +9,7 @@ namespace BDS.Runtime
 {
     internal class ServerConfigWatcher
     {
-        private readonly static string _folderPath = GlobalVariables.WorkFolder + Path.DirectorySeparatorChar + "config";
+        private readonly static string _folderPath = GlobalVariables.WorkFolder + Path.DirectorySeparatorChar + "Config";
 
         public static FileSystemWatcher watcher;
 
@@ -25,6 +25,7 @@ namespace BDS.Runtime
             watcher.Path = _folderPath;
             watcher.IncludeSubdirectories = false;
             watcher.Filter = "ServerConfig.xml";
+            //Raised FileSystemWatcher changed twice event while use notepadd++.
             watcher.NotifyFilter = NotifyFilters.LastWrite;
         }
     }

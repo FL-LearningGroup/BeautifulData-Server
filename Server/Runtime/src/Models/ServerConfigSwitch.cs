@@ -11,7 +11,7 @@ namespace BDS.Runtime.Models
         private string _reloadDataBase;
         public event EventHandler ServerSwitchEvent;
 
-        [XmlAttribute("ReloadDataBase")]
+        [XmlAttribute("reloadDataBase")]
         public string ReloadDataBase 
         {
             get => _reloadDataBase;

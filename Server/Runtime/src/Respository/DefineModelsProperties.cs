@@ -1,11 +1,12 @@
 ﻿using BDS.Framework;
 using BDS.Runtime.Models;
+using BDS.Runtime.Respository.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BDS.Runtime.DataBase
+namespace BDS.Runtime.Respository
 {
     /// <summary>
     /// Define model attributes instead of passing attributes
@@ -76,35 +77,17 @@ namespace BDS.Runtime.DataBase
             modelBuilder.Entity<PipelineConfig>()
                 .Property(e => e.ApartTime)
                 .HasColumnType("int");
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.LastExecuteDT)
+                .HasColumnType("varchar(19)")
+                .HasConversion(ValueTypeConverter.DateTimeConvertString);
+            modelBuilder.Entity<PipelineConfig>()
+                .Property(e => e.NextExecuteDT)
+                .HasColumnType("varchar(19)")
+                .HasConversion(ValueTypeConverter.DateTimeConvertString);
 
             modelBuilder.Entity<PipelineConfig>().HasKey(e => e.Name);
         }
-        //public static void PipelineAssemblyConfig(ModelBuilder modelBuilder)
-        //{
-        //    #region Column type
-        //    modelBuilder.Entity<PipelineAssemblyConfig>()
-        //        .Property(e => e.AssemblyKey)
-        //        .HasColumnType("varchar(200)")
-        //        .HasMaxLength(200);
-        //    modelBuilder.Entity<PipelineAssemblyConfig>()
-        //        .Property(e => e.AssemblyPath)
-        //        .HasColumnType("varchar(1000)")
-        //        .HasMaxLength(1000);
-        //    modelBuilder.Entity<PipelineAssemblyConfig>()
-        //        .Property(e => e.AssemblyStatus)
-        //        .HasColumnType("varchar(45)")
-        //        .HasMaxLength(45);
-        //    modelBuilder.Entity<PipelineAssemblyConfig>()
-        //        .Property(e => e.ScheduleTime)
-        //        .HasColumnType("varchar(45)")
-        //        .HasMaxLength(45);
-        //    #endregion
-
-        //    #region Table constraint
-        //    modelBuilder.Entity<PipelineAssemblyConfig>().HasKey(c => c.AssemblyKey);
-        //    modelBuilder.Entity<PipelineAssemblyConfig>().HasIndex(e => e.AssemblyKey);
-        //    #endregion
-        //}
         public static void DockPipelineHistory(ModelBuilder modelBuilder)
         {
             #region Column type
@@ -142,22 +125,14 @@ namespace BDS.Runtime.DataBase
                 .HasColumnType("text")
                 .HasConversion(ValueTypeConverter.StringBuilderConvertString);
             modelBuilder.Entity<DockPipelineHistory>()
-                .Property(e => e.LastExecuteDT)
-                .HasColumnType("varchar(19)")
-                .HasConversion(ValueTypeConverter.DateTimeConvertString);
-            modelBuilder.Entity<DockPipelineHistory>()
-                .Property(e => e.NextExecuteDT)
-                .HasColumnType("varchar(19)")
-                .HasConversion(ValueTypeConverter.DateTimeConvertString);
-            modelBuilder.Entity<DockPipelineHistory>()
                 .Property(e => e.InsertRowDT)
                 .HasColumnType("datetime")
                 .HasDefaultValueSql("NOW()");
             #endregion
 
             #region Table constraint
-            modelBuilder.Entity<DockPipelineHistory>().HasKey(c => new {c.Name, c.Status, c.NextExecuteDT });
-            modelBuilder.Entity<DockPipelineHistory>(e => e.HasIndex(e => e.NextExecuteDT));
+            modelBuilder.Entity<DockPipelineHistory>().HasKey(c => new {c.Name, c.Status, c.InsertRowDT });
+            modelBuilder.Entity<DockPipelineHistory>(e => e.HasIndex(e => new { e.Name, e.Status, e.ExecuteStartDT }));
             #endregion
         }
     }

@@ -1,4 +1,5 @@
 ﻿using BDS.Framework;
+using BDS.Runtime.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static Org.BouncyCastle.Bcpg.Attr.ImageAttrib;
 
-namespace BDS.Runtime.Models
+namespace BDS.Runtime.Respository.Models
 {
     /// <summary>
     /// Abstract pipline as base class.

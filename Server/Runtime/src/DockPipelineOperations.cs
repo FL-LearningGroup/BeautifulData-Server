@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using BDS.Runtime.Models;
-using BDS.Runtime.DataBase;
+using BDS.Runtime.Respository;
 using BDS.Framework;
 using log4net.Util;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Threading;
+using BDS.Runtime.Respository.Models;
 
 namespace BDS.Runtime
 {
@@ -16,11 +17,10 @@ namespace BDS.Runtime
     /// Invoke pipeline
     /// </summary>
     /// <designspec>
-    /// 1. Load dll
-    /// 2. Execute pipleine
-    /// 3. Set schedule time
-    /// 4. Record the results of execution
-    /// 5. Make results of execution into history table
+    /// Load dll
+    /// Execute pipleine
+    /// Record the results of execution
+    /// Make results of execution into history table
     /// </designspec>
     internal class DockPipelineOperations: DockPipeline, IDisposable
     {
@@ -41,7 +41,6 @@ namespace BDS.Runtime
                 assemblyLoadContext = new PipelineAssemblyLoadContext(DllPath);
                 LoadPipelineDT = DateTime.Now;
                 pipelineAssembly = assemblyLoadContext.LoadFromAssemblyPath(DllPath);
-                Status = WorkPipelineStatus.Wait;
             }
             catch (Exception ex)
             {
@@ -53,8 +52,7 @@ namespace BDS.Runtime
 
         private PipelineTaskResult ExecutePipelineAsync()
         {
-            object lockobject = new object();
-            lock(lockobject)
+            lock(this)
             {
                 try
                 {
@@ -98,7 +96,7 @@ namespace BDS.Runtime
                 }
                 finally
                 {
-                    Status = WorkPipelineStatus.Wait; //Cause exception
+                    Status = WorkPipelineStatus.Wait;
                 }
                 return new PipelineTaskResult() {Name = this.Name, Status = this.Status };
             }
