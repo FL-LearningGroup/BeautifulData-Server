@@ -21,5 +21,6 @@ namespace BDS.Runtime.Models
         Stopped,
         Remove,
         Removed,
+        Restart
     }
 }

@@ -69,9 +69,9 @@ namespace BDS.Runtime
                         }
                     }
                     // Execute pipeline
-                    Status = WorkPipelineStatus.Running;
                     ExecuteStartDT = DateTime.Now;
-                    foreach(WorkPipeline workPipeline in workPipelines)
+                    Status = WorkPipelineStatus.Running;
+                    foreach (WorkPipeline workPipeline in workPipelines)
                     {
                        workPipeline.Processor();
                     }
@@ -92,11 +92,8 @@ namespace BDS.Runtime
                 {
                     Logger.Error(String.Format("The pipeline {0} executed failed. detail error message: {1}", Name, ex.Message));
                     ExecutionMessage.Append(String.Format("The pipeline {0} executed failed. detail error message: {1}", Name, ex.Message));
+                    ExecuteEndDT = DateTime.Now;
                     Status = WorkPipelineStatus.Failed;
-                }
-                finally
-                {
-                    Status = WorkPipelineStatus.Wait;
                 }
                 return new PipelineTaskResult() {Name = this.Name, Status = this.Status };
             }

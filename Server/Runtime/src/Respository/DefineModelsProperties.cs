@@ -131,8 +131,7 @@ namespace BDS.Runtime.Respository
             #endregion
 
             #region Table constraint
-            modelBuilder.Entity<DockPipelineHistory>().HasKey(c => new {c.Name, c.Status, c.InsertRowDT });
-            modelBuilder.Entity<DockPipelineHistory>(e => e.HasIndex(e => new { e.Name, e.Status, e.ExecuteStartDT }));
+            modelBuilder.Entity<DockPipelineHistory>().HasKey(c => new {c.Name, c.Status, c.ExecuteStartDT });
             #endregion
         }
     }

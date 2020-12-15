@@ -23,7 +23,6 @@ namespace BDS.Runtime
     /// </summary>
     internal class PipelineHostService : BackgroundService, IPielineHostService
     {
-        private ServerConfig _serverConfig;
         private ServerConfigSwitch _configSwitch;
         private List<PipelineConfig> _pipelineConfigList;
         private List<PipelineControl> _pipelineControlList;
@@ -86,6 +85,7 @@ namespace BDS.Runtime
             if (_pipelineConfigList.Count == 0) return;
             PipelineConfigOperation.AddPipeline(_pipelineConfigList.FindAll(item => item.Status == PipelineConfigStatus.Add), _pipelineControlList);
             PipelineConfigOperation.StopPipeline(_pipelineConfigList.FindAll(item => item.Status == PipelineConfigStatus.Stop), _pipelineControlList);
+            PipelineConfigOperation.RestartPipeline(_pipelineConfigList.FindAll(item => item.Status == PipelineConfigStatus.Restart), _pipelineControlList);
             PipelineConfigOperation.RemovePipeline(_pipelineConfigList.FindAll(item => item.Status == PipelineConfigStatus.Remove), _pipelineControlList);
         }
 
@@ -154,19 +154,16 @@ namespace BDS.Runtime
             InitialServer();
             while (!stoppingToken.IsCancellationRequested)
             {
-                var snapshortPipelineControlList = _pipelineControlList;
-                //Add or remove the pipeline from the pipeline collection.
-                foreach (PipelineControl pipeline in snapshortPipelineControlList)
+                
+                await Task.Delay(2000); //For resolve _pipelineControlList collection was modified; enumeration operation may not execute.
+                foreach (PipelineControl pipeline in _pipelineControlList)
                 {
-                    Logger.Debug(String.Format("Already pipeline name {0}", pipeline.Resource.Name));
-                    //if (pipeline.InvokeStatus == PipelineInvokeStatus.Invokeable && DateTime.Now >= pipeline.NextExecuteDT)
-                    //{
-                    //    //Set pipeline invoke unable that wait for pipeline execute complete.
-                    //    pipeline.InvokeStatus = PipelineInvokeStatus.InvokeUnable;
-                    //    Logger.Info(String.Format("Execute pipeline {0} ", pipeline.Name));
-                    //    pipeline.ExecuteAsync();
-                    //}
-                    await Task.Delay(5000);
+                    if (DateTime.Now >= pipeline.NextExecuteDT && pipeline.Status == PipelineConfigStatus.Wait)
+                    {
+                        Logger.Info(String.Format("Invoke pipeline {0}", pipeline.Resource.Name));
+                        pipeline.Status = PipelineConfigStatus.Running;
+                        pipeline.InvokePipelineAsync();
+                    }
                 }
             }
         }

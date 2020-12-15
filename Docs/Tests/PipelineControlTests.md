@@ -2,4 +2,6 @@
 | Status TF| Status |
 | :--- | :---|
 | Add --> Wait| Passed|
-| Stop --> Stoped |
+| Stop --> Stoped | Passed |
+| Restart --> Wait | Passed |
+| Remove --> Removed |Passed |

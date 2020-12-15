@@ -27,16 +27,20 @@ namespace BDS.Runtime.Models
             ScheduleTime = scheduleTime;
             CancelTakenSource = cancelTakenSource;
         }
-        public async Task InvokePipeline()
+        public async Task InvokePipelineAsync()
         {
-            if ((DateTime.Now >= NextExecuteDT) && (Status == (PipelineConfigStatus.Wait | PipelineConfigStatus.Running)))
+            if ((DateTime.Now >= NextExecuteDT) && (Status ==  PipelineConfigStatus.Running))
             {
                 TaskResult = await Resource.ExecuteAsync(CancelTakenSource.Token);
             }
-            if (TaskResult.Status == Framework.WorkPipelineStatus.Success)
+            lock (this)
             {
-                UpdatePipelineConfig();
-                SetExecuteSchedule();
+                if (TaskResult.Status == Framework.WorkPipelineStatus.Success)
+                {
+                    SetExecuteSchedule();
+                    UpdatePipelineConfig();
+                }
+                Status = PipelineConfigStatus.Wait;
             }
         }
 
@@ -56,6 +60,7 @@ namespace BDS.Runtime.Models
                 PipelineConfig pipelinConfig = context.PipelineConfig.FirstOrDefault(item => item.Name == Resource.Name);
                 pipelinConfig.LastExecuteDT = LastExecuteDT;
                 pipelinConfig.NextExecuteDT = NextExecuteDT;
+                pipelinConfig.Status = PipelineConfigStatus.Wait;
                 context.PipelineConfig.Update(pipelinConfig);
                 context.SaveChanges();
             }
